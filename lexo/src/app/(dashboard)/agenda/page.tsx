@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
 import { deleteDeadline } from "@/actions/agenda";
+import { formatDate } from "@/lib/format";
 import Link from "next/link";
 
 export default async function AgendaPage() {
@@ -20,7 +21,9 @@ export default async function AgendaPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Agenda</h1>
-        <Button render={<Link href="/agenda/novo" />}>Novo prazo</Button>
+        <Button nativeButton={false} render={<Link href="/agenda/novo" />}>
+          Novo prazo
+        </Button>
       </div>
 
       <div className="space-y-2">
@@ -37,7 +40,7 @@ export default async function AgendaPage() {
               <div>
                 <p className="font-medium">{d.title}</p>
                 <p className="text-sm text-muted-foreground">
-                  {d.case.number} · {new Date(d.date).toLocaleDateString("pt-BR")}
+                  {d.case.number} · {formatDate(d.date)}
                 </p>
               </div>
             </div>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { MarkPaidButton } from "@/components/financeiro/mark-paid-button";
 import { deleteInvoice } from "@/actions/financeiro";
+import { formatDate, formatCurrency } from "@/lib/format";
 import {
   Table,
   TableBody,
@@ -35,7 +36,9 @@ export default async function FinanceiroPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Financeiro</h1>
-        <Button render={<Link href="/financeiro/novo" />}>Novo honorário</Button>
+        <Button nativeButton={false} render={<Link href="/financeiro/novo" />}>
+          Novo honorário
+        </Button>
       </div>
 
       <Table>
@@ -64,12 +67,9 @@ export default async function FinanceiroPage() {
               <TableCell>{inv.client.name}</TableCell>
               <TableCell>{inv.case?.number ?? "-"}</TableCell>
               <TableCell>
-                {inv.amount.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+                {formatCurrency(inv.amount)}
               </TableCell>
-              <TableCell>{new Date(inv.dueDate).toLocaleDateString("pt-BR")}</TableCell>
+              <TableCell>{formatDate(inv.dueDate)}</TableCell>
               <TableCell>
                 <Badge variant={statusVariant[inv.status] ?? "secondary"}>
                   {inv.status}

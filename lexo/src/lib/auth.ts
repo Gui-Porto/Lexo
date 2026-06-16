@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // Necessário para self-hosting (Auth.js v5 em produção): confia no Host da request.
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",

@@ -25,7 +25,9 @@ export default async function ProcessosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Processos</h1>
-        <Button render={<Link href="/processos/novo" />}>Novo processo</Button>
+        <Button nativeButton={false} render={<Link href="/processos/novo" />}>
+          Novo processo
+        </Button>
       </div>
 
       <Table>
