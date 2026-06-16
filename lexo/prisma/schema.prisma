@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  ADVOGADO
+  SECRETARIA
+}
+
+enum CaseStatus {
+  ATIVO
+  SUSPENSO
+  ARQUIVADO
+  ENCERRADO
+}
+
+enum DeadlineType {
+  PRAZO
+  AUDIENCIA
+  REUNIAO
+  OUTRO
+}
+
+enum DeadlineStatus {
+  PENDENTE
+  CONCLUIDO
+  PERDIDO
+}
+
+enum InvoiceStatus {
+  PENDENTE
+  PAGO
+  ATRASADO
+  CANCELADO
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("trial")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  clients   Client[]
+  cases     Case[]
+  deadlines Deadline[]
+  invoices  Invoice[]
+}
+
+model User {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  email          String       @unique
+  passwordHash   String
+  role           Role         @default(ADVOGADO)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  casesResponsavel Case[] @relation("CaseResponsavel")
+
+  @@index([organizationId])
+}
+
+model Client {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  document       String?
+  email          String?
+  phone          String?
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  cases    Case[]
+  invoices Invoice[]
+
+  @@index([organizationId])
+}
+
+model Case {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  clientId       String
+  client         Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  number         String
+  area           String?
+  status         CaseStatus   @default(ATIVO)
+  description    String?
+
+  responsavelId String?
+  responsavel   User?   @relation("CaseResponsavel", fields: [responsavelId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deadlines Deadline[]
+  invoices  Invoice[]
+
+  @@index([organizationId])
+  @@index([clientId])
+}
+
+model Deadline {
+  id             String         @id @default(cuid())
+  organizationId String
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  caseId         String
+  case           Case           @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  type           DeadlineType   @default(PRAZO)
+  status         DeadlineStatus @default(PENDENTE)
+  title          String
+  description    String?
+  date           DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([caseId])
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  clientId       String
+  client         Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  caseId         String?
+  case           Case?         @relation(fields: [caseId], references: [id])
+  description    String
+  amount         Float
+  status         InvoiceStatus @default(PENDENTE)
+  dueDate        DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([clientId])
+}

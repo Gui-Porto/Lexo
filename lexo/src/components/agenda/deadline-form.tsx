@@ -1,0 +1,80 @@
+"use client";
+
+import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createDeadline } from "@/actions/agenda";
+
+const TYPE_OPTIONS = ["PRAZO", "AUDIENCIA", "REUNIAO", "OUTRO"];
+
+export function DeadlineForm({
+  cases,
+}: {
+  cases: { id: string; number: string }[];
+}) {
+  const [state, formAction, pending] = useActionState(createDeadline, undefined);
+
+  return (
+    <form action={formAction} className="max-w-md space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="title">Título</Label>
+        <Input id="title" name="title" required />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="caseId">Processo</Label>
+        <Select name="caseId">
+          <SelectTrigger id="caseId" className="w-full">
+            <SelectValue placeholder="Selecione um processo" />
+          </SelectTrigger>
+          <SelectContent>
+            {cases.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.number}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="type">Tipo</Label>
+        <Select name="type" defaultValue="PRAZO">
+          <SelectTrigger id="type" className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {TYPE_OPTIONS.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="date">Data</Label>
+        <Input id="date" name="date" type="date" required />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Descrição</Label>
+        <Input id="description" name="description" />
+      </div>
+
+      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      <Button type="submit" disabled={pending}>
+        {pending ? "Salvando..." : "Criar prazo"}
+      </Button>
+    </form>
+  );
+}
