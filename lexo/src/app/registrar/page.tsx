@@ -21,7 +21,7 @@ export default function RegisterPage() {
   );
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/15 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Cadastre seu escritório</CardTitle>
