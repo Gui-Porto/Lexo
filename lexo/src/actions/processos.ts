@@ -33,12 +33,19 @@ export async function createCase(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.case.create({
-    data: {
-      ...parsed.data,
-      organizationId: session.user.organizationId,
-    },
+  const ownClient = await db.client.findFirst({
+    where: { id: parsed.data.clientId, organizationId: session.user.organizationId },
+    select: { id: true },
   });
+  if (!ownClient) return { error: "Cliente não encontrado" };
+
+  try {
+    await db.case.create({
+      data: { ...parsed.data, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return { error: "Erro ao salvar processo. Tente novamente." };
+  }
 
   revalidatePath("/processos");
   redirect("/processos");
@@ -62,19 +69,34 @@ export async function updateCase(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.case.updateMany({
-    where: { id: caseId, organizationId: session.user.organizationId },
-    data: parsed.data,
+  const ownClient = await db.client.findFirst({
+    where: { id: parsed.data.clientId, organizationId: session.user.organizationId },
+    select: { id: true },
   });
+  if (!ownClient) return { error: "Cliente não encontrado" };
+
+  try {
+    await db.case.updateMany({
+      where: { id: caseId, organizationId: session.user.organizationId },
+      data: parsed.data,
+    });
+  } catch {
+    return { error: "Erro ao salvar processo. Tente novamente." };
+  }
 
   revalidatePath("/processos");
-  redirect("/processos");
+  redirect(`/processos/${caseId}`);
 }
 
 export async function deleteCase(caseId: string) {
   const session = await requireSession();
-  await db.case.deleteMany({
-    where: { id: caseId, organizationId: session.user.organizationId },
-  });
+  try {
+    await db.case.deleteMany({
+      where: { id: caseId, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/processos");
+  redirect("/processos");
 }

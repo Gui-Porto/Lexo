@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -82,7 +83,7 @@ export function CaseForm({
 
       <div className="space-y-2">
         <Label htmlFor="description">Descrição</Label>
-        <Input
+        <Textarea
           id="description"
           name="description"
           defaultValue={defaultValues?.description ?? ""}

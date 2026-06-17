@@ -33,16 +33,26 @@ export async function createDeadline(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.deadline.create({
-    data: {
-      caseId: parsed.data.caseId,
-      title: parsed.data.title,
-      type: parsed.data.type,
-      description: parsed.data.description,
-      date: new Date(parsed.data.date),
-      organizationId: session.user.organizationId,
-    },
+  const ownCase = await db.case.findFirst({
+    where: { id: parsed.data.caseId, organizationId: session.user.organizationId },
+    select: { id: true },
   });
+  if (!ownCase) return { error: "Processo não encontrado" };
+
+  try {
+    await db.deadline.create({
+      data: {
+        caseId: parsed.data.caseId,
+        title: parsed.data.title,
+        type: parsed.data.type,
+        description: parsed.data.description,
+        date: new Date(parsed.data.date),
+        organizationId: session.user.organizationId,
+      },
+    });
+  } catch {
+    return { error: "Erro ao salvar prazo. Tente novamente." };
+  }
 
   revalidatePath("/agenda");
   redirect("/agenda");
@@ -50,17 +60,25 @@ export async function createDeadline(
 
 export async function toggleDeadlineStatus(deadlineId: string, completed: boolean) {
   const session = await requireSession();
-  await db.deadline.updateMany({
-    where: { id: deadlineId, organizationId: session.user.organizationId },
-    data: { status: completed ? "CONCLUIDO" : "PENDENTE" },
-  });
+  try {
+    await db.deadline.updateMany({
+      where: { id: deadlineId, organizationId: session.user.organizationId },
+      data: { status: completed ? "CONCLUIDO" : "PENDENTE" },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/agenda");
 }
 
 export async function deleteDeadline(deadlineId: string) {
   const session = await requireSession();
-  await db.deadline.deleteMany({
-    where: { id: deadlineId, organizationId: session.user.organizationId },
-  });
+  try {
+    await db.deadline.deleteMany({
+      where: { id: deadlineId, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/agenda");
 }

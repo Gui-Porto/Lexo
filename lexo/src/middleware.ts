@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 
 const PUBLIC_PATHS = ["/login", "/registrar"];
 
-export async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {

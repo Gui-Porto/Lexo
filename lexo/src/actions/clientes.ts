@@ -33,12 +33,13 @@ export async function createClient(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.client.create({
-    data: {
-      ...parsed.data,
-      organizationId: session.user.organizationId,
-    },
-  });
+  try {
+    await db.client.create({
+      data: { ...parsed.data, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return { error: "Erro ao salvar cliente. Tente novamente." };
+  }
 
   revalidatePath("/clientes");
   redirect("/clientes");
@@ -62,19 +63,28 @@ export async function updateClient(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.client.updateMany({
-    where: { id: clientId, organizationId: session.user.organizationId },
-    data: parsed.data,
-  });
+  try {
+    await db.client.updateMany({
+      where: { id: clientId, organizationId: session.user.organizationId },
+      data: parsed.data,
+    });
+  } catch {
+    return { error: "Erro ao salvar cliente. Tente novamente." };
+  }
 
   revalidatePath("/clientes");
-  redirect("/clientes");
+  redirect(`/clientes/${clientId}`);
 }
 
 export async function deleteClient(clientId: string) {
   const session = await requireSession();
-  await db.client.deleteMany({
-    where: { id: clientId, organizationId: session.user.organizationId },
-  });
+  try {
+    await db.client.deleteMany({
+      where: { id: clientId, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/clientes");
+  redirect("/clientes");
 }

@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { ActionResult } from "@/actions/clientes";
 
 type ClientFormValues = {
@@ -45,7 +46,7 @@ export function ClientForm({
       </div>
       <div className="space-y-2">
         <Label htmlFor="notes">Observações</Label>
-        <Input id="notes" name="notes" defaultValue={defaultValues?.notes ?? ""} />
+        <Textarea id="notes" name="notes" defaultValue={defaultValues?.notes ?? ""} />
       </div>
       {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
       <Button type="submit" disabled={pending}>

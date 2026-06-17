@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 enum Role {
@@ -111,8 +108,11 @@ model Case {
   deadlines Deadline[]
   invoices  Invoice[]
 
+  @@unique([organizationId, number])
   @@index([organizationId])
   @@index([clientId])
+  @@index([responsavelId])
+  @@index([status])
 }
 
 model Deadline {
@@ -132,6 +132,8 @@ model Deadline {
 
   @@index([organizationId])
   @@index([caseId])
+  @@index([date])
+  @@index([status])
 }
 
 model Invoice {
@@ -143,13 +145,16 @@ model Invoice {
   caseId         String?
   case           Case?         @relation(fields: [caseId], references: [id])
   description    String
-  amount         Float
+  amount         Decimal       @db.Decimal(12, 2)
   status         InvoiceStatus @default(PENDENTE)
   dueDate        DateTime
+  paidAt         DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
   @@index([clientId])
+  @@index([dueDate])
+  @@index([status])
 }

@@ -15,6 +15,8 @@ const invoiceSchema = z.object({
   dueDate: z.string().min(1, "Vencimento é obrigatório"),
 });
 
+const invoiceStatusSchema = z.enum(["PENDENTE", "PAGO", "ATRASADO", "CANCELADO"]);
+
 export type ActionResult = { error: string } | undefined;
 
 export async function createInvoice(
@@ -35,17 +37,35 @@ export async function createInvoice(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  await db.invoice.create({
-    data: {
-      clientId: parsed.data.clientId,
-      caseId: parsed.data.caseId || null,
-      description: parsed.data.description,
-      amount: parsed.data.amount,
-      status: parsed.data.status,
-      dueDate: new Date(parsed.data.dueDate),
-      organizationId: session.user.organizationId,
-    },
+  const ownClient = await db.client.findFirst({
+    where: { id: parsed.data.clientId, organizationId: session.user.organizationId },
+    select: { id: true },
   });
+  if (!ownClient) return { error: "Cliente não encontrado" };
+
+  if (parsed.data.caseId) {
+    const ownCase = await db.case.findFirst({
+      where: { id: parsed.data.caseId, organizationId: session.user.organizationId },
+      select: { id: true },
+    });
+    if (!ownCase) return { error: "Processo não encontrado" };
+  }
+
+  try {
+    await db.invoice.create({
+      data: {
+        clientId: parsed.data.clientId,
+        caseId: parsed.data.caseId || null,
+        description: parsed.data.description,
+        amount: parsed.data.amount,
+        status: parsed.data.status,
+        dueDate: new Date(parsed.data.dueDate),
+        organizationId: session.user.organizationId,
+      },
+    });
+  } catch {
+    return { error: "Erro ao salvar honorário. Tente novamente." };
+  }
 
   revalidatePath("/financeiro");
   redirect("/financeiro");
@@ -53,17 +73,31 @@ export async function createInvoice(
 
 export async function updateInvoiceStatus(invoiceId: string, status: string) {
   const session = await requireSession();
-  await db.invoice.updateMany({
-    where: { id: invoiceId, organizationId: session.user.organizationId },
-    data: { status: status as "PENDENTE" | "PAGO" | "ATRASADO" | "CANCELADO" },
-  });
+  const parsed = invoiceStatusSchema.safeParse(status);
+  if (!parsed.success) return;
+
+  try {
+    await db.invoice.updateMany({
+      where: { id: invoiceId, organizationId: session.user.organizationId },
+      data: {
+        status: parsed.data,
+        ...(parsed.data === "PAGO" ? { paidAt: new Date() } : {}),
+      },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/financeiro");
 }
 
 export async function deleteInvoice(invoiceId: string) {
   const session = await requireSession();
-  await db.invoice.deleteMany({
-    where: { id: invoiceId, organizationId: session.user.organizationId },
-  });
+  try {
+    await db.invoice.deleteMany({
+      where: { id: invoiceId, organizationId: session.user.organizationId },
+    });
+  } catch {
+    return;
+  }
   revalidatePath("/financeiro");
 }

@@ -30,33 +30,25 @@ export async function registerOrganization(
   }
 
   const { organizationName, name, email, password } = parsed.data;
-
-  const existing = await db.user.findUnique({ where: { email } });
-  if (existing) {
-    return { error: "Já existe um usuário com este email" };
-  }
-
   const passwordHash = await bcrypt.hash(password, 10);
 
-  await db.organization.create({
-    data: {
-      name: organizationName,
-      users: {
-        create: {
-          name,
-          email,
-          passwordHash,
-          role: "ADMIN",
+  try {
+    await db.organization.create({
+      data: {
+        name: organizationName,
+        users: {
+          create: { name, email, passwordHash, role: "ADMIN" },
         },
       },
-    },
-  });
+    });
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2002") {
+      return { error: "Já existe um usuário com este email" };
+    }
+    return { error: "Erro ao criar conta. Tente novamente." };
+  }
 
-  await signIn("credentials", {
-    email,
-    password,
-    redirectTo: "/processos",
-  });
+  await signIn("credentials", { email, password, redirectTo: "/processos" });
 
   return { success: true };
 }

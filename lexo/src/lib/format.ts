@@ -7,9 +7,10 @@ export function formatDate(date: Date | string): string {
   return new Date(date).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
-/** Formata um valor numérico como moeda em Real brasileiro. */
-export function formatCurrency(amount: number): string {
-  return amount.toLocaleString("pt-BR", {
+/** Formata um valor numérico ou Decimal do Prisma como moeda em Real brasileiro. */
+export function formatCurrency(amount: number | { toNumber: () => number }): string {
+  const value = typeof amount === "number" ? amount : amount.toNumber();
+  return value.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
