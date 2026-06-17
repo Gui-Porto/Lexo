@@ -116,6 +116,12 @@ export default async function FinanceiroPage({
               </TableCell>
               <TableCell className="flex items-center justify-end gap-2">
                 {inv.status !== "PAGO" && <MarkPaidButton invoiceId={inv.id} />}
+                <Link
+                  href={`/financeiro/${inv.id}`}
+                  className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+                >
+                  Editar
+                </Link>
                 <DeleteButton action={deleteInvoice.bind(null, inv.id)} label="Excluir" />
               </TableCell>
             </TableRow>

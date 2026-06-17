@@ -99,6 +99,12 @@ export default async function AgendaPage({
               <Badge variant={d.type === "AUDIENCIA" ? "default" : "secondary"}>
                 {d.type}
               </Badge>
+              <Link
+                href={`/agenda/${d.id}`}
+                className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Editar
+              </Link>
               <DeleteButton action={deleteDeadline.bind(null, d.id)} label="Excluir" />
             </div>
           </div>

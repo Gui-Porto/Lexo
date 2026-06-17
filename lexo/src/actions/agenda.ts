@@ -58,6 +58,49 @@ export async function createDeadline(
   redirect(`/agenda?toast=${encodeURIComponent("Prazo criado com sucesso")}`);
 }
 
+export async function updateDeadline(
+  deadlineId: string,
+  _prevState: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  const session = await requireSession();
+  const parsed = deadlineSchema.safeParse({
+    caseId: formData.get("caseId"),
+    title: formData.get("title"),
+    type: formData.get("type") ?? "PRAZO",
+    date: formData.get("date"),
+    description: formData.get("description") || undefined,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
+  }
+
+  const ownCase = await db.case.findFirst({
+    where: { id: parsed.data.caseId, organizationId: session.user.organizationId },
+    select: { id: true },
+  });
+  if (!ownCase) return { error: "Processo não encontrado" };
+
+  try {
+    await db.deadline.updateMany({
+      where: { id: deadlineId, organizationId: session.user.organizationId },
+      data: {
+        caseId: parsed.data.caseId,
+        title: parsed.data.title,
+        type: parsed.data.type,
+        description: parsed.data.description,
+        date: new Date(parsed.data.date),
+      },
+    });
+  } catch {
+    return { error: "Erro ao salvar prazo. Tente novamente." };
+  }
+
+  revalidatePath("/agenda");
+  redirect(`/agenda?toast=${encodeURIComponent("Prazo atualizado com sucesso")}`);
+}
+
 export async function toggleDeadlineStatus(deadlineId: string, completed: boolean) {
   const session = await requireSession();
   try {

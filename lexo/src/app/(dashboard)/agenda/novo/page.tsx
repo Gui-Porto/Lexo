@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { DeadlineForm } from "@/components/agenda/deadline-form";
+import { createDeadline } from "@/actions/agenda";
 
 export default async function NovoPrazoPage() {
   const session = await requireSession();
@@ -18,7 +19,7 @@ export default async function NovoPrazoPage() {
           Cadastre um processo antes de criar um prazo.
         </p>
       ) : (
-        <DeadlineForm cases={cases} />
+        <DeadlineForm action={createDeadline} cases={cases} />
       )}
     </div>
   );

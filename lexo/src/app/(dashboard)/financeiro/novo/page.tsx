@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { InvoiceForm } from "@/components/financeiro/invoice-form";
+import { createInvoice } from "@/actions/financeiro";
 
 export default async function NovoHonorarioPage() {
   const session = await requireSession();
@@ -26,7 +27,7 @@ export default async function NovoHonorarioPage() {
           Cadastre um cliente antes de criar um honorário.
         </p>
       ) : (
-        <InvoiceForm clients={clients} cases={cases} />
+        <InvoiceForm action={createInvoice} clients={clients} cases={cases} />
       )}
     </div>
   );
