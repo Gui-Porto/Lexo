@@ -5,12 +5,18 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 
-const registerSchema = z.object({
-  organizationName: z.string().min(2, "Nome do escritório muito curto"),
-  name: z.string().min(2, "Nome muito curto"),
-  email: z.string().email("Email inválido"),
-  password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
-});
+const registerSchema = z
+  .object({
+    organizationName: z.string().min(2, "Nome do escritório muito curto"),
+    name: z.string().min(2, "Nome muito curto"),
+    email: z.string().email("Email inválido"),
+    password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
 export type RegisterResult = { error: string } | { success: true };
 
@@ -23,6 +29,7 @@ export async function registerOrganization(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   });
 
   if (!parsed.success) {
@@ -48,7 +55,7 @@ export async function registerOrganization(
     return { error: "Erro ao criar conta. Tente novamente." };
   }
 
-  await signIn("credentials", { email, password, redirectTo: "/processos" });
+  await signIn("credentials", { email, password, redirectTo: "/dashboard" });
 
   return { success: true };
 }

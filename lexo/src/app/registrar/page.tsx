@@ -53,6 +53,16 @@ export default function RegisterPage() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirmar senha</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                minLength={8}
+                required
+              />
+            </div>
             {state && "error" in state && (
               <p className="text-sm text-destructive">{state.error}</p>
             )}
