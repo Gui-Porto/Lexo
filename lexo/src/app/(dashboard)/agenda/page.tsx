@@ -1,21 +1,65 @@
+import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
+import { SearchFilters } from "@/components/search-filters";
+import { Pagination } from "@/components/pagination";
 import { deleteDeadline } from "@/actions/agenda";
 import { formatDate } from "@/lib/format";
 import Link from "next/link";
 
-export default async function AgendaPage() {
-  const session = await requireSession();
+const PAGE_SIZE = 20;
 
-  const deadlines = await db.deadline.findMany({
-    where: { organizationId: session.user.organizationId },
-    include: { case: true },
-    orderBy: { date: "asc" },
-  });
+const STATUS_OPTIONS = [
+  { value: "PENDENTE", label: "Pendente" },
+  { value: "CONCLUIDO", label: "Concluído" },
+  { value: "PERDIDO", label: "Perdido" },
+];
+
+const TYPE_OPTIONS = [
+  { value: "PRAZO", label: "Prazo" },
+  { value: "AUDIENCIA", label: "Audiência" },
+  { value: "REUNIAO", label: "Reunião" },
+  { value: "OUTRO", label: "Outro" },
+];
+
+export default async function AgendaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string; type?: string; page?: string }>;
+}) {
+  const session = await requireSession();
+  const { q, status, type, page: pageStr } = await searchParams;
+  const page = Math.max(1, Number(pageStr ?? 1));
+  const orgId = session.user.organizationId;
+
+  const where = {
+    organizationId: orgId,
+    ...(status ? { status: status as "PENDENTE" | "CONCLUIDO" | "PERDIDO" } : {}),
+    ...(type ? { type: type as "PRAZO" | "AUDIENCIA" | "REUNIAO" | "OUTRO" } : {}),
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q, mode: "insensitive" as const } },
+            { case: { number: { contains: q, mode: "insensitive" as const } } },
+          ],
+        }
+      : {}),
+  };
+
+  const [deadlines, total] = await Promise.all([
+    db.deadline.findMany({
+      where,
+      include: { case: true },
+      orderBy: { date: "asc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.deadline.count({ where }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -26,9 +70,16 @@ export default async function AgendaPage() {
         </Button>
       </div>
 
+      <Suspense>
+        <div className="flex flex-wrap gap-2">
+          <SearchFilters statusOptions={STATUS_OPTIONS} />
+          <SearchFilters statusOptions={TYPE_OPTIONS} statusParam="type" />
+        </div>
+      </Suspense>
+
       <div className="space-y-2">
         {deadlines.length === 0 && (
-          <p className="text-sm text-muted-foreground">Nenhum prazo cadastrado ainda.</p>
+          <p className="text-sm text-muted-foreground">Nenhum prazo encontrado.</p>
         )}
         {deadlines.map((d) => (
           <div
@@ -53,6 +104,10 @@ export default async function AgendaPage() {
           </div>
         ))}
       </div>
+
+      <Suspense>
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
+      </Suspense>
     </div>
   );
 }

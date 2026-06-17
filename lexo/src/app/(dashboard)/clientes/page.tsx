@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
+import { SearchFilters } from "@/components/search-filters";
+import { Pagination } from "@/components/pagination";
 import {
   Table,
   TableBody,
@@ -11,13 +14,40 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function ClientesPage() {
-  const session = await requireSession();
+const PAGE_SIZE = 20;
 
-  const clients = await db.client.findMany({
-    where: { organizationId: session.user.organizationId },
-    orderBy: { createdAt: "desc" },
-  });
+export default async function ClientesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const session = await requireSession();
+  const { q, page: pageStr } = await searchParams;
+  const page = Math.max(1, Number(pageStr ?? 1));
+  const orgId = session.user.organizationId;
+
+  const where = {
+    organizationId: orgId,
+    ...(q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" as const } },
+            { document: { contains: q, mode: "insensitive" as const } },
+            { email: { contains: q, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [clients, total] = await Promise.all([
+    db.client.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.client.count({ where }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -27,6 +57,10 @@ export default async function ClientesPage() {
           Novo cliente
         </Button>
       </div>
+
+      <Suspense>
+        <SearchFilters />
+      </Suspense>
 
       <Table>
         <TableHeader>
@@ -41,7 +75,7 @@ export default async function ClientesPage() {
           {clients.length === 0 && (
             <TableRow>
               <TableCell colSpan={4} className="text-center text-muted-foreground">
-                Nenhum cliente cadastrado ainda.
+                Nenhum cliente encontrado.
               </TableCell>
             </TableRow>
           )}
@@ -59,6 +93,10 @@ export default async function ClientesPage() {
           ))}
         </TableBody>
       </Table>
+
+      <Suspense>
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
+      </Suspense>
     </div>
   );
 }

@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SearchFilters } from "@/components/search-filters";
+import { Pagination } from "@/components/pagination";
 import {
   Table,
   TableBody,
@@ -12,14 +15,49 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function ProcessosPage() {
-  const session = await requireSession();
+const PAGE_SIZE = 20;
 
-  const cases = await db.case.findMany({
-    where: { organizationId: session.user.organizationId },
-    include: { client: true },
-    orderBy: { createdAt: "desc" },
-  });
+const STATUS_OPTIONS = [
+  { value: "ATIVO", label: "Ativo" },
+  { value: "SUSPENSO", label: "Suspenso" },
+  { value: "ARQUIVADO", label: "Arquivado" },
+  { value: "ENCERRADO", label: "Encerrado" },
+];
+
+export default async function ProcessosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string; page?: string }>;
+}) {
+  const session = await requireSession();
+  const { q, status, page: pageStr } = await searchParams;
+  const page = Math.max(1, Number(pageStr ?? 1));
+  const orgId = session.user.organizationId;
+
+  const where = {
+    organizationId: orgId,
+    ...(status ? { status: status as "ATIVO" | "SUSPENSO" | "ARQUIVADO" | "ENCERRADO" } : {}),
+    ...(q
+      ? {
+          OR: [
+            { number: { contains: q, mode: "insensitive" as const } },
+            { area: { contains: q, mode: "insensitive" as const } },
+            { client: { name: { contains: q, mode: "insensitive" as const } } },
+          ],
+        }
+      : {}),
+  };
+
+  const [cases, total] = await Promise.all([
+    db.case.findMany({
+      where,
+      include: { client: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.case.count({ where }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -29,6 +67,10 @@ export default async function ProcessosPage() {
           Novo processo
         </Button>
       </div>
+
+      <Suspense>
+        <SearchFilters statusOptions={STATUS_OPTIONS} />
+      </Suspense>
 
       <Table>
         <TableHeader>
@@ -43,7 +85,7 @@ export default async function ProcessosPage() {
           {cases.length === 0 && (
             <TableRow>
               <TableCell colSpan={4} className="text-center text-muted-foreground">
-                Nenhum processo cadastrado ainda.
+                Nenhum processo encontrado.
               </TableCell>
             </TableRow>
           )}
@@ -63,6 +105,10 @@ export default async function ProcessosPage() {
           ))}
         </TableBody>
       </Table>
+
+      <Suspense>
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
+      </Suspense>
     </div>
   );
 }

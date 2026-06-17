@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { MarkPaidButton } from "@/components/financeiro/mark-paid-button";
+import { SearchFilters } from "@/components/search-filters";
+import { Pagination } from "@/components/pagination";
 import { deleteInvoice } from "@/actions/financeiro";
 import { formatDate, formatCurrency } from "@/lib/format";
 import {
@@ -16,6 +19,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+const PAGE_SIZE = 20;
+
+const STATUS_OPTIONS = [
+  { value: "PENDENTE", label: "Pendente" },
+  { value: "PAGO", label: "Pago" },
+  { value: "ATRASADO", label: "Atrasado" },
+  { value: "CANCELADO", label: "Cancelado" },
+];
+
 const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
   PAGO: "default",
   PENDENTE: "secondary",
@@ -23,14 +35,39 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
   CANCELADO: "secondary",
 };
 
-export default async function FinanceiroPage() {
+export default async function FinanceiroPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string; page?: string }>;
+}) {
   const session = await requireSession();
+  const { q, status, page: pageStr } = await searchParams;
+  const page = Math.max(1, Number(pageStr ?? 1));
+  const orgId = session.user.organizationId;
 
-  const invoices = await db.invoice.findMany({
-    where: { organizationId: session.user.organizationId },
-    include: { client: true, case: true },
-    orderBy: { dueDate: "asc" },
-  });
+  const where = {
+    organizationId: orgId,
+    ...(status ? { status: status as "PENDENTE" | "PAGO" | "ATRASADO" | "CANCELADO" } : {}),
+    ...(q
+      ? {
+          OR: [
+            { description: { contains: q, mode: "insensitive" as const } },
+            { client: { name: { contains: q, mode: "insensitive" as const } } },
+          ],
+        }
+      : {}),
+  };
+
+  const [invoices, total] = await Promise.all([
+    db.invoice.findMany({
+      where,
+      include: { client: true, case: true },
+      orderBy: { dueDate: "asc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.invoice.count({ where }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -40,6 +77,10 @@ export default async function FinanceiroPage() {
           Novo honorário
         </Button>
       </div>
+
+      <Suspense>
+        <SearchFilters statusOptions={STATUS_OPTIONS} />
+      </Suspense>
 
       <Table>
         <TableHeader>
@@ -57,7 +98,7 @@ export default async function FinanceiroPage() {
           {invoices.length === 0 && (
             <TableRow>
               <TableCell colSpan={7} className="text-center text-muted-foreground">
-                Nenhum honorário cadastrado ainda.
+                Nenhum honorário encontrado.
               </TableCell>
             </TableRow>
           )}
@@ -66,9 +107,7 @@ export default async function FinanceiroPage() {
               <TableCell>{inv.description}</TableCell>
               <TableCell>{inv.client.name}</TableCell>
               <TableCell>{inv.case?.number ?? "-"}</TableCell>
-              <TableCell>
-                {formatCurrency(inv.amount)}
-              </TableCell>
+              <TableCell>{formatCurrency(Number(inv.amount))}</TableCell>
               <TableCell>{formatDate(inv.dueDate)}</TableCell>
               <TableCell>
                 <Badge variant={statusVariant[inv.status] ?? "secondary"}>
@@ -83,6 +122,10 @@ export default async function FinanceiroPage() {
           ))}
         </TableBody>
       </Table>
+
+      <Suspense>
+        <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
+      </Suspense>
     </div>
   );
 }
