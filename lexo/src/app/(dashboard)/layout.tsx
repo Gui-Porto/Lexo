@@ -22,7 +22,7 @@ export default async function DashboardLayout({
         <div className="mb-6 px-3">
           <span className="text-lg font-bold">Lexo</span>
         </div>
-        <SidebarNav />
+        <SidebarNav role={session.user.role} />
         <div className="mt-auto space-y-2 px-3">
           <p className="truncate text-sm text-muted-foreground">
             {session.user.email}

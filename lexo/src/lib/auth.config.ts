@@ -12,6 +12,20 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       if (PUBLIC_PATHS.some((p) => nextUrl.pathname.startsWith(p))) return true;
       if (!isLoggedIn) return Response.redirect(new URL("/login", nextUrl));
+
+      const role = (auth?.user as { role?: string })?.role;
+
+      if (role === "SECRETARIA" && nextUrl.pathname.startsWith("/financeiro")) {
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+
+      if (
+        role !== "ADMIN" &&
+        nextUrl.pathname.startsWith("/configuracoes")
+      ) {
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+
       return true;
     },
     jwt: async ({ token, user }) => {

@@ -34,18 +34,27 @@ export default async function ProcessosPage({
   const page = Math.max(1, Number(pageStr ?? 1));
   const orgId = session.user.organizationId;
 
+  const isAdvogado = session.user.role === "ADVOGADO";
+
   const where = {
     organizationId: orgId,
     ...(status ? { status: status as "ATIVO" | "SUSPENSO" | "ARQUIVADO" | "ENCERRADO" } : {}),
-    ...(q
-      ? {
-          OR: [
-            { number: { contains: q, mode: "insensitive" as const } },
-            { area: { contains: q, mode: "insensitive" as const } },
-            { client: { name: { contains: q, mode: "insensitive" as const } } },
-          ],
-        }
-      : {}),
+    AND: [
+      ...(isAdvogado
+        ? [{ OR: [{ responsavelId: session.user.id }, { responsavelId: null }] }]
+        : []),
+      ...(q
+        ? [
+            {
+              OR: [
+                { number: { contains: q, mode: "insensitive" as const } },
+                { area: { contains: q, mode: "insensitive" as const } },
+                { client: { name: { contains: q, mode: "insensitive" as const } } },
+              ],
+            },
+          ]
+        : []),
+    ],
   };
 
   const [cases, total] = await Promise.all([

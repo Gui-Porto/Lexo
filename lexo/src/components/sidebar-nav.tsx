@@ -4,16 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const links = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/processos", label: "Processos" },
-  { href: "/clientes", label: "Clientes" },
-  { href: "/agenda", label: "Agenda" },
-  { href: "/financeiro", label: "Financeiro" },
+const BASE_LINKS = [
+  { href: "/dashboard", label: "Dashboard", roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/processos", label: "Processos", roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/clientes", label: "Clientes", roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/agenda", label: "Agenda", roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/financeiro", label: "Financeiro", roles: ["ADMIN", "ADVOGADO"] },
+  { href: "/configuracoes/usuarios", label: "Usuários", roles: ["ADMIN"] },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ role }: { role?: string }) {
   const pathname = usePathname();
+  const links = BASE_LINKS.filter((l) => !role || l.roles.includes(role));
 
   return (
     <nav className="flex flex-col gap-1">
