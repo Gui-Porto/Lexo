@@ -12,6 +12,7 @@ const caseSchema = z.object({
   area: z.string().optional(),
   status: z.enum(["ATIVO", "SUSPENSO", "ARQUIVADO", "ENCERRADO"]),
   description: z.string().optional(),
+  responsavelId: z.string().optional(),
 });
 
 export type ActionResult = { error: string } | undefined;
@@ -27,6 +28,7 @@ export async function createCase(
     area: formData.get("area") || undefined,
     status: formData.get("status") ?? "ATIVO",
     description: formData.get("description") || undefined,
+    responsavelId: formData.get("responsavelId") || undefined,
   });
 
   if (!parsed.success) {
@@ -38,6 +40,14 @@ export async function createCase(
     select: { id: true },
   });
   if (!ownClient) return { error: "Cliente não encontrado" };
+
+  if (parsed.data.responsavelId) {
+    const ownUser = await db.user.findFirst({
+      where: { id: parsed.data.responsavelId, organizationId: session.user.organizationId },
+      select: { id: true },
+    });
+    if (!ownUser) return { error: "Responsável não encontrado" };
+  }
 
   try {
     await db.case.create({
@@ -63,6 +73,7 @@ export async function updateCase(
     area: formData.get("area") || undefined,
     status: formData.get("status") ?? "ATIVO",
     description: formData.get("description") || undefined,
+    responsavelId: formData.get("responsavelId") || undefined,
   });
 
   if (!parsed.success) {
@@ -74,6 +85,14 @@ export async function updateCase(
     select: { id: true },
   });
   if (!ownClient) return { error: "Cliente não encontrado" };
+
+  if (parsed.data.responsavelId) {
+    const ownUser = await db.user.findFirst({
+      where: { id: parsed.data.responsavelId, organizationId: session.user.organizationId },
+      select: { id: true },
+    });
+    if (!ownUser) return { error: "Responsável não encontrado" };
+  }
 
   try {
     await db.case.updateMany({

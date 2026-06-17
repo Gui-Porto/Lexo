@@ -20,6 +20,7 @@ type CaseFormValues = {
   area: string | null;
   status: string;
   description: string | null;
+  responsavelId?: string | null;
 };
 
 const STATUS_OPTIONS = ["ATIVO", "SUSPENSO", "ARQUIVADO", "ENCERRADO"];
@@ -27,11 +28,13 @@ const STATUS_OPTIONS = ["ATIVO", "SUSPENSO", "ARQUIVADO", "ENCERRADO"];
 export function CaseForm({
   action,
   clients,
+  users,
   defaultValues,
   submitLabel,
 }: {
   action: (prevState: ActionResult, formData: FormData) => Promise<ActionResult>;
   clients: { id: string; name: string }[];
+  users?: { id: string; name: string }[];
   defaultValues?: CaseFormValues;
   submitLabel: string;
 }) {
@@ -80,6 +83,24 @@ export function CaseForm({
           </SelectContent>
         </Select>
       </div>
+
+      {users && users.length > 0 && (
+        <div className="space-y-2">
+          <Label htmlFor="responsavelId">Responsável</Label>
+          <Select name="responsavelId" defaultValue={defaultValues?.responsavelId ?? ""}>
+            <SelectTrigger id="responsavelId" className="w-full">
+              <SelectValue placeholder="Sem responsável" />
+            </SelectTrigger>
+            <SelectContent>
+              {users.map((user) => (
+                <SelectItem key={user.id} value={user.id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="description">Descrição</Label>

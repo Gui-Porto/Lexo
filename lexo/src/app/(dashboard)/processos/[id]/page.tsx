@@ -21,12 +21,17 @@ export default async function ProcessoDetailPage({
   const { id } = await params;
   const session = await requireSession();
 
-  const [caseItem, clients] = await Promise.all([
+  const [caseItem, clients, users] = await Promise.all([
     db.case.findFirst({
       where: { id, organizationId: session.user.organizationId },
-      include: { deadlines: true, invoices: true },
+      include: { deadlines: true, invoices: true, responsavel: { select: { name: true } } },
     }),
     db.client.findMany({
+      where: { organizationId: session.user.organizationId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    db.user.findMany({
       where: { organizationId: session.user.organizationId },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
@@ -50,6 +55,7 @@ export default async function ProcessoDetailPage({
       <CaseForm
         action={boundUpdate}
         clients={clients}
+        users={users}
         defaultValues={caseItem}
         submitLabel="Salvar alterações"
       />

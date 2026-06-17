@@ -5,11 +5,18 @@ import { createCase } from "@/actions/processos";
 
 export default async function NovoProcessoPage() {
   const session = await requireSession();
-  const clients = await db.client.findMany({
-    where: { organizationId: session.user.organizationId },
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  const [clients, users] = await Promise.all([
+    db.client.findMany({
+      where: { organizationId: session.user.organizationId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    db.user.findMany({
+      where: { organizationId: session.user.organizationId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -19,7 +26,7 @@ export default async function NovoProcessoPage() {
           Cadastre um cliente antes de criar um processo.
         </p>
       ) : (
-        <CaseForm action={createCase} clients={clients} submitLabel="Criar processo" />
+        <CaseForm action={createCase} clients={clients} users={users} submitLabel="Criar processo" />
       )}
     </div>
   );
