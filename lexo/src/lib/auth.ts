@@ -2,14 +2,10 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // Necessário para self-hosting (Auth.js v5 em produção): confia no Host da request.
-  trustHost: true,
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-  },
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {
@@ -37,24 +33,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.organizationId = user.organizationId;
-        token.role = user.role;
-      }
-      return token;
-    },
-    session: async ({ session, token }) => {
-      if (!token.sub || !token.organizationId) {
-        return session;
-      }
-      if (session.user) {
-        session.user.id = token.sub;
-        session.user.organizationId = token.organizationId;
-        session.user.role = token.role ?? "ADVOGADO";
-      }
-      return session;
-    },
-  },
 });
