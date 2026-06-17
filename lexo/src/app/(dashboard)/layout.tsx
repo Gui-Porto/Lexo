@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/logout";
+import { FlashToast } from "@/components/flash-toast";
 
 export default async function DashboardLayout({
   children,
@@ -32,7 +34,12 @@ export default async function DashboardLayout({
           </form>
         </div>
       </aside>
-      <main className="flex-1 p-8">{children}</main>
+      <main className="flex-1 p-8">
+        <Suspense>
+          <FlashToast />
+        </Suspense>
+        {children}
+      </main>
     </div>
   );
 }

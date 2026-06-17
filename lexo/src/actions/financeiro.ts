@@ -68,7 +68,7 @@ export async function createInvoice(
   }
 
   revalidatePath("/financeiro");
-  redirect("/financeiro");
+  redirect(`/financeiro?toast=${encodeURIComponent("Honorário criado com sucesso")}`);
 }
 
 export async function updateInvoiceStatus(invoiceId: string, status: string) {

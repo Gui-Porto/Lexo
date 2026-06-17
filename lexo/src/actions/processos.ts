@@ -48,7 +48,7 @@ export async function createCase(
   }
 
   revalidatePath("/processos");
-  redirect("/processos");
+  redirect(`/processos?toast=${encodeURIComponent("Processo criado com sucesso")}`);
 }
 
 export async function updateCase(
@@ -85,7 +85,7 @@ export async function updateCase(
   }
 
   revalidatePath("/processos");
-  redirect(`/processos/${caseId}`);
+  redirect(`/processos/${caseId}?toast=${encodeURIComponent("Processo atualizado com sucesso")}`);
 }
 
 export async function deleteCase(caseId: string) {
@@ -98,5 +98,5 @@ export async function deleteCase(caseId: string) {
     return;
   }
   revalidatePath("/processos");
-  redirect("/processos");
+  redirect(`/processos?toast=${encodeURIComponent("Processo excluído")}`);
 }

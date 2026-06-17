@@ -55,7 +55,7 @@ export async function createDeadline(
   }
 
   revalidatePath("/agenda");
-  redirect("/agenda");
+  redirect(`/agenda?toast=${encodeURIComponent("Prazo criado com sucesso")}`);
 }
 
 export async function toggleDeadlineStatus(deadlineId: string, completed: boolean) {

@@ -42,7 +42,7 @@ export async function createClient(
   }
 
   revalidatePath("/clientes");
-  redirect("/clientes");
+  redirect(`/clientes?toast=${encodeURIComponent("Cliente criado com sucesso")}`);
 }
 
 export async function updateClient(
@@ -73,7 +73,7 @@ export async function updateClient(
   }
 
   revalidatePath("/clientes");
-  redirect(`/clientes/${clientId}`);
+  redirect(`/clientes/${clientId}?toast=${encodeURIComponent("Cliente atualizado com sucesso")}`);
 }
 
 export async function deleteClient(clientId: string) {
@@ -86,5 +86,5 @@ export async function deleteClient(clientId: string) {
     return;
   }
   revalidatePath("/clientes");
-  redirect("/clientes");
+  redirect(`/clientes?toast=${encodeURIComponent("Cliente excluído")}`);
 }
