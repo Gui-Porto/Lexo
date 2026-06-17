@@ -7,8 +7,10 @@ import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
 import { deleteDeadline } from "@/actions/agenda";
 import { formatDate } from "@/lib/format";
+import { CalendarClock } from "lucide-react";
 import Link from "next/link";
 
 const PAGE_SIZE = 20;
@@ -63,12 +65,15 @@ export default async function AgendaPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Agenda</h1>
-        <Button nativeButton={false} render={<Link href="/agenda/novo" />}>
-          Novo prazo
-        </Button>
-      </div>
+      <PageHeader
+        title="Agenda"
+        icon={CalendarClock}
+        action={
+          <Button nativeButton={false} render={<Link href="/agenda/novo" />}>
+            Novo prazo
+          </Button>
+        }
+      />
 
       <Suspense>
         <div className="flex flex-wrap gap-2">
@@ -84,7 +89,11 @@ export default async function AgendaPage({
         {deadlines.map((d) => (
           <div
             key={d.id}
-            className="flex items-center justify-between rounded-md border p-4"
+            className="flex items-center justify-between rounded-xl p-4 transition-all duration-150 hover:bg-white/[0.03]"
+            style={{
+              background: "oklch(0.155 0.02 264)",
+              border: "1px solid oklch(1 0 0 / 7%)",
+            }}
           >
             <div className="flex items-center gap-3">
               <DeadlineToggle deadlineId={d.id} completed={d.status === "CONCLUIDO"} />

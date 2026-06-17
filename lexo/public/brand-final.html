@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexo — Brand Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #060813;
+  --card:   #0c0e1d;
+  --border: rgba(255,255,255,0.07);
+  --muted:  rgba(255,255,255,0.35);
+  --i200:   #c7d2fe;
+  --i300:   #a5b4fc;
+  --i400:   #818cf8;
+  --i500:   #6366f1;
+  --i600:   #4f46e5;
+  --i700:   #4338ca;
+  --i800:   #3730a3;
+}
+
+body {
+  background: var(--ink);
+  color: #dde1f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+/* ── SHARED ─────────────────────────────────── */
+.section { padding: 80px; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--i400);
+  margin-bottom: 10px;
+}
+.h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  color: #fff;
+  line-height: 1.05;
+}
+.h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.body { color: var(--muted); line-height: 1.75; max-width: 520px; }
+
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+  margin-bottom: 14px;
+}
+.label--dark { color: rgba(0,0,0,.2); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 3px; }
+
+.panel {
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-radius: 0;
+}
+.panel-dark  { background: #090b18; }
+.panel-light { background: #f3f4fb; }
+.panel-mid   { background: #111327; }
+.panels { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+
+.row { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── COVER ───────────────────────────────────── */
+.cover {
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  padding: 72px 80px;
+  border-bottom: 1px solid var(--border);
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 100% at -10% 50%, rgba(99,102,241,.18) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 110% 50%, rgba(167,139,250,.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.cover-tagline {
+  font-size: 15px;
+  color: var(--muted);
+  margin-top: 20px;
+  letter-spacing: .01em;
+}
+.cover-meta {
+  font-size: 11px;
+  color: rgba(255,255,255,.2);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* ── MARK ANATOMY ────────────────────────────── */
+.anatomy-wrap {
+  display: flex;
+  gap: 64px;
+  align-items: center;
+}
+.anatomy-bars {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.bar-anno {
+  font-size: 11px;
+  color: var(--i300);
+  white-space: nowrap;
+}
+.bar-anno-line {
+  width: 24px;
+  height: 1px;
+  background: var(--i500);
+  opacity: .5;
+}
+.anatomy-desc {
+  flex: 1;
+  max-width: 400px;
+}
+.anatomy-desc p { color: var(--muted); line-height: 1.75; }
+.anatomy-desc p + p { margin-top: 14px; }
+
+/* ── COLOR SWATCHES ──────────────────────────── */
+.swatch-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.swatch {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  width: 160px;
+}
+.swatch-color { height: 80px; }
+.swatch-info {
+  padding: 12px 14px;
+  background: #0c0e1d;
+}
+.swatch-name { font-weight: 600; color: #fff; font-size: 13px; }
+.swatch-values { margin-top: 4px; font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+/* ── TYPOGRAPHY ──────────────────────────────── */
+.type-sample { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.type-sample:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.type-meta { font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: .04em; }
+
+/* ── SIZE SCALE ──────────────────────────────── */
+.scale-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.scale-row:last-child { border-bottom: none; }
+.scale-label { width: 160px; font-size: 12px; color: var(--muted); }
+
+/* ── DONT ────────────────────────────────────── */
+.dont-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.dont-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,80,80,.15);
+}
+.dont-preview {
+  height: 100px;
+  background: #0c0e1d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dont-desc {
+  padding: 12px 14px;
+  background: rgba(255,60,60,.05);
+  font-size: 12px;
+  color: rgba(255,120,120,.7);
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+.footer {
+  padding: 32px 80px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255,255,255,.15);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+
+<!-- ══════════════════════════════════════
+     COVER
+══════════════════════════════════════ -->
+<div class="cover">
+  <div>
+    <div class="eyebrow">Identidade Visual · Versão Final</div>
+    <!-- Hero wordmark -->
+    <div style="display:flex;align-items:center;gap:28px;margin-top:28px">
+      <svg width="80" height="80" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cov-bg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#a5b4fc"/>
+            <stop offset="55%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#3730a3"/>
+          </linearGradient>
+          <radialGradient id="cov-shine" cx="35%" cy="22%" r="55%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="36" height="36" rx="9" fill="url(#cov-bg)"/>
+        <rect width="36" height="36" rx="9" fill="url(#cov-shine)"/>
+        <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+        <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+        <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+      </svg>
+      <div class="h1">Lexo</div>
+    </div>
+    <p class="cover-tagline">Gestão Jurídica Inteligente · Identidade Visual 2025</p>
+  </div>
+  <div class="cover-meta">Documento confidencial · Lexo Technologies · Uso interno</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     O SÍMBOLO
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">01 · O Símbolo</div>
+  <h2 class="h2">Strata Mark</h2>
+  <p class="body" style="margin-bottom:56px">Três barras horizontais de comprimentos progressivos. Um símbolo único, atemporal e completamente livre de referências jurídicas clichês — construído inteiramente sobre o conceito de organização hierárquica de informação.</p>
+
+  <div class="anatomy-wrap">
+
+    <!-- Large isolated mark -->
+    <svg width="148" height="148" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="an-bg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#a5b4fc"/>
+          <stop offset="55%" stop-color="#6366f1"/>
+          <stop offset="100%" stop-color="#3730a3"/>
+        </linearGradient>
+        <radialGradient id="an-sh" cx="35%" cy="22%" r="55%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="an-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <rect width="36" height="36" rx="9" fill="url(#an-bg)" filter="url(#an-glow)"/>
+      <rect width="36" height="36" rx="9" fill="url(#an-sh)"/>
+      <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+      <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+      <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+    </svg>
+
+    <!-- Annotated bars -->
+    <div class="anatomy-bars" style="gap:18px">
+      <div class="bar-row">
+        <svg width="36" height="5" viewBox="0 0 36 5" fill="none">
+          <rect width="9" height="5" rx="2.5" fill="#a5b4fc" fill-opacity=".5"/>
+        </svg>
+        <div class="bar-anno-line"></div>
+        <div class="bar-anno" style="color:var(--i300)">Ponto de partida · Precisão</div>
+      </div>
+      <div class="bar-row">
+        <svg width="60" height="5" viewBox="0 0 60 5" fill="none">
+          <rect width="60" height="5" rx="2.5" fill="#818cf8" fill-opacity=".75"/>
+        </svg>
+        <div class="bar-anno-line"></div>
+        <div class="bar-anno" style="color:var(--i400)">Estrutura em desenvolvimento</div>
+      </div>
+      <div class="bar-row">
+        <svg width="88" height="5" viewBox="0 0 88 5" fill="none">
+          <defs>
+            <linearGradient id="bar3" x1="0" y1="0" x2="88" y2="0">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#818cf8"/>
+            </linearGradient>
+          </defs>
+          <rect width="88" height="5" rx="2.5" fill="url(#bar3)"/>
+        </svg>
+        <div class="bar-anno-line"></div>
+        <div class="bar-anno" style="color:var(--i400)">Base sólida · Autoridade</div>
+      </div>
+    </div>
+
+    <div class="anatomy-desc">
+      <p>A barra menor, no topo, representa o ponto de entrada de um processo jurídico — o início preciso de cada caso. A barra intermediária simboliza o desenvolvimento ativo: pesquisa, prazos, movimentações. A barra maior na base é a fundação inabalável do sistema — a plataforma em si, que sustenta tudo.</p>
+      <p>Juntas, as três barras criam uma progressão visual de cima para baixo que o olho humano lê como crescimento, organização e solidez. O gradiente do mais claro ao mais profundo adiciona dimensão sem perder simplicidade.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SISTEMA DE LOGO
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">02 · Sistema de Logo</div>
+  <h2 class="h2">Todas as Versões</h2>
+
+  <!-- Horizontal dark + light -->
+  <div class="panels" style="margin-top:36px;margin-bottom:3px">
+    <div class="grid-2">
+
+      <div class="panel panel-dark">
+        <div class="label">Horizontal · Fundo escuro</div>
+        <svg width="216" height="42" viewBox="0 0 216 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wm-dk-bg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#a5b4fc"/>
+              <stop offset="55%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#3730a3"/>
+            </linearGradient>
+            <radialGradient id="wm-dk-sh" cx="35%" cy="22%" r="55%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Icon 36x36 centered vertically in 42px -->
+          <g transform="translate(0,3)">
+            <rect width="36" height="36" rx="9" fill="url(#wm-dk-bg)"/>
+            <rect width="36" height="36" rx="9" fill="url(#wm-dk-sh)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </g>
+          <text x="50" y="30" font-family="Outfit,system-ui" font-weight="700" font-size="28" letter-spacing="-0.3" fill="white">Lexo</text>
+        </svg>
+      </div>
+
+      <div class="panel panel-light">
+        <div class="label label--dark">Horizontal · Fundo claro</div>
+        <svg width="216" height="42" viewBox="0 0 216 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="wm-lt-bg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#818cf8"/>
+              <stop offset="55%" stop-color="#4f46e5"/>
+              <stop offset="100%" stop-color="#2e27a0"/>
+            </linearGradient>
+            <radialGradient id="wm-lt-sh" cx="35%" cy="22%" r="55%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g transform="translate(0,3)">
+            <rect width="36" height="36" rx="9" fill="url(#wm-lt-bg)"/>
+            <rect width="36" height="36" rx="9" fill="url(#wm-lt-sh)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.5"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.78"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </g>
+          <text x="50" y="30" font-family="Outfit,system-ui" font-weight="700" font-size="28" letter-spacing="-0.3" fill="#1e1b4b">Lexo</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Vertical + Icon -->
+  <div class="panels">
+    <div class="grid-4">
+
+      <div class="panel panel-dark" style="align-items:center;justify-content:center;min-height:200px">
+        <div class="label">Vertical · Escuro</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+          <svg width="52" height="52" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="v-dk" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/>
+              </linearGradient>
+            </defs>
+            <rect width="36" height="36" rx="9" fill="url(#v-dk)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </svg>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:22px;letter-spacing:-.3px;color:white">Lexo</span>
+        </div>
+      </div>
+
+      <div class="panel panel-light" style="align-items:center;justify-content:center;min-height:200px">
+        <div class="label label--dark">Vertical · Claro</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+          <svg width="52" height="52" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="v-lt" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#818cf8"/><stop offset="55%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#2e27a0"/>
+              </linearGradient>
+            </defs>
+            <rect width="36" height="36" rx="9" fill="url(#v-lt)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.5"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.78"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </svg>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:22px;letter-spacing:-.3px;color:#1e1b4b">Lexo</span>
+        </div>
+      </div>
+
+      <div class="panel panel-dark" style="align-items:center;justify-content:center;min-height:200px">
+        <div class="label">Ícone · App / Favicon</div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <!-- 48px -->
+          <svg width="48" height="48" viewBox="0 0 36 36" fill="none">
+            <defs><linearGradient id="ic48" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+            <rect width="36" height="36" rx="9" fill="url(#ic48)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </svg>
+          <!-- 32px -->
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+            <defs><linearGradient id="ic32" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+            <rect width="36" height="36" rx="9" fill="url(#ic32)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </svg>
+          <!-- 16px -->
+          <svg width="16" height="16" viewBox="0 0 36 36" fill="none">
+            <defs><linearGradient id="ic16" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+            <rect width="36" height="36" rx="9" fill="url(#ic16)"/>
+            <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+            <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+            <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+          </svg>
+        </div>
+        <p style="font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.08em;margin-top:8px">48 · 32 · 16 px</p>
+      </div>
+
+      <div class="panel panel-mid" style="align-items:center;justify-content:center;min-height:200px">
+        <div class="label">Ícone · Marca branca</div>
+        <!-- White (monochrome) version -->
+        <svg width="52" height="52" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+          <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.4"/>
+          <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.7"/>
+          <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CORES
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">03 · Sistema de Cores</div>
+  <h2 class="h2">Paleta Principal</h2>
+
+  <div class="swatch-grid" style="margin-top:36px">
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:linear-gradient(135deg,#a5b4fc,#6366f1,#3730a3)"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Strata Gradient</div>
+        <div class="swatch-values">#a5b4fc → #6366f1 → #3730a3<br>oklch: 0.74→0.66→0.45 C0.18 H274</div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:#6366f1"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Indigo Primary</div>
+        <div class="swatch-values">#6366f1<br>oklch(0.66 0.18 274)<br>Uso: CTA, links, destaque</div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:#a5b4fc"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Indigo Light</div>
+        <div class="swatch-values">#a5b4fc<br>oklch(0.75 0.14 274)<br>Uso: ícones, labels</div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:#3730a3"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Indigo Deep</div>
+        <div class="swatch-values">#3730a3<br>oklch(0.45 0.22 274)<br>Uso: sombras, profundidade</div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:#060813"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Background</div>
+        <div class="swatch-values">#060813<br>oklch(0.11 0.018 264)<br>Uso: fundo da aplicação</div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-color" style="background:#f3f4fb;border-bottom:1px solid rgba(0,0,0,.06)"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Surface Light</div>
+        <div class="swatch-values">#f3f4fb<br>oklch(0.97 0.01 264)<br>Uso: fundo claro, docs</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     TIPOGRAFIA
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">04 · Tipografia</div>
+  <h2 class="h2">Sistema de Fontes</h2>
+
+  <div style="margin-top:40px">
+
+    <div class="type-sample">
+      <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:52px;letter-spacing:-.03em;color:#fff;line-height:1">
+        Lexo
+      </div>
+      <div class="type-meta">Outfit 900 · Letter-spacing -0.03em · Wordmark / Display</div>
+    </div>
+
+    <div class="type-sample">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:36px;letter-spacing:-.02em;color:#fff;line-height:1.1">
+        Gestão Jurídica Inteligente
+      </div>
+      <div class="type-meta">Outfit 700 · H1 / Headings principais</div>
+    </div>
+
+    <div class="type-sample">
+      <div style="font-family:'Outfit',sans-serif;font-weight:600;font-size:22px;letter-spacing:-.015em;color:rgba(255,255,255,.85);line-height:1.3">
+        Processos, Prazos e Honorários em um só lugar
+      </div>
+      <div class="type-meta">Outfit 600 · H2 / Subtítulos</div>
+    </div>
+
+    <div class="type-sample">
+      <div style="font-family:'Inter',sans-serif;font-weight:400;font-size:15px;color:rgba(255,255,255,.55);line-height:1.75;max-width:520px">
+        O Lexo centraliza toda a gestão do seu escritório em uma plataforma moderna, segura e fácil de usar. Acompanhe processos, gerencie prazos e controle honorários com precisão e eficiência.
+      </div>
+      <div class="type-meta">Inter 400 · Body / Texto corrido</div>
+    </div>
+
+    <div class="type-sample">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--i400)">
+        Identidade Visual · Gestão Jurídica · SaaS
+      </div>
+      <div class="type-meta">Inter 600 · 10px · Letter-spacing 0.16em · Labels / Eyebrows</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     ESCALA
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">05 · Escala de Uso</div>
+  <h2 class="h2">Tamanhos e Contextos</h2>
+
+  <div style="margin-top:40px">
+
+    <div class="scale-row">
+      <div class="scale-label">Marketing · Hero<br><span style="color:rgba(255,255,255,.3)">≥ 120px</span></div>
+      <svg width="120" height="120" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="sc1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient><radialGradient id="sc1s" cx="35%" cy="22%" r="55%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs>
+        <rect width="36" height="36" rx="9" fill="url(#sc1)"/><rect width="36" height="36" rx="9" fill="url(#sc1s)"/>
+        <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+        <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+        <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+      </svg>
+    </div>
+
+    <div class="scale-row">
+      <div class="scale-label">App · Sidebar<br><span style="color:rgba(255,255,255,.3)">34–44px</span></div>
+      <svg width="44" height="44" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="sc2" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+        <rect width="36" height="36" rx="9" fill="url(#sc2)"/>
+        <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+        <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+        <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+      </svg>
+    </div>
+
+    <div class="scale-row">
+      <div class="scale-label">Favicon · Browser<br><span style="color:rgba(255,255,255,.3)">32px</span></div>
+      <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="sc3" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+        <rect width="36" height="36" rx="9" fill="url(#sc3)"/>
+        <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+        <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+        <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+      </svg>
+    </div>
+
+    <div class="scale-row">
+      <div class="scale-label">Favicon · Mínimo<br><span style="color:rgba(255,255,255,.3)">16px</span></div>
+      <svg width="16" height="16" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="sc4" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="55%" stop-color="#6366f1"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+        <rect width="36" height="36" rx="9" fill="url(#sc4)"/>
+        <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+        <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+        <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+      </svg>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     USOS INCORRETOS
+══════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">06 · Usos Incorretos</div>
+  <h2 class="h2" style="margin-bottom:32px">O que não fazer</h2>
+
+  <div class="dont-grid">
+
+    <div class="dont-card">
+      <div class="dont-preview">
+        <!-- Stretched -->
+        <svg width="80" height="48" viewBox="0 0 48 36" fill="none">
+          <defs><linearGradient id="d1" x1="0" y1="0" x2="48" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+          <rect width="48" height="36" rx="9" fill="url(#d1)"/>
+          <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+          <rect x="7" y="17" width="20" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+          <rect x="7" y="26" width="34" height="5" rx="2.5" fill="white"/>
+        </svg>
+      </div>
+      <div class="dont-desc">Não distorcer ou esticar as proporções</div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-preview">
+        <!-- Wrong colors -->
+        <svg width="48" height="48" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="9" fill="#ef4444"/>
+          <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+          <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+          <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+        </svg>
+      </div>
+      <div class="dont-desc">Não alterar as cores do gradiente</div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-preview">
+        <!-- Low contrast on white without icon bg -->
+        <svg width="48" height="48" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="9" fill="rgba(99,102,241,.08)" stroke="rgba(99,102,241,.2)" stroke-width="1.5"/>
+          <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="#6366f1" fill-opacity="0.2"/>
+          <rect x="7" y="17" width="15" height="5" rx="2.5" fill="#6366f1" fill-opacity="0.2"/>
+          <rect x="7" y="26" width="22" height="5" rx="2.5" fill="#6366f1" fill-opacity="0.2"/>
+        </svg>
+      </div>
+      <div class="dont-desc">Não usar com contraste insuficiente</div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-preview">
+        <!-- Rotated -->
+        <svg width="48" height="48" viewBox="0 0 36 36" fill="none" style="transform:rotate(45deg)">
+          <defs><linearGradient id="d4" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#3730a3"/></linearGradient></defs>
+          <rect width="36" height="36" rx="9" fill="url(#d4)"/>
+          <rect x="7" y="8"  width="9"  height="5" rx="2.5" fill="white" fill-opacity="0.45"/>
+          <rect x="7" y="17" width="15" height="5" rx="2.5" fill="white" fill-opacity="0.75"/>
+          <rect x="7" y="26" width="22" height="5" rx="2.5" fill="white"/>
+        </svg>
+      </div>
+      <div class="dont-desc">Não girar ou inclinar o símbolo</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer class="footer">
+  Lexo Technologies · Identidade Visual Versão Final · Direitos Reservados · 2025
+</footer>
+
+</body>
+</html>
