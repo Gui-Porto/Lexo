@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import Anthropic from "@anthropic-ai/sdk";
+import { generateFromPdf } from "@/lib/gemini";
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -60,40 +60,14 @@ export async function POST(req: NextRequest) {
   const bytes = await file.arrayBuffer();
   const base64 = Buffer.from(bytes).toString("base64");
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-  let message: Anthropic.Message;
+  let text: string;
   try {
-    message = await anthropic.messages.create({
-      model: "claude-opus-4-8",
-      max_tokens: 512,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "document",
-              source: {
-                type: "base64",
-                media_type: "application/pdf",
-                data: base64,
-              },
-            } as Anthropic.DocumentBlockParam,
-            { type: "text", text: prompt },
-          ],
-        },
-      ],
-    });
+    text = await generateFromPdf(base64, prompt);
   } catch {
     return NextResponse.json({ error: "Erro ao processar documento" }, { status: 500 });
   }
 
-  const content = message.content[0];
-  if (content.type !== "text") {
-    return NextResponse.json({ error: "Resposta inesperada" }, { status: 500 });
-  }
-
-  const jsonMatch = content.text.match(/\{[\s\S]*\}/);
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     return NextResponse.json({ error: "Não foi possível extrair dados do documento" }, { status: 422 });
   }

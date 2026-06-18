@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import Anthropic from "@anthropic-ai/sdk";
+import { streamText } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({ caseId: z.string().min(1) });
@@ -109,39 +109,7 @@ Sugira 2-4 ações concretas que o advogado responsável deveria tomar nos próx
 
 Seja direto, prático e use linguagem profissional. Destaque urgências quando existirem.`;
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-  const stream = anthropic.messages.stream({
-    model: "claude-opus-4-8",
-    max_tokens: 2048,
-    thinking: { type: "adaptive" },
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
-        }
-      } catch {
-        controller.error(new Error("Erro ao gerar resumo"));
-      } finally {
-        controller.close();
-      }
-    },
-    cancel() {
-      stream.abort();
-    },
-  });
-
-  return new Response(readable, {
+  return new Response(streamText(prompt), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",

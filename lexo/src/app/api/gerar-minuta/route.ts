@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import Anthropic from "@anthropic-ai/sdk";
+import { streamText } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({
@@ -33,10 +33,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Processo não encontrado" }, { status: 404 });
   }
 
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-  });
-
   const prompt = `Você é um advogado brasileiro especialista em redação de peças processuais. Gere uma ${tipoDocumento} completa e bem estruturada com base nos seguintes dados do processo:
 
 **Número do processo:** ${caso.number}
@@ -47,37 +43,7 @@ ${instrucoes ? `\n**Instruções específicas:** ${instrucoes}` : ""}
 
 A peça deve seguir as normas processuais brasileiras vigentes (CPC/2015 ou legislação específica da área). Estruture adequadamente com: qualificação das partes, fatos, fundamentos jurídicos, pedidos, requerimentos finais, local/data e espaço para assinatura. Use linguagem jurídica formal e precisa. Inclua referências a artigos de lei e jurisprudência relevantes quando aplicável.`;
 
-  const stream = anthropic.messages.stream({
-    model: "claude-opus-4-8",
-    max_tokens: 4096,
-    thinking: { type: "adaptive" },
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
-        }
-      } catch {
-        controller.error(new Error("Erro ao gerar minuta"));
-      } finally {
-        controller.close();
-      }
-    },
-    cancel() {
-      stream.abort();
-    },
-  });
-
-  return new Response(readable, {
+  return new Response(streamText(prompt), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",

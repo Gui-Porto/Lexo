@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import Anthropic from "@anthropic-ai/sdk";
+import { streamText } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({
@@ -54,39 +54,7 @@ Indique mudanças de posicionamento ou tendências em julgamentos recentes.
 
 Use linguagem jurídica técnica e precisa. Cite precedentes com número do processo ou identificação quando possível.`;
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-  const stream = anthropic.messages.stream({
-    model: "claude-opus-4-8",
-    max_tokens: 4096,
-    thinking: { type: "adaptive" },
-    messages: [{ role: "user", content: prompt }],
-  });
-
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
-        }
-      } catch {
-        controller.error(new Error("Erro na pesquisa"));
-      } finally {
-        controller.close();
-      }
-    },
-    cancel() {
-      stream.abort();
-    },
-  });
-
-  return new Response(readable, {
+  return new Response(streamText(prompt), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
