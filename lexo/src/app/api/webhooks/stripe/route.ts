@@ -3,6 +3,8 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import type Stripe from "stripe";
 
+export const dynamic = "force-dynamic";
+
 function planFromPriceId(priceId: string): string {
   if (priceId === process.env.STRIPE_PRICE_ESSENCIAL) return "essencial";
   if (priceId === process.env.STRIPE_PRICE_PRO) return "pro";
