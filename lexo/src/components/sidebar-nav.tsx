@@ -12,6 +12,7 @@ import {
   CreditCard,
   Shield,
   ClipboardList,
+  ScaleIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,8 +21,9 @@ const BASE_LINKS = [
   { href: "/processos",              label: "Processos",  icon: Briefcase,       roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
   { href: "/clientes",               label: "Clientes",   icon: Users,           roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
   { href: "/agenda",                 label: "Agenda",     icon: CalendarClock,   roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
-  { href: "/financeiro",             label: "Financeiro", icon: Wallet,          roles: ["ADMIN", "ADVOGADO"] },
-  { href: "/configuracoes/usuarios", label: "Usuários",   icon: UserCog,         roles: ["ADMIN"] },
+  { href: "/financeiro",             label: "Financeiro",  icon: Wallet,          roles: ["ADMIN", "ADVOGADO"] },
+  { href: "/pesquisa-juridica",      label: "Pesquisa IA", icon: ScaleIcon,       roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/configuracoes/usuarios", label: "Usuários",    icon: UserCog,         roles: ["ADMIN"] },
   { href: "/planos",                 label: "Planos",     icon: CreditCard,      roles: ["ADMIN"] },
   { href: "/configuracoes/seguranca",label: "Segurança",  icon: Shield,          roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
   { href: "/configuracoes/auditoria",label: "Auditoria",  icon: ClipboardList,   roles: ["ADMIN"] },

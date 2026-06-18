@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
-import { SparklesIcon } from "lucide-react";
+import { SparklesIcon, FileTextIcon } from "lucide-react";
 import { RiskBadge } from "@/components/agenda/risk-badge";
 
 export default async function ProcessoDetailPage({
@@ -59,8 +59,12 @@ export default async function ProcessoDetailPage({
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{caseItem.number}</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/minutas`} />}>
+          <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/resumo`} />}>
             <SparklesIcon />
+            Resumo IA
+          </Button>
+          <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/minutas`} />}>
+            <FileTextIcon />
             Gerar minuta
           </Button>
           <DeleteButton action={boundDelete} label="Excluir processo" />
