@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
+import { RiskBadge } from "@/components/agenda/risk-badge";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
 import { PageHeader } from "@/components/page-header";
@@ -113,6 +114,7 @@ export default async function AgendaPage({
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <RiskBadge date={d.date} type={d.type} status={d.status} />
               {d.status === "PERDIDO" && (
                 <Badge variant="destructive">Perdido</Badge>
               )}

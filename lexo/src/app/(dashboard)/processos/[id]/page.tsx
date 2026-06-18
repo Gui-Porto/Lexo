@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
 import { SparklesIcon } from "lucide-react";
+import { RiskBadge } from "@/components/agenda/risk-badge";
 
 export default async function ProcessoDetailPage({
   params,
@@ -85,7 +86,10 @@ export default async function ProcessoDetailPage({
           {caseItem.deadlines.map((d) => (
             <div key={d.id} className="flex items-center justify-between rounded-md border p-3">
               <span>{d.title}</span>
-              <Badge variant="secondary">{d.status}</Badge>
+              <div className="flex items-center gap-2">
+                <RiskBadge date={d.date} type={d.type} status={d.status} />
+                <Badge variant="secondary">{d.status}</Badge>
+              </div>
             </div>
           ))}
         </CardContent>

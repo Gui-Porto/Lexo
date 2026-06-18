@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { formatDate, formatCurrency } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { RiskBadge } from "@/components/agenda/risk-badge";
 import { Briefcase, Clock, Wallet, Users, ArrowRight, AlertCircle } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -182,17 +183,7 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Badge
-                        variant="secondary"
-                        className="text-xs"
-                        style={
-                          d.type === "AUDIENCIA"
-                            ? { background: "oklch(0.70 0.18 30 / 0.15)", color: "oklch(0.80 0.16 30)", border: "1px solid oklch(0.70 0.18 30 / 0.25)" }
-                            : {}
-                        }
-                      >
-                        {d.type}
-                      </Badge>
+                      <RiskBadge date={d.date} type={d.type} status={d.status} />
                       <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(d.date)}</span>
                     </div>
                   </li>
