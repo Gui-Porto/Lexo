@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { generateFromPdf } from "@/lib/gemini";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -36,6 +37,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
+  // 🔒 SEGURANÇA [VULN-3]: extração de PDF é cara (10 MB + Gemini); limite mais estrito.
+  if (!(await checkRateLimit(`ia-pdf:${session.user.organizationId}`, 10, 60))) {
+    return NextResponse.json({ error: "Muitas requisições. Aguarde um momento." }, { status: 429 });
+  }
+
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
   const tipo = formData.get("tipo") as string | null;
@@ -58,12 +64,19 @@ export async function POST(req: NextRequest) {
   }
 
   const bytes = await file.arrayBuffer();
+  // 🔒 SEGURANÇA [VULN-8]: valida magic bytes (%PDF-), não confia no Content-Type
+  // informado pelo cliente, que é spoofável (CWE-434, Lei 12).
+  const magic = Buffer.from(bytes.slice(0, 5)).toString("latin1");
+  if (magic !== "%PDF-") {
+    return NextResponse.json({ error: "Arquivo não é um PDF válido" }, { status: 400 });
+  }
   const base64 = Buffer.from(bytes).toString("base64");
 
   let text: string;
   try {
     text = await generateFromPdf(base64, prompt);
-  } catch {
+  } catch (e) {
+    console.error("[extrair-documento] erro ao processar PDF com a IA:", e);
     return NextResponse.json({ error: "Erro ao processar documento" }, { status: 500 });
   }
 

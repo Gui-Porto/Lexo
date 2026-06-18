@@ -3,6 +3,7 @@ import { requireSession } from "@/lib/session";
 import { generateURI } from "otplib";
 import QRCode from "qrcode";
 import { initiateTwoFactor } from "@/actions/totp";
+import { decryptSecret } from "@/lib/crypto";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Shield, ShieldCheck, ShieldOff } from "lucide-react";
@@ -20,9 +21,11 @@ export default async function SegurancaPage() {
   let manualKey: string | null = null;
 
   if (user?.totpPendingSecret) {
-    const uri = generateURI({ label: user.email ?? "", issuer: "Lexo", secret: user.totpPendingSecret });
+    // 🔒 SEGURANÇA [VULN-6]: decifra o segredo pendente para montar o QR/chave manual.
+    const plainSecret = decryptSecret(user.totpPendingSecret);
+    const uri = generateURI({ label: user.email ?? "", issuer: "Lexo", secret: plainSecret });
     qrDataUrl = await QRCode.toDataURL(uri, { width: 200, margin: 2, color: { dark: "#e2e8f0", light: "#161b25" } });
-    manualKey = user.totpPendingSecret;
+    manualKey = plainSecret;
   }
 
   return (

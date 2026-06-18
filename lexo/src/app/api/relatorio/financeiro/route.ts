@@ -3,7 +3,13 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 function escapeCSV(value: string | number | null | undefined): string {
-  const str = String(value ?? "");
+  let str = String(value ?? "");
+  // 🔒 SEGURANÇA [VULN-4]: CSV/Formula Injection (CWE-1236). Células que começam com
+  // = + - @ (ou TAB/CR) são interpretadas como fórmula pelo Excel/Sheets. Prefixamos
+  // com aspa simples para neutralizar a execução ao abrir o relatório.
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
   if (str.includes('"') || str.includes(",") || str.includes("\n")) {
     return `"${str.replace(/"/g, '""')}"`;
   }
@@ -14,6 +20,11 @@ export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.organizationId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  // 🔒 SEGURANÇA [VULN-2]: financeiro é vedado à SECRETARIA também na API de export,
+  // não só na navegação protegida pelo proxy (CWE-285, A1).
+  if (session.user.role === "SECRETARIA") {
+    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);

@@ -51,7 +51,8 @@ export async function createDeadline(
         organizationId: session.user.organizationId,
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[agenda] erro ao salvar prazo:", e);
     return { error: "Erro ao salvar prazo. Tente novamente." };
   }
 
@@ -102,7 +103,8 @@ export async function updateDeadline(
         date: new Date(parsed.data.date),
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[agenda] erro ao salvar prazo:", e);
     return { error: "Erro ao salvar prazo. Tente novamente." };
   }
 
@@ -129,7 +131,8 @@ export async function toggleDeadlineStatus(deadlineId: string, completed: boolea
       where: { id: deadlineId, organizationId: session.user.organizationId },
       data: { status: completed ? "CONCLUIDO" : "PENDENTE" },
     });
-  } catch {
+  } catch (e) {
+    console.error("[agenda] erro ao atualizar/excluir prazo:", e);
     return;
   }
   if (deadline) {
@@ -150,7 +153,8 @@ export async function deleteDeadline(deadlineId: string) {
     await db.deadline.deleteMany({
       where: { id: deadlineId, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[agenda] erro ao atualizar/excluir prazo:", e);
     return;
   }
   revalidatePath("/agenda");

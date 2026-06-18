@@ -55,6 +55,7 @@ export async function registerOrganization(
     if (typeof e === "object" && e !== null && "code" in e && e.code === "P2002") {
       return { error: "Já existe um usuário com este email" };
     }
+    console.error("[auth] erro ao registrar organização:", e);
     return { error: "Erro ao criar conta. Tente novamente." };
   }
 

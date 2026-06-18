@@ -17,6 +17,12 @@ Em 2026-06-18 o roadmap inteiro (Fases 2→4) foi implementado e o redesign visu
 ### Deploy no Render (gotcha importante)
 Build de produção quebra se um cliente de SDK for instanciado no topo do módulo sem a env var. Caso resolvido: `src/lib/stripe.ts` instanciava `new Stripe(process.env.STRIPE_SECRET_KEY!)` no load → "Failed to collect page data for /api/webhooks/stripe". Corrigido com Proxy lazy + `export const dynamic = "force-dynamic"` na rota. Padrão a seguir: instanciar SDKs (Stripe/Anthropic/Resend) lazy ou dentro das funções, nunca no module scope.
 
+### Migrations no deploy (gotcha CRÍTICO — verificar antes de mexer em tabela nova)
+Não há `render.yaml` no repo; o README trata `prisma migrate deploy` como passo manual. ANTES de criar/usar uma tabela nova em código que roda em prod, confirmar que o build/pre-deploy command do Render roda `npx prisma migrate deploy`. Se não rodar, a tabela não existe em prod e qualquer query a ela lança em runtime. Caso real: a migration `20260618150000_add_rate_hit` (modelo RateHit) é usada pelo `checkRateLimit()` no login — se a tabela não existir, o login QUEBRA. Ver [[security-hardening]].
+
+### Auditoria de segurança (2026-06-18) — ver [[security-hardening]]
+Auditoria AppSec zero-trust aplicada na branch `dev` (commits `6a1005d` + `af226d4`). Skill reutilizável criada em `.claude/skills/auditoria-seguranca/` (`/auditoria-seguranca`).
+
 ---
 
 ## ✅ FASE 0 — Concluída (segurança + bugs críticos)

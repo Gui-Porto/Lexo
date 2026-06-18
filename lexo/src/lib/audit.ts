@@ -21,7 +21,9 @@ export async function logAudit({
     await db.auditLog.create({
       data: { organizationId, userId, userName, action, entityType, entityId, description },
     });
-  } catch {
-    // audit failure never breaks the main flow
+  } catch (e) {
+    // 🔒 SEGURANÇA [VULN-7]: a falha de auditoria não quebra o fluxo principal,
+    // mas precisa ser observável (Lei 14) — nunca silenciosa.
+    console.error(`[audit] falha ao registrar ação "${action}" (org ${organizationId}):`, e);
   }
 }

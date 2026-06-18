@@ -202,6 +202,16 @@ model AuditLog {
   @@index([createdAt])
 }
 
+// Rate limiting persistido (janela deslizante). Sem dependência paga (Redis/Upstash);
+// usa o próprio Postgres. Linhas expiradas são limpas a cada checagem da mesma chave.
+model RateHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
 model ActivityLog {
   id             String       @id @default(cuid())
   organizationId String
