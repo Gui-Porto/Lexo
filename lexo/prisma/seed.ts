@@ -228,11 +228,11 @@ async function main() {
   ];
 
   await Promise.all(
-    invoiceData.map(({ paidAt, ...rest }) =>
+    invoiceData.map(({ paidAt, amount, ...rest }) =>
       db.invoice.create({
         data: {
           organizationId: org.id,
-          amount: rest.amount,
+          amount,
           ...rest,
           ...(paidAt ? { paidAt } : {}),
         },
