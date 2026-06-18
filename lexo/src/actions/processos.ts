@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
+import { logActivity } from "@/lib/activity";
 
 const caseSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente"),
@@ -49,13 +50,23 @@ export async function createCase(
     if (!ownUser) return { error: "Responsável não encontrado" };
   }
 
+  let newCase: { id: string };
   try {
-    await db.case.create({
+    newCase = await db.case.create({
       data: { ...parsed.data, organizationId: session.user.organizationId },
+      select: { id: true },
     });
   } catch {
     return { error: "Erro ao salvar processo. Tente novamente." };
   }
+
+  await logActivity({
+    organizationId: session.user.organizationId,
+    caseId: newCase.id,
+    userId: session.user.id,
+    userName: session.user.name ?? "Usuário",
+    action: "Processo criado",
+  });
 
   revalidatePath("/processos");
   redirect(`/processos?toast=${encodeURIComponent("Processo criado com sucesso")}`);
@@ -102,6 +113,14 @@ export async function updateCase(
   } catch {
     return { error: "Erro ao salvar processo. Tente novamente." };
   }
+
+  await logActivity({
+    organizationId: session.user.organizationId,
+    caseId,
+    userId: session.user.id,
+    userName: session.user.name ?? "Usuário",
+    action: `Processo atualizado — status: ${parsed.data.status}`,
+  });
 
   revalidatePath("/processos");
   redirect(`/processos/${caseId}?toast=${encodeURIComponent("Processo atualizado com sucesso")}`);

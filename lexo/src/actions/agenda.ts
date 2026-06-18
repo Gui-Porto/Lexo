@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
+import { logActivity } from "@/lib/activity";
 
 const deadlineSchema = z.object({
   caseId: z.string().min(1, "Selecione um processo"),
@@ -54,6 +55,14 @@ export async function createDeadline(
     return { error: "Erro ao salvar prazo. Tente novamente." };
   }
 
+  await logActivity({
+    organizationId: session.user.organizationId,
+    caseId: parsed.data.caseId,
+    userId: session.user.id,
+    userName: session.user.name ?? "Usuário",
+    action: `Prazo "${parsed.data.title}" criado`,
+  });
+
   revalidatePath("/agenda");
   redirect(`/agenda?toast=${encodeURIComponent("Prazo criado com sucesso")}`);
 }
@@ -97,12 +106,24 @@ export async function updateDeadline(
     return { error: "Erro ao salvar prazo. Tente novamente." };
   }
 
+  await logActivity({
+    organizationId: session.user.organizationId,
+    caseId: parsed.data.caseId,
+    userId: session.user.id,
+    userName: session.user.name ?? "Usuário",
+    action: `Prazo "${parsed.data.title}" atualizado`,
+  });
+
   revalidatePath("/agenda");
   redirect(`/agenda?toast=${encodeURIComponent("Prazo atualizado com sucesso")}`);
 }
 
 export async function toggleDeadlineStatus(deadlineId: string, completed: boolean) {
   const session = await requireSession();
+  const deadline = await db.deadline.findFirst({
+    where: { id: deadlineId, organizationId: session.user.organizationId },
+    select: { caseId: true, title: true },
+  });
   try {
     await db.deadline.updateMany({
       where: { id: deadlineId, organizationId: session.user.organizationId },
@@ -110,6 +131,15 @@ export async function toggleDeadlineStatus(deadlineId: string, completed: boolea
     });
   } catch {
     return;
+  }
+  if (deadline) {
+    await logActivity({
+      organizationId: session.user.organizationId,
+      caseId: deadline.caseId,
+      userId: session.user.id,
+      userName: session.user.name ?? "Usuário",
+      action: `Prazo "${deadline.title}" marcado como ${completed ? "Concluído" : "Pendente"}`,
+    });
   }
   revalidatePath("/agenda");
 }

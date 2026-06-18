@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/format";
 
 export default async function ProcessoDetailPage({
   params,
@@ -21,7 +22,7 @@ export default async function ProcessoDetailPage({
   const { id } = await params;
   const session = await requireSession();
 
-  const [caseItem, clients, users] = await Promise.all([
+  const [caseItem, clients, users, activityLogs] = await Promise.all([
     db.case.findFirst({
       where: { id, organizationId: session.user.organizationId },
       include: { deadlines: true, invoices: true, responsavel: { select: { name: true } } },
@@ -35,6 +36,11 @@ export default async function ProcessoDetailPage({
       where: { organizationId: session.user.organizationId },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
+    }),
+    db.activityLog.findMany({
+      where: { caseId: id, organizationId: session.user.organizationId },
+      orderBy: { createdAt: "desc" },
+      take: 50,
     }),
   ]);
 
@@ -95,6 +101,30 @@ export default async function ProcessoDetailPage({
               <Badge variant="secondary">{inv.status}</Badge>
             </Link>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de atividades</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {activityLogs.length === 0 && (
+            <p className="text-sm text-muted-foreground">Nenhuma atividade registrada.</p>
+          )}
+          <ol className="space-y-3">
+            {activityLogs.map((log) => (
+              <li key={log.id} className="flex gap-3 text-sm">
+                <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary/60" />
+                <div>
+                  <p>{log.action}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {log.userName} · {formatDate(log.createdAt)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </CardContent>
       </Card>
     </div>
