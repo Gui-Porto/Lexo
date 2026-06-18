@@ -25,6 +25,20 @@ type CaseFormValues = {
 
 const STATUS_OPTIONS = ["ATIVO", "SUSPENSO", "ARQUIVADO", "ENCERRADO"];
 
+const AREA_OPTIONS = [
+  "Cível",
+  "Trabalhista",
+  "Criminal",
+  "Família",
+  "Previdenciário",
+  "Tributário",
+  "Administrativo",
+  "Imobiliário",
+  "Empresarial",
+  "Consumidor",
+  "Outros",
+];
+
 export function CaseForm({
   action,
   clients,
@@ -64,8 +78,19 @@ export function CaseForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="area">Área</Label>
-        <Input id="area" name="area" defaultValue={defaultValues?.area ?? ""} />
+        <Label htmlFor="area">Área jurídica</Label>
+        <Select name="area" defaultValue={defaultValues?.area ?? ""}>
+          <SelectTrigger id="area" className="w-full">
+            <SelectValue placeholder="Selecione a área" />
+          </SelectTrigger>
+          <SelectContent>
+            {AREA_OPTIONS.map((area) => (
+              <SelectItem key={area} value={area}>
+                {area}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
