@@ -119,6 +119,8 @@ Seja direto, prático e use linguagem profissional. Destaque urgências quando e
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
+      // 🔒 SEGURANÇA: nosniff também na resposta de streaming (não herda o header global).
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }
