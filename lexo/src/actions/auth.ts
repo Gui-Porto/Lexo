@@ -39,10 +39,13 @@ export async function registerOrganization(
   const { organizationName, name, email, password } = parsed.data;
   const passwordHash = await bcrypt.hash(password, 10);
 
+  const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
   try {
     await db.organization.create({
       data: {
         name: organizationName,
+        trialEndsAt,
         users: {
           create: { name, email, passwordHash, role: "ADMIN" },
         },

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
+import { Briefcase } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -70,12 +72,15 @@ export default async function ProcessosPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Processos</h1>
-        <Button nativeButton={false} render={<Link href="/processos/novo" />}>
-          Novo processo
-        </Button>
-      </div>
+      <PageHeader
+        title="Processos"
+        icon={Briefcase}
+        action={
+          <Button nativeButton={false} render={<Link href="/processos/novo" />}>
+            Novo processo
+          </Button>
+        }
+      />
 
       <Suspense>
         <SearchFilters statusOptions={STATUS_OPTIONS} />

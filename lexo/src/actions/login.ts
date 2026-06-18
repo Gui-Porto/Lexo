@@ -13,6 +13,7 @@ export async function login(
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
+      totpCode: formData.get("totpCode") ?? "",
       redirectTo: "/processos",
     });
   } catch (error) {

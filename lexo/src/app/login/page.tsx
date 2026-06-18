@@ -36,6 +36,17 @@ export default function LoginPage() {
               <Label htmlFor="password">Senha</Label>
               <Input id="password" name="password" type="password" required />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="totpCode">Código 2FA</Label>
+              <Input
+                id="totpCode"
+                name="totpCode"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="000000 — deixe vazio se não ativado"
+                autoComplete="one-time-code"
+              />
+            </div>
             {state?.error && (
               <p className="text-sm text-destructive">{state.error}</p>
             )}

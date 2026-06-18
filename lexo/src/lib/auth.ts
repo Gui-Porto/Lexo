@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { verifySync } from "otplib";
 import { db } from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 
@@ -11,10 +12,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: {},
         password: {},
+        totpCode: {},
       },
       authorize: async (credentials) => {
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
+        const totpCode = credentials?.totpCode as string | undefined;
         if (!email || !password) return null;
 
         const user = await db.user.findUnique({ where: { email } });
@@ -22,6 +25,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
+
+        if (user.totpEnabled && user.totpSecret) {
+          if (!totpCode) return null;
+          const totpResult = verifySync({ token: totpCode.trim(), secret: user.totpSecret });
+          const totpValid = totpResult.valid;
+          if (!totpValid) return null;
+        }
 
         return {
           id: user.id,

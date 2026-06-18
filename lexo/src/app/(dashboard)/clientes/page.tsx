@@ -5,6 +5,8 @@ import { requireSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
+import { Users } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -51,12 +53,15 @@ export default async function ClientesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Clientes</h1>
-        <Button nativeButton={false} render={<Link href="/clientes/novo" />}>
-          Novo cliente
-        </Button>
-      </div>
+      <PageHeader
+        title="Clientes"
+        icon={Users}
+        action={
+          <Button nativeButton={false} render={<Link href="/clientes/novo" />}>
+            Novo cliente
+          </Button>
+        }
+      />
 
       <Suspense>
         <SearchFilters />

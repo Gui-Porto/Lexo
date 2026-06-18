@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
+import { RiskBadge } from "@/components/agenda/risk-badge";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
 import { deleteDeadline } from "@/actions/agenda";
 import { formatDate } from "@/lib/format";
+import { CalendarClock } from "lucide-react";
 import Link from "next/link";
 
 const PAGE_SIZE = 20;
@@ -35,6 +38,12 @@ export default async function AgendaPage({
   const { q, status, type, page: pageStr } = await searchParams;
   const page = Math.max(1, Number(pageStr ?? 1));
   const orgId = session.user.organizationId;
+
+  // Expirar automaticamente prazos pendentes já vencidos
+  await db.deadline.updateMany({
+    where: { organizationId: orgId, status: "PENDENTE", date: { lt: new Date() } },
+    data: { status: "PERDIDO" },
+  });
 
   const where = {
     organizationId: orgId,
@@ -63,12 +72,15 @@ export default async function AgendaPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Agenda</h1>
-        <Button nativeButton={false} render={<Link href="/agenda/novo" />}>
-          Novo prazo
-        </Button>
-      </div>
+      <PageHeader
+        title="Agenda"
+        icon={CalendarClock}
+        action={
+          <Button nativeButton={false} render={<Link href="/agenda/novo" />}>
+            Novo prazo
+          </Button>
+        }
+      />
 
       <Suspense>
         <div className="flex flex-wrap gap-2">
@@ -84,18 +96,31 @@ export default async function AgendaPage({
         {deadlines.map((d) => (
           <div
             key={d.id}
-            className="flex items-center justify-between rounded-md border p-4"
+            className="flex items-center justify-between rounded-xl p-4 transition-all duration-150 hover:bg-white/[0.03]"
+            style={{
+              background: "oklch(0.155 0.02 264)",
+              border: "1px solid oklch(1 0 0 / 7%)",
+            }}
           >
             <div className="flex items-center gap-3">
               <DeadlineToggle deadlineId={d.id} completed={d.status === "CONCLUIDO"} />
               <div>
-                <p className="font-medium">{d.title}</p>
+                <p className={`font-medium ${d.status === "PERDIDO" ? "line-through text-muted-foreground" : ""}`}>
+                  {d.title}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {d.case.number} · {formatDate(d.date)}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <RiskBadge date={d.date} type={d.type} status={d.status} />
+              {d.status === "PERDIDO" && (
+                <Badge variant="destructive">Perdido</Badge>
+              )}
+              {d.status === "CONCLUIDO" && (
+                <Badge variant="secondary">Concluído</Badge>
+              )}
               <Badge variant={d.type === "AUDIENCIA" ? "default" : "secondary"}>
                 {d.type}
               </Badge>

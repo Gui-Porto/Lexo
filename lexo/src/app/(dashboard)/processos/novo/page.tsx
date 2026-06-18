@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
-import { CaseForm } from "@/components/processos/case-form";
+import { CaseFormWrapper } from "@/components/processos/case-form-wrapper";
 import { createCase } from "@/actions/processos";
 
 export default async function NovoProcessoPage() {
@@ -26,7 +26,7 @@ export default async function NovoProcessoPage() {
           Cadastre um cliente antes de criar um processo.
         </p>
       ) : (
-        <CaseForm action={createCase} clients={clients} users={users} submitLabel="Criar processo" />
+        <CaseFormWrapper action={createCase} clients={clients} users={users} submitLabel="Criar processo" />
       )}
     </div>
   );

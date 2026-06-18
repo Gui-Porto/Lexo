@@ -41,29 +41,38 @@ enum InvoiceStatus {
 }
 
 model Organization {
-  id        String   @id @default(cuid())
-  name      String
-  plan      String   @default("trial")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String
+  plan                 String    @default("trial")
+  trialEndsAt          DateTime?
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  users     User[]
-  clients   Client[]
-  cases     Case[]
-  deadlines Deadline[]
-  invoices  Invoice[]
+  users        User[]
+  invites      UserInvite[]
+  auditLogs    AuditLog[]
+  clients      Client[]
+  cases        Case[]
+  deadlines    Deadline[]
+  invoices     Invoice[]
+  activityLogs ActivityLog[]
 }
 
 model User {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  name           String
-  email          String       @unique
-  passwordHash   String
-  role           Role         @default(ADVOGADO)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name              String
+  email             String       @unique
+  passwordHash      String
+  role              Role         @default(ADVOGADO)
+  totpSecret        String?
+  totpEnabled       Boolean      @default(false)
+  totpPendingSecret String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
   casesResponsavel Case[] @relation("CaseResponsavel")
 
@@ -105,8 +114,9 @@ model Case {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  deadlines Deadline[]
-  invoices  Invoice[]
+  deadlines    Deadline[]
+  invoices     Invoice[]
+  activityLogs ActivityLog[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
@@ -126,6 +136,7 @@ model Deadline {
   title          String
   description    String?
   date           DateTime
+  notifiedAt     DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -157,4 +168,52 @@ model Invoice {
   @@index([clientId])
   @@index([dueDate])
   @@index([status])
+}
+
+model UserInvite {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  email          String
+  role           Role         @default(ADVOGADO)
+  token          String       @unique @default(cuid())
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([token])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  userName       String
+  action         String
+  entityType     String?
+  entityId       String?
+  description    String
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  caseId         String
+  case           Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId         String?
+  userName       String
+  action         String
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([caseId])
+  @@index([createdAt])
 }

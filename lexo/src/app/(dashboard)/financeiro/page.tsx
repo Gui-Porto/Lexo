@@ -8,8 +8,11 @@ import { DeleteButton } from "@/components/delete-button";
 import { MarkPaidButton } from "@/components/financeiro/mark-paid-button";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { PageHeader } from "@/components/page-header";
 import { deleteInvoice } from "@/actions/financeiro";
 import { formatDate, formatCurrency } from "@/lib/format";
+import { ExportReport } from "@/components/financeiro/export-report";
+import { Wallet } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -71,16 +74,21 @@ export default async function FinanceiroPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Financeiro</h1>
-        <Button nativeButton={false} render={<Link href="/financeiro/novo" />}>
-          Novo honorário
-        </Button>
-      </div>
+      <PageHeader
+        title="Financeiro"
+        icon={Wallet}
+        action={
+          <Button nativeButton={false} render={<Link href="/financeiro/novo" />}>
+            Novo honorário
+          </Button>
+        }
+      />
 
       <Suspense>
         <SearchFilters statusOptions={STATUS_OPTIONS} />
       </Suspense>
+
+      <ExportReport />
 
       <Table>
         <TableHeader>
