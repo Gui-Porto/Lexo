@@ -11,6 +11,7 @@ import { Pagination } from "@/components/pagination";
 import { PageHeader } from "@/components/page-header";
 import { deleteInvoice } from "@/actions/financeiro";
 import { formatDate, formatCurrency } from "@/lib/format";
+import { ExportReport } from "@/components/financeiro/export-report";
 import { Wallet } from "lucide-react";
 import {
   Table,
@@ -86,6 +87,8 @@ export default async function FinanceiroPage({
       <Suspense>
         <SearchFilters statusOptions={STATUS_OPTIONS} />
       </Suspense>
+
+      <ExportReport />
 
       <Table>
         <TableHeader>
