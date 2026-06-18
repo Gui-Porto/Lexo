@@ -1,6 +1,22 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+
+// Lazy proxy: o cliente Resend só é instanciado no primeiro uso (runtime),
+// nunca na avaliação do módulo. Evita que o build de produção falhe ao coletar
+// dados das rotas quando RESEND_API_KEY está ausente.
+export const resend = new Proxy({} as Resend, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getResend(), prop, receiver);
+  },
+});
 
 export function inviteEmailHtml({
   orgName,

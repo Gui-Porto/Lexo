@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { resend, deadlineReminderHtml } from "@/lib/resend";
 
+export const dynamic = "force-dynamic";
+
 // Chamado diariamente pelo cron do Render (ou qualquer scheduler).
 // Protegido por CRON_SECRET no header Authorization.
 export async function GET(req: NextRequest) {
