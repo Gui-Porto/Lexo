@@ -5,8 +5,8 @@ metadata:
   type: project
 ---
 
-O deploy de produção do Lexo é **automático**: o serviço no Render está com **Auto-Deploy = "On Commit"** na branch `master`. Todo `git push origin master` dispara o build+deploy sozinho, pelo próprio Render.
+O deploy de produção do Lexo deveria ser automático (Render Auto-Deploy na `master`), MAS em 2026-06-18 o merge do PR #1 na `master` (via GitHub) **NÃO disparou o deploy sozinho** — foi preciso **Manual Deploy → "Deploy latest commit"** no painel do Render. Causa provável: toggle Auto-Deploy desligado OU o filtro "Root Directory: lexo" (mudanças fora de `lexo/` não disparam). Config confirmada no painel: Branch `master`, Root Directory `lexo`, Build Command `npm install && npx prisma generate && npx prisma migrate deploy && npm run build` (logo, migrations rodam no deploy).
 
-**Why:** O usuário usa o plano gratuito do Render e quer deploy automático a cada merge na master; o Auto-Deploy nativo resolve isso sem precisar de Deploy Hook nem de eu disparar nada.
+**Why:** O usuário usa o plano gratuito do Render e quer deploy automático; mas não dá para assumir que todo push/merge na master deploya sozinho — já falhou uma vez.
 
-**How to apply:** Eu NÃO preciso (nem consigo, sem credenciais) disparar o deploy manualmente. Basta mergear na `master` e `git push origin master` — o Render faz o resto. Após o push, sugerir conferir a aba Events/Logs do serviço. Produção: https://lexo-45tf.onrender.com. Build quebra se SDK for instanciado no module scope sem env var — ver gotcha em [[project-roadmap]].
+**How to apply:** Após `git push origin master`, NÃO assumir que está no ar. **Verificar de verdade**: `curl -sS -I https://lexo-45tf.onrender.com/login` e conferir se os headers novos (ex.: `content-security-policy`, `strict-transport-security`) aparecem. Se o código não subiu, orientar o usuário a fazer **Manual Deploy** no Render e/ou ligar o toggle **Auto-Deploy** em Settings. Atenção: free tier hiberna e faz cold-start nas requisições (o log `npm start`/`next start` pode ser só o serviço antigo acordando, não um deploy novo). Produção: https://lexo-45tf.onrender.com. Ver também [[security-hardening]] e gotcha de build em [[project-roadmap]].
