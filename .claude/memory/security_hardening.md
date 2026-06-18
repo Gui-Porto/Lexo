@@ -5,20 +5,20 @@ metadata:
   type: project
 ---
 
-Auditoria AppSec zero-trust executada em 2026-06-18, aplicada na branch `dev` (commits `6a1005d` e `af226d4`). Nota subiu de B- para A-. Base já era sólida (multi-tenancy por organizationId, Zod em toda mutação, webhook Stripe assinado, segredos fora do git).
+Auditoria AppSec zero-trust executada em 2026-06-18, aplicada na branch `dev` (commits `6a1005d`, `af226d4`, `c3e0b4e`). TODAS as 8 vulnerabilidades corrigidas (nota A). Base já era sólida (multi-tenancy por organizationId, Zod em toda mutação, webhook Stripe assinado, segredos fora do git). `next build` passa (exit 0).
 
-**Corrigido (já na dev):**
+**Corrigido (tudo na dev):**
 - VULN-1: cron `/api/cron/notify-deadlines` era fail-open (sem CRON_SECRET, rodava aberto) → agora fail-secure.
 - VULN-2: SECRETARIA contornava o bloqueio de `/financeiro` (que só existia no proxy) chamando Server Actions e `/api/relatorio/financeiro` direto. Novo `requireFinanceiroAccess()`/`requireRole()` em `src/lib/session.ts` aplicado no ponto de uso.
-- VULN-3: rate limiting via modelo `RateHit` + `src/lib/rate-limit.ts` (`checkRateLimit`). Login 10/15min por email; rotas de IA 20/min por org; extrair-documento 10/min.
+- VULN-3: rate limiting via modelo `RateHit` + `src/lib/rate-limit.ts` (`checkRateLimit`). Login 10/15min por email; rotas de IA 20/min por org; extrair-documento 10/min. `checkRateLimit` é FAIL-OPEN + log se o store falhar (não derruba login).
 - VULN-4: CSV/formula injection neutralizado no relatório financeiro (prefixo `'` em `= + - @`).
-- VULN-5: HSTS + CSP em `next.config.ts`. CSP usa `'unsafe-inline'` em script-src (App Router injeta scripts inline) — hardening = migrar para nonce.
+- VULN-5: HSTS + CSP em `next.config.ts`. CSP usa `'unsafe-inline'` em script-src (App Router injeta scripts inline) — hardening futuro = migrar para nonce.
+- VULN-6: segredos TOTP cifrados em repouso com AES-256-GCM em `src/lib/crypto.ts` (`encryptSecret`/`decryptSecret`, prefixo `enc:v1:`). Chave derivada de `TOTP_ENC_KEY` com fallback p/ `AUTH_SECRET`. Aplicado em `actions/totp.ts`, `lib/auth.ts` (login) e na página de segurança (QR). Segredos legados em texto puro seguem válidos (decrypt detecta o prefixo; sem lockout).
+- VULN-7: sweep de logging — todos os `catch {}` silenciosos agora fazem `console.error("[contexto]", e)` mantendo msg genérica ao usuário (financeiro, clientes, processos, agenda, usuarios, auth, audit, activity, gemini, extrair-documento).
 - VULN-8: valida magic bytes `%PDF-` no upload (não confia no Content-Type).
 
-**Pendente (precisa de decisão do usuário):**
-- VULN-6: `totpSecret`/`totpPendingSecret` em texto puro no banco. Cifrar com AES-256-GCM (chave em env do Render) + migração dos seeds existentes. Bypass de 2FA se o banco vazar.
-- VULN-7: sweep de error swallowing — vários `catch {}` sem log escondem falhas. Trocar por `console.error("[contexto]", e)` mantendo msg genérica ao usuário.
+**Gotcha de deploy (CRÍTICO):** a migration `RateHit` PRECISA rodar em prod (`prisma migrate deploy`). Se não rodar, o `checkRateLimit` agora FALHA ABERTO (login segue funcionando), mas o rate limit só passa a valer quando a tabela existir. Ver gotcha de migrations em [[project-roadmap]].
 
-**Gotcha de deploy:** a migration do RateHit PRECISA rodar em prod (`prisma migrate deploy`) senão o login quebra. Ver gotcha em [[project-roadmap]].
+**Opcional (env):** definir `TOTP_ENC_KEY` no Render para separar a chave de cifra do TOTP do `AUTH_SECRET` (hoje usa o AUTH_SECRET como fallback — já funciona).
 
-**How to apply:** branch `dev` não foi mergeada na `master` (que auto-deploya). Antes do merge: garantir migrate deploy no Render e fazer smoke-test da CSP (hydration) e do login (rate limit + RateHit existe).
+**How to apply:** branch `dev` não foi mergeada na `master` (que auto-deploya). Antes do merge: garantir `prisma migrate deploy` no Render e smoke-test da CSP (hydration) e do login (com e sem 2FA).
