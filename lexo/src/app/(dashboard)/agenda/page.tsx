@@ -38,6 +38,12 @@ export default async function AgendaPage({
   const page = Math.max(1, Number(pageStr ?? 1));
   const orgId = session.user.organizationId;
 
+  // Expirar automaticamente prazos pendentes já vencidos
+  await db.deadline.updateMany({
+    where: { organizationId: orgId, status: "PENDENTE", date: { lt: new Date() } },
+    data: { status: "PERDIDO" },
+  });
+
   const where = {
     organizationId: orgId,
     ...(status ? { status: status as "PENDENTE" | "CONCLUIDO" | "PERDIDO" } : {}),
@@ -98,13 +104,21 @@ export default async function AgendaPage({
             <div className="flex items-center gap-3">
               <DeadlineToggle deadlineId={d.id} completed={d.status === "CONCLUIDO"} />
               <div>
-                <p className="font-medium">{d.title}</p>
+                <p className={`font-medium ${d.status === "PERDIDO" ? "line-through text-muted-foreground" : ""}`}>
+                  {d.title}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {d.case.number} · {formatDate(d.date)}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {d.status === "PERDIDO" && (
+                <Badge variant="destructive">Perdido</Badge>
+              )}
+              {d.status === "CONCLUIDO" && (
+                <Badge variant="secondary">Concluído</Badge>
+              )}
               <Badge variant={d.type === "AUDIENCIA" ? "default" : "secondary"}>
                 {d.type}
               </Badge>
