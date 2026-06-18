@@ -17,8 +17,8 @@ Auditoria AppSec zero-trust executada em 2026-06-18, aplicada na branch `dev` (c
 - VULN-7: sweep de logging — todos os `catch {}` silenciosos agora fazem `console.error("[contexto]", e)` mantendo msg genérica ao usuário (financeiro, clientes, processos, agenda, usuarios, auth, audit, activity, gemini, extrair-documento).
 - VULN-8: valida magic bytes `%PDF-` no upload (não confia no Content-Type).
 
-**Gotcha de deploy (CRÍTICO):** a migration `RateHit` PRECISA rodar em prod (`prisma migrate deploy`). Se não rodar, o `checkRateLimit` agora FALHA ABERTO (login segue funcionando), mas o rate limit só passa a valer quando a tabela existir. Ver gotcha de migrations em [[project-roadmap]].
+**Deploy autossuficiente (RESOLVIDO no commit `426b825`):** o script `build` em package.json agora é `prisma generate && (prisma migrate deploy || echo migrate-deploy-skipped) && next build`. Aplica as migrations (incl. RateHit) no deploy sem depender da config do painel do Render. O `migrate deploy` é tolerante a falha (não quebra build local sem DB). Em prod, com DATABASE_URL no ambiente, aplica normalmente. Dupla garantia: o `checkRateLimit` é fail-open, então o login nunca quebra mesmo se a migration atrasar.
 
 **Opcional (env):** definir `TOTP_ENC_KEY` no Render para separar a chave de cifra do TOTP do `AUTH_SECRET` (hoje usa o AUTH_SECRET como fallback — já funciona).
 
-**How to apply:** branch `dev` não foi mergeada na `master` (que auto-deploya). Antes do merge: garantir `prisma migrate deploy` no Render e smoke-test da CSP (hydration) e do login (com e sem 2FA).
+**How to apply:** branch `dev` empurrada para origin, NÃO mergeada na `master` (que auto-deploya). PR: abrir via https://github.com/Gui-Porto/Lexo-Placeholder/compare/master...dev . Pós-merge: smoke-test da CSP (hydration) e do login (com e sem 2FA). gh CLI não está instalado nesta máquina.
