@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 
-const PUBLIC_PATHS = ["/login", "/registrar"];
+const PUBLIC_PATHS = ["/login", "/registrar", "/convite"];
 
 export const authConfig = {
   trustHost: true,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,10 @@ const ROLE_OPTIONS = [
 export function InviteUserForm() {
   const [state, formAction, pending] = useActionState(inviteUser, undefined);
 
+  useEffect(() => {
+    if (state && "success" in state) toast.success(state.success);
+  }, [state]);
+
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
@@ -24,10 +29,6 @@ export function InviteUserForm() {
       <div className="space-y-2">
         <Label htmlFor="invite-email">Email</Label>
         <Input id="invite-email" name="email" type="email" required />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="invite-password">Senha inicial</Label>
-        <Input id="invite-password" name="password" type="password" minLength={8} required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="invite-role">Papel</Label>
@@ -44,10 +45,11 @@ export function InviteUserForm() {
           ))}
         </select>
       </div>
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
-      {state === undefined && !pending ? null : state === undefined && pending ? null : null}
+      {state && "error" in state && (
+        <p className="text-sm text-destructive">{state.error}</p>
+      )}
       <Button type="submit" disabled={pending}>
-        {pending ? "Adicionando..." : "Adicionar usuário"}
+        {pending ? "Enviando convite..." : "Enviar convite por email"}
       </Button>
     </form>
   );

@@ -2,6 +2,38 @@ import { Resend } from "resend";
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
+export function inviteEmailHtml({
+  orgName,
+  inviteeName,
+  acceptUrl,
+}: {
+  orgName: string;
+  inviteeName: string;
+  acceptUrl: string;
+}): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#0d1017;font-family:sans-serif;color:#e2e8f0">
+  <div style="max-width:560px;margin:40px auto;background:#161b25;border-radius:12px;overflow:hidden;border:1px solid #1e2535">
+    <div style="padding:24px 32px;background:linear-gradient(135deg,#3730a3,#6366f1)">
+      <h1 style="margin:0;font-size:22px;color:#fff">Lexo · Convite</h1>
+      <p style="margin:6px 0 0;font-size:14px;color:#c7d2fe">${orgName}</p>
+    </div>
+    <div style="padding:32px">
+      <p style="margin:0 0 8px;font-size:15px;color:#e2e8f0">Olá, <strong>${inviteeName}</strong>!</p>
+      <p style="margin:0 0 24px;font-size:14px;color:#94a3b8">Você foi convidado para acessar o Lexo como membro de <strong style="color:#e2e8f0">${orgName}</strong>. Clique no botão abaixo para criar sua senha e ativar sua conta.</p>
+      <a href="${acceptUrl}" style="display:inline-block;padding:12px 28px;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">Ativar minha conta</a>
+      <p style="margin:24px 0 0;font-size:12px;color:#475569">O link expira em 7 dias. Se você não esperava este convite, pode ignorar este email.</p>
+    </div>
+    <div style="padding:16px 32px;border-top:1px solid #1e2535;font-size:12px;color:#475569">
+      Lexo · Sistema de Gestão Jurídica
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
 export function deadlineReminderHtml({
   orgName,
   deadlines,
