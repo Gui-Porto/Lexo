@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { streamText } from "@/lib/gemini";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -14,6 +15,11 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.organizationId) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
+  // 🔒 SEGURANÇA [VULN-3]: limita por organização para proteger a cota gratuita do Gemini.
+  if (!(await checkRateLimit(`ia:${session.user.organizationId}`, 20, 60))) {
+    return NextResponse.json({ error: "Muitas requisições. Aguarde um momento." }, { status: 429 });
   }
 
   const body = await req.json();

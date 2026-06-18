@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { generateFromPdf } from "@/lib/gemini";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -34,6 +35,11 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.organizationId) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
+  // 🔒 SEGURANÇA [VULN-3]: extração de PDF é cara (10 MB + Gemini); limite mais estrito.
+  if (!(await checkRateLimit(`ia-pdf:${session.user.organizationId}`, 10, 60))) {
+    return NextResponse.json({ error: "Muitas requisições. Aguarde um momento." }, { status: 429 });
   }
 
   const formData = await req.formData();
