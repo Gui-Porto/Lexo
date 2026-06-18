@@ -52,6 +52,7 @@ model Organization {
 
   users        User[]
   invites      UserInvite[]
+  auditLogs    AuditLog[]
   clients      Client[]
   cases        Case[]
   deadlines    Deadline[]
@@ -60,15 +61,18 @@ model Organization {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  name           String
-  email          String       @unique
-  passwordHash   String
-  role           Role         @default(ADVOGADO)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name              String
+  email             String       @unique
+  passwordHash      String
+  role              Role         @default(ADVOGADO)
+  totpSecret        String?
+  totpEnabled       Boolean      @default(false)
+  totpPendingSecret String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
   casesResponsavel Case[] @relation("CaseResponsavel")
 
@@ -180,6 +184,22 @@ model UserInvite {
 
   @@index([organizationId])
   @@index([token])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  userName       String
+  action         String
+  entityType     String?
+  entityId       String?
+  description    String
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([createdAt])
 }
 
 model ActivityLog {

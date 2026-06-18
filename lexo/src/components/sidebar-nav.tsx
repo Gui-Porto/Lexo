@@ -10,6 +10,8 @@ import {
   Wallet,
   UserCog,
   CreditCard,
+  Shield,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +23,8 @@ const BASE_LINKS = [
   { href: "/financeiro",             label: "Financeiro", icon: Wallet,          roles: ["ADMIN", "ADVOGADO"] },
   { href: "/configuracoes/usuarios", label: "Usuários",   icon: UserCog,         roles: ["ADMIN"] },
   { href: "/planos",                 label: "Planos",     icon: CreditCard,      roles: ["ADMIN"] },
+  { href: "/configuracoes/seguranca",label: "Segurança",  icon: Shield,          roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+  { href: "/configuracoes/auditoria",label: "Auditoria",  icon: ClipboardList,   roles: ["ADMIN"] },
 ];
 
 export function SidebarNav({ role }: { role?: string }) {
