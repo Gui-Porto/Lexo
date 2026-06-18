@@ -8,10 +8,14 @@ metadata:
 ---
 
 ## Status atual
-Fase 0 concluída e em produção em https://lexo-45tf.onrender.com (Render + PostgreSQL).
+Fases 0, 1, 2, 3 e 4 concluídas. Produção em https://lexo-45tf.onrender.com (Render + PostgreSQL).
+Em 2026-06-18 o roadmap inteiro (Fases 2→4) foi implementado e o redesign visual finalizado.
 
-**Why:** Sessão de CTO/Arquiteto definiu o roadmap completo. Fase 0 foi executada e deployada.
-**How to apply:** Usar este roadmap para priorizar o que implementar a seguir. Perguntar ao usuário por qual fase/item quer começar.
+**Why:** Sessão de CTO/Arquiteto definiu o roadmap completo; todas as fases foram executadas.
+**How to apply:** Roadmap essencialmente completo — próximas conversas tendem a ser refinamento, bugs ou novas ideias fora do roadmap original. Perguntar ao usuário o que priorizar.
+
+### Deploy no Render (gotcha importante)
+Build de produção quebra se um cliente de SDK for instanciado no topo do módulo sem a env var. Caso resolvido: `src/lib/stripe.ts` instanciava `new Stripe(process.env.STRIPE_SECRET_KEY!)` no load → "Failed to collect page data for /api/webhooks/stripe". Corrigido com Proxy lazy + `export const dynamic = "force-dynamic"` na rota. Padrão a seguir: instanciar SDKs (Stripe/Anthropic/Resend) lazy ou dentro das funções, nunca no module scope.
 
 ---
 
@@ -58,28 +62,31 @@ Fase 0 concluída e em produção em https://lexo-45tf.onrender.com (Render + Po
 
 ---
 
-## 🔵 FASE 2 — Maturidade Operacional
-- [ ] Notificações de prazo por email (aviso 3/7 dias antes, via Resend)
-- [ ] Prazo automático como PERDIDO quando date < now e status PENDENTE
-- [ ] Relatório financeiro — exportação PDF/CSV por período
-- [ ] Histórico de atividades por processo
-- [ ] Combobox de área jurídica (Cível, Trabalhista, Criminal, etc.)
-- [ ] Validação CPF/CNPJ no cadastro de clientes
+## ✅ FASE 2 — Maturidade Operacional (concluída em 2026-06-18)
+- [x] Prazo automático como PERDIDO quando date < now e status PENDENTE (agenda/page.tsx)
+- [x] Combobox de área jurídica (Cível, Trabalhista, Criminal, etc.) em case-form.tsx
+- [x] Validação CPF/CNPJ no cadastro de clientes (src/lib/document.ts + refine() no Zod)
+- [x] Histórico de atividades por processo (modelo ActivityLog + logActivity() helper)
+- [x] Notificações de prazo por email via Resend (GET /api/cron/notify-deadlines, CRON_SECRET)
+- [x] Relatório financeiro — CSV (/api/relatorio/financeiro) + PDF (impressão /financeiro/relatorio)
 
 ---
 
-## 🟢 FASE 3 — Escala e Monetização
-- [ ] Sistema de planos (trial 30 dias → Essencial R$79 → Pro R$149)
-- [ ] Billing com Stripe (checkout, webhooks, portal do cliente)
-- [ ] Convite de usuários por email com link temporário
-- [ ] 2FA para administradores
-- [ ] Auditoria de todas as ações por usuário
+## ✅ FASE 3 — Escala e Monetização (concluída em 2026-06-18)
+- [x] Sistema de planos (trial 30 dias → Essencial R$79 → Pro R$149) (2026-06-18)
+- [x] Billing com Stripe (checkout, webhooks, portal do cliente) (2026-06-18)
+- [x] Convite de usuários por email com link temporário (2026-06-18)
+- [x] 2FA para administradores (2026-06-18)
+- [x] Auditoria de todas as ações por usuário (2026-06-18)
 
 ---
 
 ## 🤖 FASE 4 — IA (ordenada por ROI)
-- [ ] Gerador de minutas/peças processuais via Claude API (ROI muito alto)
-- [ ] Extrator de documentos PDF — IA preenche forms automaticamente (ROI alto)
-- [ ] Score de risco de prazo — badge colorido de prioridade (ROI alto)
-- [ ] Pesquisa jurisprudencial em linguagem natural (ROI médio)
-- [ ] Resumo automático do processo (ROI médio)
+- [x] Gerador de minutas/peças processuais (2026-06-18)
+- [x] Extrator de documentos PDF — IA preenche forms automaticamente (2026-06-18)
+- [x] Score de risco de prazo — badge colorido de prioridade (2026-06-18)
+- [x] Pesquisa jurisprudencial em linguagem natural (2026-06-18)
+- [x] Resumo automático do processo (2026-06-18)
+
+### ⚠️ IA usa Gemini, NÃO Claude (migrado em 2026-06-18)
+Para manter o projeto 100% gratuito, os 4 recursos de IA foram migrados da Anthropic (paga) para o **Google Gemini 2.5 Flash** (free tier do Google AI Studio). Helper central: `src/lib/gemini.ts` com `streamText()` (3 rotas de streaming) e `generateFromPdf()` (extração de PDF). SDK: `@google/genai`. Env var: `GEMINI_API_KEY` (pegar em aistudio.google.com/apikey). `@anthropic-ai/sdk` foi removido. NÃO sugerir voltar ao Claude sem o usuário pedir — a escolha foi explicitamente por custo zero.
