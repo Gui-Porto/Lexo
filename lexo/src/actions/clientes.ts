@@ -5,10 +5,17 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
+import { validateDocument } from "@/lib/document";
 
 const clientSchema = z.object({
   name: z.string().min(2, "Nome muito curto"),
-  document: z.string().optional(),
+  document: z
+    .string()
+    .optional()
+    .refine(
+      (v) => !v || validateDocument(v),
+      "CPF ou CNPJ inválido"
+    ),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   phone: z.string().optional(),
   notes: z.string().optional(),

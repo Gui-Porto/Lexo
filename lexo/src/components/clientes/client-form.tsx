@@ -34,7 +34,12 @@ export function ClientForm({
       </div>
       <div className="space-y-2">
         <Label htmlFor="document">Documento (CPF/CNPJ)</Label>
-        <Input id="document" name="document" defaultValue={defaultValues?.document ?? ""} />
+        <Input
+          id="document"
+          name="document"
+          placeholder="000.000.000-00 ou 00.000.000/0000-00"
+          defaultValue={defaultValues?.document ?? ""}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
