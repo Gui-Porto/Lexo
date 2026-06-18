@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && (prisma migrate deploy || echo migrate-deploy-skipped) && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
