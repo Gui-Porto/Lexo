@@ -58,6 +58,12 @@ export async function POST(req: NextRequest) {
   }
 
   const bytes = await file.arrayBuffer();
+  // 🔒 SEGURANÇA [VULN-8]: valida magic bytes (%PDF-), não confia no Content-Type
+  // informado pelo cliente, que é spoofável (CWE-434, Lei 12).
+  const magic = Buffer.from(bytes.slice(0, 5)).toString("latin1");
+  if (magic !== "%PDF-") {
+    return NextResponse.json({ error: "Arquivo não é um PDF válido" }, { status: 400 });
+  }
   const base64 = Buffer.from(bytes).toString("base64");
 
   let text: string;

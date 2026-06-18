@@ -4,7 +4,9 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/session";
+// 🔒 SEGURANÇA [VULN-2]: financeiro exige ADMIN/ADVOGADO em toda mutação,
+// não apenas no proxy de navegação. SECRETARIA é barrada no ponto de uso.
+import { requireFinanceiroAccess } from "@/lib/session";
 
 const invoiceSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente"),
@@ -23,7 +25,7 @@ export async function createInvoice(
   _prevState: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await requireSession();
+  const session = await requireFinanceiroAccess();
   const parsed = invoiceSchema.safeParse({
     clientId: formData.get("clientId"),
     caseId: formData.get("caseId") || undefined,
@@ -76,7 +78,7 @@ export async function updateInvoice(
   _prevState: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await requireSession();
+  const session = await requireFinanceiroAccess();
   const parsed = invoiceSchema.safeParse({
     clientId: formData.get("clientId"),
     caseId: formData.get("caseId") || undefined,
@@ -126,7 +128,7 @@ export async function updateInvoice(
 }
 
 export async function updateInvoiceStatus(invoiceId: string, status: string) {
-  const session = await requireSession();
+  const session = await requireFinanceiroAccess();
   const parsed = invoiceStatusSchema.safeParse(status);
   if (!parsed.success) return;
 
@@ -145,7 +147,7 @@ export async function updateInvoiceStatus(invoiceId: string, status: string) {
 }
 
 export async function deleteInvoice(invoiceId: string) {
-  const session = await requireSession();
+  const session = await requireFinanceiroAccess();
   try {
     await db.invoice.deleteMany({
       where: { id: invoiceId, organizationId: session.user.organizationId },

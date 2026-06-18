@@ -7,8 +7,15 @@ export const dynamic = "force-dynamic";
 // Chamado diariamente pelo cron do Render (ou qualquer scheduler).
 // Protegido por CRON_SECRET no header Authorization.
 export async function GET(req: NextRequest) {
+  // 🔒 SEGURANÇA [VULN-1]: fail-secure (CWE-636). Sem CRON_SECRET configurado o
+  // endpoint NEGA acesso — nunca executa aberto. Antes, a ausência da env var
+  // desligava a verificação e expunha o disparo de e-mails a qualquer um.
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!secret) {
+    console.error("[cron/notify-deadlines] CRON_SECRET ausente — negando acesso");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
