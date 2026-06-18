@@ -75,7 +75,8 @@ export async function POST(req: NextRequest) {
   let text: string;
   try {
     text = await generateFromPdf(base64, prompt);
-  } catch {
+  } catch (e) {
+    console.error("[extrair-documento] erro ao processar PDF com a IA:", e);
     return NextResponse.json({ error: "Erro ao processar documento" }, { status: 500 });
   }
 

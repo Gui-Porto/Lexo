@@ -56,7 +56,8 @@ export async function createCase(
       data: { ...parsed.data, organizationId: session.user.organizationId },
       select: { id: true },
     });
-  } catch {
+  } catch (e) {
+    console.error("[processos] erro ao salvar processo:", e);
     return { error: "Erro ao salvar processo. Tente novamente." };
   }
 
@@ -110,7 +111,8 @@ export async function updateCase(
       where: { id: caseId, organizationId: session.user.organizationId },
       data: parsed.data,
     });
-  } catch {
+  } catch (e) {
+    console.error("[processos] erro ao salvar processo:", e);
     return { error: "Erro ao salvar processo. Tente novamente." };
   }
 
@@ -132,7 +134,8 @@ export async function deleteCase(caseId: string) {
     await db.case.deleteMany({
       where: { id: caseId, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[processos] erro ao excluir processo:", e);
     return;
   }
   revalidatePath("/processos");

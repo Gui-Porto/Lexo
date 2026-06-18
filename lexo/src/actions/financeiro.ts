@@ -65,7 +65,8 @@ export async function createInvoice(
         organizationId: session.user.organizationId,
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[financeiro] erro ao salvar honorário:", e);
     return { error: "Erro ao salvar honorário. Tente novamente." };
   }
 
@@ -119,7 +120,8 @@ export async function updateInvoice(
         ...(parsed.data.status === "PAGO" ? { paidAt: new Date() } : { paidAt: null }),
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[financeiro] erro ao salvar honorário:", e);
     return { error: "Erro ao salvar honorário. Tente novamente." };
   }
 
@@ -140,7 +142,8 @@ export async function updateInvoiceStatus(invoiceId: string, status: string) {
         ...(parsed.data === "PAGO" ? { paidAt: new Date() } : {}),
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[financeiro] erro ao atualizar/excluir honorário:", e);
     return;
   }
   revalidatePath("/financeiro");
@@ -152,7 +155,8 @@ export async function deleteInvoice(invoiceId: string) {
     await db.invoice.deleteMany({
       where: { id: invoiceId, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[financeiro] erro ao atualizar/excluir honorário:", e);
     return;
   }
   revalidatePath("/financeiro");

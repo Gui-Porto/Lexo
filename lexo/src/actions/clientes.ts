@@ -44,7 +44,8 @@ export async function createClient(
     await db.client.create({
       data: { ...parsed.data, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[clientes] erro ao salvar cliente:", e);
     return { error: "Erro ao salvar cliente. Tente novamente." };
   }
 
@@ -75,7 +76,8 @@ export async function updateClient(
       where: { id: clientId, organizationId: session.user.organizationId },
       data: parsed.data,
     });
-  } catch {
+  } catch (e) {
+    console.error("[clientes] erro ao salvar cliente:", e);
     return { error: "Erro ao salvar cliente. Tente novamente." };
   }
 
@@ -89,7 +91,8 @@ export async function deleteClient(clientId: string) {
     await db.client.deleteMany({
       where: { id: clientId, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[clientes] erro ao excluir cliente:", e);
     return;
   }
   revalidatePath("/clientes");

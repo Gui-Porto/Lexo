@@ -18,14 +18,23 @@ export async function checkRateLimit(
 ): Promise<boolean> {
   const since = new Date(Date.now() - windowSec * 1000);
 
-  // Limpa hits expirados desta chave para manter a tabela enxuta (índice [key, createdAt]).
-  await db.rateHit.deleteMany({ where: { key, createdAt: { lt: since } } });
+  try {
+    // Limpa hits expirados desta chave para manter a tabela enxuta (índice [key, createdAt]).
+    await db.rateHit.deleteMany({ where: { key, createdAt: { lt: since } } });
 
-  const count = await db.rateHit.count({ where: { key, createdAt: { gte: since } } });
-  if (count >= max) return false;
+    const count = await db.rateHit.count({ where: { key, createdAt: { gte: since } } });
+    if (count >= max) return false;
 
-  await db.rateHit.create({ data: { key } });
-  return true;
+    await db.rateHit.create({ data: { key } });
+    return true;
+  } catch (e) {
+    // Resiliência: se o store falhar (ex.: migration RateHit ainda não aplicada),
+    // o rate limit é um controle secundário — falha ABERTO para não derrubar o login,
+    // mas registra o incidente para diagnóstico. O controle volta a valer assim que a
+    // tabela existir. NUNCA derrubar a autenticação por causa do limiter.
+    console.error(`[rate-limit] store indisponível para "${key}", liberando requisição:`, e);
+    return true;
+  }
 }
 
 /** Extrai o IP do cliente respeitando o proxy do Render (x-forwarded-for). */

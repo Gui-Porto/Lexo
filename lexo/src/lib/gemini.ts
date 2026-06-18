@@ -36,7 +36,9 @@ export function streamText(prompt: string): ReadableStream<Uint8Array> {
         for await (const chunk of response) {
           if (chunk.text) controller.enqueue(encoder.encode(chunk.text));
         }
-      } catch {
+      } catch (e) {
+        // 🔒 SEGURANÇA [VULN-7]: loga o erro real internamente; ao cliente, mensagem genérica.
+        console.error("[gemini] erro no streaming de conteúdo:", e);
         controller.error(new Error("Erro ao gerar conteúdo"));
       } finally {
         controller.close();

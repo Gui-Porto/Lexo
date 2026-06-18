@@ -19,7 +19,8 @@ export async function logActivity({
     await db.activityLog.create({
       data: { organizationId, caseId, userId, userName, action },
     });
-  } catch {
-    // log failures are non-fatal
+  } catch (e) {
+    // 🔒 SEGURANÇA [VULN-7]: não-fatal, porém observável (Lei 14).
+    console.error(`[activity] falha ao registrar atividade no caso ${caseId}:`, e);
   }
 }

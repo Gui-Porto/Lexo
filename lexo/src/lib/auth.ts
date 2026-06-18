@@ -5,6 +5,7 @@ import { verifySync } from "otplib";
 import { db } from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { decryptSecret } from "@/lib/crypto";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -36,9 +37,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (user.totpEnabled && user.totpSecret) {
           if (!totpCode) return null;
-          const totpResult = verifySync({ token: totpCode.trim(), secret: user.totpSecret });
-          const totpValid = totpResult.valid;
-          if (!totpValid) return null;
+          // 🔒 SEGURANÇA [VULN-6]: decifra o segredo TOTP para validar o código.
+          const totpResult = verifySync({
+            token: totpCode.trim(),
+            secret: decryptSecret(user.totpSecret),
+          });
+          if (!totpResult.valid) return null;
         }
 
         return {

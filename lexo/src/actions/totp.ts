@@ -1,10 +1,11 @@
 "use server";
 
-import { generateSecret, generateSync, verifySync, generateURI } from "otplib";
+import { generateSecret, verifySync } from "otplib";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { logAudit } from "@/lib/audit";
+import { encryptSecret, decryptSecret } from "@/lib/crypto";
 
 export type TotpActionResult = { error: string } | undefined;
 
@@ -13,7 +14,8 @@ export async function initiateTwoFactor(): Promise<void> {
   const secret = generateSecret();
   await db.user.update({
     where: { id: session.user.id },
-    data: { totpPendingSecret: secret },
+    // 🔒 SEGURANÇA [VULN-6]: o segredo pendente vai cifrado ao banco.
+    data: { totpPendingSecret: encryptSecret(secret) },
   });
   revalidatePath("/configuracoes/seguranca");
 }
@@ -32,11 +34,14 @@ export async function confirmTwoFactor(
 
   if (!user?.totpPendingSecret) return { error: "Sessão expirada. Reinicie o processo." };
 
-  const result = verifySync({ token: code, secret: user.totpPendingSecret });
+  // 🔒 SEGURANÇA [VULN-6]: decifra apenas em memória para validar o código.
+  const plainSecret = decryptSecret(user.totpPendingSecret);
+  const result = verifySync({ token: code, secret: plainSecret });
   if (!result.valid) return { error: "Código inválido. Tente novamente." };
 
   await db.user.update({
     where: { id: session.user.id },
+    // O valor pendente já está cifrado; promove-se direto a totpSecret.
     data: { totpSecret: user.totpPendingSecret, totpEnabled: true, totpPendingSecret: null },
   });
 
@@ -65,7 +70,8 @@ export async function disableTwoFactor(
 
   if (!user?.totpSecret) return { error: "2FA não está ativado." };
 
-  const result = verifySync({ token: code, secret: user.totpSecret });
+  // 🔒 SEGURANÇA [VULN-6]: decifra o segredo para validar antes de desativar.
+  const result = verifySync({ token: code, secret: decryptSecret(user.totpSecret) });
   if (!result.valid) return { error: "Código inválido." };
 
   await db.user.update({

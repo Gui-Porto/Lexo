@@ -139,7 +139,8 @@ export async function updateUserRole(
       where: { id: parsed.data.userId, organizationId: session.user.organizationId },
       data: { role: parsed.data.role },
     });
-  } catch {
+  } catch (e) {
+    console.error("[usuarios] erro ao atualizar papel:", e);
     return { error: "Erro ao atualizar papel. Tente novamente." };
   }
 
@@ -170,7 +171,8 @@ export async function removeUser(userId: string) {
     await db.user.deleteMany({
       where: { id: userId, organizationId: session.user.organizationId },
     });
-  } catch {
+  } catch (e) {
+    console.error("[usuarios] erro ao remover usuário:", e);
     return;
   }
 
