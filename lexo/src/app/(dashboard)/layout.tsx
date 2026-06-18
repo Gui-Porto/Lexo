@@ -5,6 +5,7 @@ import { SidebarNav } from "@/components/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/logout";
 import { FlashToast } from "@/components/flash-toast";
+import { TrialBanner } from "@/components/trial-banner";
 import { LogOut } from "lucide-react";
 import { LogoWordmark } from "@/components/ui/logo";
 
@@ -97,6 +98,9 @@ export default async function DashboardLayout({
         <div className="mx-auto max-w-6xl px-8 py-8">
           <Suspense>
             <FlashToast />
+          </Suspense>
+          <Suspense>
+            <TrialBanner organizationId={session.user.organizationId} />
           </Suspense>
           {children}
         </div>

@@ -9,6 +9,7 @@ import {
   CalendarClock,
   Wallet,
   UserCog,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ const BASE_LINKS = [
   { href: "/agenda",                 label: "Agenda",     icon: CalendarClock,   roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
   { href: "/financeiro",             label: "Financeiro", icon: Wallet,          roles: ["ADMIN", "ADVOGADO"] },
   { href: "/configuracoes/usuarios", label: "Usuários",   icon: UserCog,         roles: ["ADMIN"] },
+  { href: "/planos",                 label: "Planos",     icon: CreditCard,      roles: ["ADMIN"] },
 ];
 
 export function SidebarNav({ role }: { role?: string }) {
