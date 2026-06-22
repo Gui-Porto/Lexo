@@ -355,7 +355,7 @@ export default async function DashboardPage() {
                       className="shrink-0 text-xs"
                       style={
                         c.status === "ATIVO"
-                          ? { background: "rgb(5 150 105 / 0.12)", color: "#047857", border: "1px solid rgb(5 150 105 / 0.25)" }
+                          ? { background: "rgb(52 211 153 / 0.12)", color: "#6ee7b7", border: "1px solid rgb(52 211 153 / 0.25)" }
                           : {}
                       }
                     >
