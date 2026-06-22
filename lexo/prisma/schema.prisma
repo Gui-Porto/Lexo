@@ -58,6 +58,7 @@ model Organization {
   deadlines    Deadline[]
   invoices     Invoice[]
   activityLogs ActivityLog[]
+  timeEntries  TimeEntry[]
 }
 
 model User {
@@ -74,7 +75,8 @@ model User {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 
-  casesResponsavel Case[] @relation("CaseResponsavel")
+  casesResponsavel Case[]      @relation("CaseResponsavel")
+  timeEntries      TimeEntry[]
 
   @@index([organizationId])
 }
@@ -117,6 +119,7 @@ model Case {
   deadlines    Deadline[]
   invoices     Invoice[]
   activityLogs ActivityLog[]
+  timeEntries  TimeEntry[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
@@ -226,4 +229,27 @@ model ActivityLog {
   @@index([organizationId])
   @@index([caseId])
   @@index([createdAt])
+}
+
+model TimeEntry {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userName        String
+  caseId          String?
+  case            Case?        @relation(fields: [caseId], references: [id])
+  description     String?
+  startedAt       DateTime
+  endedAt         DateTime?
+  durationMinutes Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([caseId])
+  @@index([startedAt])
 }
