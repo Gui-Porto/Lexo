@@ -41,38 +41,30 @@ export function SidebarNav({ role }: { role?: string }) {
           <Link
             key={href}
             href={href}
-            style={{ "--delay": `${i * 40}ms` } as React.CSSProperties}
+            style={
+              {
+                "--delay": `${i * 40}ms`,
+                ...(active ? { boxShadow: "inset 2px 0 0 var(--brand)" } : {}),
+              } as React.CSSProperties
+            }
             className={cn(
               "animate-fade-in group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
               active
-                ? "text-white"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-brand/10 text-brand"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
-            {...(active && {
-              style: {
-                background: "linear-gradient(90deg, oklch(0.66 0.18 274 / 0.2), oklch(0.66 0.18 274 / 0.08))",
-                boxShadow: "inset 1px 0 0 oklch(0.66 0.18 274 / 0.8)",
-                "--delay": `${i * 40}ms`,
-              } as React.CSSProperties,
-            })}
           >
             <Icon
               className={cn(
                 "h-4 w-4 shrink-0 transition-all duration-200",
                 active
-                  ? "text-primary drop-shadow-[0_0_6px_oklch(0.66_0.18_274)]"
+                  ? "text-brand"
                   : "text-muted-foreground group-hover:text-foreground"
               )}
             />
             {label}
             {active && (
-              <span
-                className="ml-auto h-1.5 w-1.5 rounded-full"
-                style={{
-                  background: "oklch(0.66 0.18 274)",
-                  boxShadow: "0 0 8px 2px oklch(0.66 0.18 274 / 0.6)",
-                }}
-              />
+              <span className="bg-brand ml-auto h-1.5 w-1.5 rounded-full" />
             )}
           </Link>
         );

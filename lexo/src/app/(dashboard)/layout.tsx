@@ -21,36 +21,27 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen relative">
-      {/* Luz ambiente no fundo */}
+      {/* Luz ambiente sutil no fundo */}
       <div
         className="pointer-events-none fixed inset-0 z-0"
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.66 0.18 274 / 0.12) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(ellipse 40% 40% at 80% 80%, oklch(0.65 0.15 200 / 0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% -10%, rgb(37 99 235 / 0.05) 0%, transparent 70%)",
         }}
       />
 
       {/* Sidebar */}
       <aside
-        className="relative z-10 flex w-64 shrink-0 flex-col border-r"
+        className="bg-sidebar relative z-10 flex w-64 shrink-0 flex-col border-r"
         style={{
-          background: "oklch(0.09 0.016 264 / 0.85)",
           backdropFilter: "blur(24px) saturate(180%)",
           WebkitBackdropFilter: "blur(24px) saturate(180%)",
-          borderColor: "oklch(1 0 0 / 6%)",
+          borderColor: "var(--sidebar-border)",
         }}
       >
         {/* Logo */}
-        <div className="flex items-center px-5 py-5 border-b" style={{ borderColor: "oklch(1 0 0 / 6%)" }}>
+        <div className="border-b flex items-center px-5 py-5" style={{ borderColor: "var(--sidebar-border)" }}>
           <LogoWordmark size={34} />
         </div>
 
@@ -61,18 +52,11 @@ export default async function DashboardLayout({
 
         {/* Footer */}
         <div
-          className="px-4 py-4 border-t space-y-3"
-          style={{ borderColor: "oklch(1 0 0 / 6%)" }}
+          className="border-t space-y-3 px-4 py-4"
+          style={{ borderColor: "var(--sidebar-border)" }}
         >
           <div className="flex items-center gap-2 px-2">
-            <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold uppercase"
-              style={{
-                background: "linear-gradient(135deg, oklch(0.66 0.18 274 / 0.3), oklch(0.55 0.2 290 / 0.3))",
-                border: "1px solid oklch(0.66 0.18 274 / 0.3)",
-                color: "oklch(0.80 0.12 274)",
-              }}
-            >
+            <div className="bg-brand/15 border-brand/25 text-brand flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold uppercase">
               {session.user.name?.[0] ?? session.user.email?.[0] ?? "U"}
             </div>
             <p className="truncate text-xs text-muted-foreground flex-1">

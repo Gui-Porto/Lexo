@@ -53,32 +53,32 @@ export default async function DashboardPage() {
       label: "Processos ativos",
       value: processosAtivos,
       icon: Briefcase,
-      color: "oklch(0.66 0.18 274)",   // indigo
-      bg: "oklch(0.66 0.18 274 / 0.12)",
+      color: "#2563eb",   // azul (brand)
+      bg: "rgb(37 99 235 / 0.10)",
       delay: "0ms",
     },
     {
       label: "Prazos em 7 dias",
       value: prazos7dias,
       icon: prazos7dias > 0 ? AlertCircle : Clock,
-      color: prazos7dias > 0 ? "oklch(0.78 0.17 75)" : "oklch(0.65 0.15 200)",
-      bg: prazos7dias > 0 ? "oklch(0.78 0.17 75 / 0.12)" : "oklch(0.65 0.15 200 / 0.10)",
+      color: prazos7dias > 0 ? "#d97706" : "#0891b2",
+      bg: prazos7dias > 0 ? "rgb(217 119 6 / 0.10)" : "rgb(8 145 178 / 0.10)",
       delay: "60ms",
     },
     {
       label: "Faturas em aberto",
       value: formatCurrency(totalAberto),
       icon: Wallet,
-      color: "oklch(0.72 0.17 150)",   // emerald
-      bg: "oklch(0.72 0.17 150 / 0.10)",
+      color: "#059669",   // emerald
+      bg: "rgb(5 150 105 / 0.10)",
       delay: "120ms",
     },
     {
       label: "Clientes",
       value: totalClientes,
       icon: Users,
-      color: "oklch(0.70 0.18 300)",   // violet
-      bg: "oklch(0.70 0.18 300 / 0.12)",
+      color: "#7c3aed",   // violet
+      bg: "rgb(124 58 237 / 0.10)",
       delay: "180ms",
     },
   ];
@@ -96,12 +96,8 @@ export default async function DashboardPage() {
         {kpis.map(({ label, value, icon: Icon, color, bg, delay }) => (
           <div
             key={label}
-            className="hover-glow animate-fade-up rounded-xl p-5 relative overflow-hidden"
-            style={{
-              "--delay": delay,
-              background: "oklch(0.155 0.02 264)",
-              border: "1px solid oklch(1 0 0 / 7%)",
-            } as React.CSSProperties}
+            className="hover-glow animate-fade-up bg-card border-border shadow-panel relative overflow-hidden rounded-xl border p-5"
+            style={{ "--delay": delay } as React.CSSProperties}
           >
             {/* Glow blob */}
             <div
@@ -135,21 +131,17 @@ export default async function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Próximos prazos */}
         <div
-          className="animate-fade-up rounded-xl"
-          style={{
-            "--delay": "240ms",
-            background: "oklch(0.155 0.02 264)",
-            border: "1px solid oklch(1 0 0 / 7%)",
-          } as React.CSSProperties}
+          className="animate-fade-up bg-card border-border shadow-panel rounded-xl border"
+          style={{ "--delay": "240ms" } as React.CSSProperties}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "oklch(1 0 0 / 7%)" }}>
+          <div className="border-border flex items-center justify-between border-b px-6 py-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
+              <Clock className="text-brand h-4 w-4" />
               <span className="font-medium text-sm">Próximos prazos</span>
             </div>
             <Link
               href="/agenda"
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+              className="hover:text-brand flex items-center gap-1 text-xs text-muted-foreground transition-colors"
             >
               Ver todos <ArrowRight className="h-3 w-3" />
             </Link>
@@ -170,11 +162,7 @@ export default async function DashboardPage() {
                       <div
                         className="h-1.5 w-1.5 shrink-0 rounded-full"
                         style={{
-                          background:
-                            d.type === "AUDIENCIA"
-                              ? "oklch(0.70 0.18 30)"
-                              : "oklch(0.66 0.18 274)",
-                          boxShadow: `0 0 6px ${d.type === "AUDIENCIA" ? "oklch(0.70 0.18 30 / 0.7)" : "oklch(0.66 0.18 274 / 0.7)"}`,
+                          background: d.type === "AUDIENCIA" ? "#e11d48" : "#2563eb",
                         }}
                       />
                       <div className="min-w-0">
@@ -195,21 +183,17 @@ export default async function DashboardPage() {
 
         {/* Processos recentes */}
         <div
-          className="animate-fade-up rounded-xl"
-          style={{
-            "--delay": "280ms",
-            background: "oklch(0.155 0.02 264)",
-            border: "1px solid oklch(1 0 0 / 7%)",
-          } as React.CSSProperties}
+          className="animate-fade-up bg-card border-border shadow-panel rounded-xl border"
+          style={{ "--delay": "280ms" } as React.CSSProperties}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "oklch(1 0 0 / 7%)" }}>
+          <div className="border-border flex items-center justify-between border-b px-6 py-4">
             <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-primary" />
+              <Briefcase className="text-brand h-4 w-4" />
               <span className="font-medium text-sm">Processos recentes</span>
             </div>
             <Link
               href="/processos"
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+              className="hover:text-brand flex items-center gap-1 text-xs text-muted-foreground transition-colors"
             >
               Ver todos <ArrowRight className="h-3 w-3" />
             </Link>
@@ -229,15 +213,12 @@ export default async function DashboardPage() {
                     <div className="flex items-center gap-3 min-w-0">
                       <div
                         className="h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{
-                          background: "oklch(0.66 0.18 274)",
-                          boxShadow: "0 0 6px oklch(0.66 0.18 274 / 0.7)",
-                        }}
+                        style={{ background: "#2563eb" }}
                       />
                       <div className="min-w-0">
                         <Link
                           href={`/processos/${c.id}`}
-                          className="text-sm font-medium hover:text-primary transition-colors truncate block"
+                          className="hover:text-brand block truncate text-sm font-medium transition-colors"
                         >
                           {c.number}
                         </Link>
@@ -249,7 +230,7 @@ export default async function DashboardPage() {
                       className="text-xs shrink-0"
                       style={
                         c.status === "ATIVO"
-                          ? { background: "oklch(0.72 0.17 150 / 0.15)", color: "oklch(0.80 0.14 150)", border: "1px solid oklch(0.72 0.17 150 / 0.25)" }
+                          ? { background: "rgb(5 150 105 / 0.12)", color: "#047857", border: "1px solid rgb(5 150 105 / 0.25)" }
                           : {}
                       }
                     >
