@@ -45,7 +45,7 @@ export function LogoWordmark({ size = 36 }: { size?: number }) {
           fontSize: size * 0.44,
           fontWeight: 700,
           letterSpacing: "-0.01em",
-          background: "linear-gradient(135deg, #c7d2fe 0%, #818cf8 50%, #a78bfa 100%)",
+          background: "linear-gradient(135deg, #18181b 0%, #4338ca 55%, #2563eb 100%)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
