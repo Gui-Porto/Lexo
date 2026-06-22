@@ -1,7 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
 const PUBLIC_EXACT = ["/"];
-const PUBLIC_PREFIX = ["/login", "/registrar", "/convite"];
+const PUBLIC_PREFIX = ["/login", "/registrar", "/convite", "/portal"];
 
 export const authConfig = {
   trustHost: true,
