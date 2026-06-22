@@ -7,9 +7,14 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-heading: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --shadow-panel: 0 24px 60px -24px rgb(24 24 27 / 0.18);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -54,33 +59,43 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Lexo light premium — "Linear/Notion para advogados" (paleta do doc-mestre) */
+  --background: #f9f9f8;
+  --foreground: #1a1a19;
+  --card: #fdfdfd;
+  --card-foreground: #1a1a19;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a19;
+  --primary: #18181b; /* ink */
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f3;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f3;
+  --muted-foreground: #71717a;
+  --accent: #eeeeec; /* hover sutil (convenção shadcn) */
+  --accent-foreground: #18181b;
+  --brand: #2563eb; /* azul de destaque do doc */
+  --brand-foreground: #ffffff;
+  --success: #059669;
+  --warning: #d97706;
+  --destructive: #e11d48; /* rose-500 */
+  --border: rgb(0 0 0 / 0.08);
+  --input: rgb(0 0 0 / 0.10);
+  --ring: #2563eb;
+  --radius: 0.625rem; /* 10px */
+  --chart-1: #2563eb;
+  --chart-2: #0891b2;
+  --chart-3: #059669;
+  --chart-4: #d97706;
+  --chart-5: #e11d48;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a19;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f3;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: rgb(0 0 0 / 0.08);
+  --sidebar-ring: #2563eb;
 }
 
 .dark {
@@ -136,13 +151,13 @@
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px 0px oklch(0.66 0.18 274 / 0.12); }
-  50%       { box-shadow: 0 0 40px 4px oklch(0.66 0.18 274 / 0.25); }
+  0%, 100% { box-shadow: 0 0 20px 0px rgb(37 99 235 / 0.10); }
+  50%       { box-shadow: 0 0 40px 4px rgb(37 99 235 / 0.20); }
 }
 
 @keyframes border-glow {
-  0%, 100% { border-color: oklch(0.66 0.18 274 / 0.25); }
-  50%       { border-color: oklch(0.66 0.18 274 / 0.60); }
+  0%, 100% { border-color: rgb(37 99 235 / 0.25); }
+  50%       { border-color: rgb(37 99 235 / 0.60); }
 }
 
 /* ─── Base ───────────────────────────────────────────────────────── */
@@ -162,11 +177,11 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 12%);
+    background: rgb(0 0 0 / 0.15);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(1 0 0 / 22%);
+    background: rgb(0 0 0 / 0.28);
   }
 }
 
@@ -184,32 +199,36 @@
     animation-delay: var(--delay, 0ms);
   }
 
-  /* Glassmorphism */
+  /* Glassmorphism claro */
   .glass {
-    background: oklch(1 0 0 / 4%);
+    background: rgb(255 255 255 / 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid oklch(1 0 0 / 8%);
+    border: 1px solid rgb(0 0 0 / 0.06);
   }
 
-  /* Glow indigo no hover */
+  /* Painel premium com sombra suave */
+  .shadow-panel {
+    box-shadow: var(--shadow-panel);
+  }
+
+  /* Glow azul no hover */
   .hover-glow {
     transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
   }
   .hover-glow:hover {
-    box-shadow: 0 0 0 1px oklch(0.66 0.18 274 / 0.35),
-                0 8px 32px oklch(0.66 0.18 274 / 0.15),
-                0 2px 8px oklch(0 0 0 / 0.4);
+    box-shadow: 0 0 0 1px rgb(37 99 235 / 0.25),
+                0 10px 30px -10px rgb(37 99 235 / 0.20),
+                0 2px 8px rgb(24 24 27 / 0.06);
     transform: translateY(-1px);
   }
 
-  /* Gradient text indigo */
+  /* Gradient text ink → azul */
   .gradient-text {
     background: linear-gradient(
       135deg,
-      oklch(0.85 0.06 274) 0%,
-      oklch(0.66 0.18 274) 50%,
-      oklch(0.75 0.14 300) 100%
+      #18181b 0%,
+      #2563eb 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -218,7 +237,7 @@
 
   /* Borda animada */
   .glow-border {
-    border: 1px solid oklch(0.66 0.18 274 / 0.25);
+    border: 1px solid rgb(37 99 235 / 0.25);
     animation: border-glow 3s ease-in-out infinite;
   }
 
@@ -226,9 +245,9 @@
   .shimmer-text {
     background: linear-gradient(
       90deg,
-      oklch(0.66 0.18 274 / 0.8) 0%,
-      oklch(0.85 0.06 274) 40%,
-      oklch(0.66 0.18 274 / 0.8) 80%
+      rgb(37 99 235 / 0.85) 0%,
+      rgb(96 165 250 / 0.95) 40%,
+      rgb(37 99 235 / 0.85) 80%
     );
     background-size: 200% auto;
     -webkit-background-clip: text;

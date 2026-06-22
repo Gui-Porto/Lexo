@@ -1,2 +1,11 @@
 # Claude Code local settings (machine-specific permissions)
 .claude/settings.local.json
+
+# Graphify knowledge graph (gerado localmente)
+graphify-out/
+
+# Obsidian vault (gerado localmente)
+.obsidian/
+
+# Arquivos de inventário/índice (nunca rastrear)
+*.inv
