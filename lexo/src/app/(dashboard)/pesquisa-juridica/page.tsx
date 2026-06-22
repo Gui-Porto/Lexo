@@ -1,15 +1,7 @@
-import { requireSession } from "@/lib/session";
-import { PageHeader } from "@/components/page-header";
-import { PesquisaForm } from "./pesquisa-form";
-import { ScaleIcon } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { LexoAIChat } from "./lexo-ai-chat";
 
-export default async function PesquisaJuridicaPage() {
-  await requireSession();
-
-  return (
-    <div className="space-y-8">
-      <PageHeader title="Pesquisa Jurisprudencial" icon={ScaleIcon} />
-      <PesquisaForm />
-    </div>
-  );
+export default async function LexoIAPage() {
+  const session = await auth();
+  return <LexoAIChat userEmail={session?.user?.email ?? undefined} />;
 }
