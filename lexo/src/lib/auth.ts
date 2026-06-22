@@ -15,8 +15,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
         totpCode: {},
+        pendingToken: {},
       },
       authorize: async (credentials) => {
+        const pendingToken = credentials?.pendingToken as string | undefined;
+
+        // 2FA second step: verify encrypted pending token + TOTP code
+        if (pendingToken) {
+          const totpCode = credentials?.totpCode as string | undefined;
+          if (!totpCode) return null;
+          try {
+            const payload = JSON.parse(decryptSecret(pendingToken)) as {
+              userId: string;
+              exp: number;
+            };
+            if (Date.now() > payload.exp) return null;
+            const user = await db.user.findUnique({ where: { id: payload.userId } });
+            if (!user?.totpEnabled || !user.totpSecret) return null;
+            const result = verifySync({
+              token: totpCode.trim(),
+              secret: decryptSecret(user.totpSecret),
+            });
+            if (!result.valid) return null;
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              organizationId: user.organizationId,
+              role: user.role,
+            };
+          } catch {
+            return null;
+          }
+        }
+
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
         const totpCode = credentials?.totpCode as string | undefined;

@@ -56,7 +56,6 @@ const bullets = [
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(login, undefined);
   const [showPass, setShowPass] = useState(false);
-  const [showTotp, setShowTotp] = useState(false);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
@@ -260,32 +259,6 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-            </div>
-
-            {/* 2FA (colapsível) */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowTotp((v) => !v)}
-                style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 12, color: "oklch(0.52 0.02 264)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-              >
-                <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ transform: showTotp ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.15s ease" }}>
-                  <path d="M9 18l6-6-6-6"/>
-                </svg>
-                Tenho um código 2FA
-              </button>
-              {showTotp && (
-                <div style={{ marginTop: 10 }}>
-                  <input
-                    name="totpCode"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="000 000"
-                    autoComplete="one-time-code"
-                    style={{ ...INPUT, paddingLeft: 13, fontFamily: FM, letterSpacing: "0.18em", textAlign: "center" }}
-                  />
-                </div>
-              )}
             </div>
 
             {/* Manter conectado */}
