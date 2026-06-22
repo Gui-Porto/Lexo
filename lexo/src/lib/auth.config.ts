@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
-const PUBLIC_PATHS = ["/login", "/registrar", "/convite"];
+const PUBLIC_EXACT = ["/"];
+const PUBLIC_PREFIX = ["/login", "/registrar", "/convite"];
 
 export const authConfig = {
   trustHost: true,
@@ -10,7 +11,10 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      if (PUBLIC_PATHS.some((p) => nextUrl.pathname.startsWith(p))) return true;
+      const isPublic =
+        PUBLIC_EXACT.includes(nextUrl.pathname) ||
+        PUBLIC_PREFIX.some((p) => nextUrl.pathname.startsWith(p));
+      if (isPublic) return true;
       if (!isLoggedIn) return Response.redirect(new URL("/login", nextUrl));
 
       const role = (auth?.user as { role?: string })?.role;
