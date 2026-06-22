@@ -40,6 +40,18 @@ enum InvoiceStatus {
   CANCELADO
 }
 
+enum TaskStatus {
+  PENDENTE
+  EM_ANDAMENTO
+  CONCLUIDA
+}
+
+enum TaskPriority {
+  BAIXA
+  MEDIA
+  ALTA
+}
+
 model Organization {
   id                   String    @id @default(cuid())
   name                 String
@@ -59,6 +71,7 @@ model Organization {
   invoices     Invoice[]
   activityLogs ActivityLog[]
   timeEntries  TimeEntry[]
+  tasks        Task[]
 }
 
 model User {
@@ -90,6 +103,8 @@ model Client {
   email          String?
   phone          String?
   notes          String?
+  portalEnabled  Boolean      @default(false)
+  portalToken    String?      @unique
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
@@ -120,6 +135,7 @@ model Case {
   invoices     Invoice[]
   activityLogs ActivityLog[]
   timeEntries  TimeEntry[]
+  tasks        Task[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
@@ -229,6 +245,29 @@ model ActivityLog {
   @@index([organizationId])
   @@index([caseId])
   @@index([createdAt])
+}
+
+model Task {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedToId   String?
+  assignedToName String?
+  caseId         String?
+  case           Case?        @relation(fields: [caseId], references: [id])
+  title          String
+  description    String?
+  status         TaskStatus   @default(PENDENTE)
+  priority       TaskPriority @default(MEDIA)
+  dueDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([assignedToId])
+  @@index([caseId])
+  @@index([status])
+  @@index([dueDate])
 }
 
 model TimeEntry {
