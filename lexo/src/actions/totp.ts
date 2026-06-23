@@ -2,6 +2,7 @@
 
 import { generateSecret, verifySync } from "otplib";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { logAudit } from "@/lib/audit";
@@ -54,6 +55,40 @@ export async function confirmTwoFactor(
   });
 
   revalidatePath("/configuracoes/seguranca");
+}
+
+export async function confirmTwoFactorSetup(
+  _prevState: TotpActionResult,
+  formData: FormData
+): Promise<TotpActionResult> {
+  const session = await requireSession();
+  const code = (formData.get("code") as string)?.replace(/\D/g, "").slice(0, 6);
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { totpPendingSecret: true },
+  });
+
+  if (!user?.totpPendingSecret) return { error: "Sessão expirada. Reinicie o processo." };
+
+  const plainSecret = decryptSecret(user.totpPendingSecret);
+  const result = verifySync({ token: code, secret: plainSecret });
+  if (!result.valid) return { error: "Código inválido. Tente novamente." };
+
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { totpSecret: user.totpPendingSecret, totpEnabled: true, totpPendingSecret: null },
+  });
+
+  await logAudit({
+    organizationId: session.user.organizationId,
+    userId: session.user.id,
+    userName: session.user.name ?? session.user.email ?? "",
+    action: "ATIVOU_2FA",
+    description: "Ativou verificação em dois fatores no cadastro",
+  });
+
+  redirect("/processos");
 }
 
 export async function disableTwoFactor(

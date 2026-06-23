@@ -59,7 +59,7 @@ export async function registerOrganization(
     return { error: "Erro ao criar conta. Tente novamente." };
   }
 
-  await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+  await signIn("credentials", { email, password, redirectTo: "/registrar/2fa" });
 
   return { success: true };
 }
