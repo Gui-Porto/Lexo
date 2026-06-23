@@ -72,6 +72,7 @@ model Organization {
   activityLogs ActivityLog[]
   timeEntries  TimeEntry[]
   tasks        Task[]
+  aiThreads    AIThread[]
 }
 
 model User {
@@ -90,6 +91,7 @@ model User {
 
   casesResponsavel Case[]      @relation("CaseResponsavel")
   timeEntries      TimeEntry[]
+  aiThreads        AIThread[]
 
   @@index([organizationId])
 }
@@ -291,4 +293,32 @@ model TimeEntry {
   @@index([userId])
   @@index([caseId])
   @@index([startedAt])
+}
+
+model AIThread {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  messages       AIMessage[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model AIMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+  thread    AIThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([threadId])
+  @@index([createdAt])
 }
