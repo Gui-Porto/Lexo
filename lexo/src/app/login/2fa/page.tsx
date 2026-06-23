@@ -196,8 +196,14 @@ export default function TwoFactorPage() {
 
       {/* Logo */}
       <div style={{ position: "absolute", top: 24, right: 28 }}>
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span style={{ fontFamily: F, fontSize: 20, fontWeight: 700, color: "oklch(0.92 0.01 264)", letterSpacing: "-0.5px" }}>
+        <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <span style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+            <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 4.5V15H15" />
+              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+            </svg>
+          </span>
+          <span style={{ fontFamily: F, fontSize: 20, fontWeight: 700, color: "oklch(0.98 0.008 264)", letterSpacing: "-0.5px" }}>
             Lexo
           </span>
         </Link>

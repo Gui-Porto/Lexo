@@ -88,8 +88,13 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
         <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC} 18%,transparent), transparent)`, filter: "blur(24px)", left: 10, top: 100, pointerEvents: "none" }} />
 
         <Link href="/" style={{ position: "relative", display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-          <span style={{ width: 34, height: 34, borderRadius: 9, background: `linear-gradient(135deg,${AC},${AC2})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", font: `800 18px ${F}`, boxShadow: `0 4px 16px color-mix(in oklab,${AC} 45%,transparent)` }}>L</span>
-          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.5px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
+          <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+            <svg width={19} height={19} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 4.5V15H15" />
+              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+            </svg>
+          </span>
+          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
         </Link>
 
         <div style={{ position: "relative", marginTop: "auto" }}>
