@@ -5,7 +5,12 @@ import QRCode from "qrcode";
 import { initiateTwoFactor } from "@/actions/totp";
 import { decryptSecret } from "@/lib/crypto";
 import { formatDate } from "@/lib/format";
+import { getPlanLimits, canInviteMoreUsers, usersRemainingInPlan } from "@/lib/plan-permissions";
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "@/components/delete-button";
+import { InviteUserForm } from "@/components/usuarios/invite-user-form";
+import { UserRoleForm } from "@/components/usuarios/user-role-form";
+import { removeUser, revokeInvite } from "@/actions/usuarios";
 import {
   Shield,
   ShieldCheck,
@@ -13,17 +18,53 @@ import {
   ClipboardList,
   Settings,
   Lock,
+  UserCog,
+  Crown,
+  Mail,
+  Clock,
 } from "lucide-react";
 import { ConfirmTwoFactorForm, DisableTwoFactorForm } from "./seguranca/totp-forms";
 
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
 const TABS = [
-  { key: "seguranca", label: "Segurança", icon: Lock },
-  { key: "auditoria", label: "Auditoria", icon: ClipboardList, adminOnly: true },
+  { key: "seguranca",  label: "Segurança",  icon: Lock,          adminOnly: false },
+  { key: "usuarios",   label: "Usuários",   icon: UserCog,       adminOnly: true  },
+  { key: "auditoria",  label: "Auditoria",  icon: ClipboardList, adminOnly: true  },
 ] as const;
 
 type Tab = (typeof TABS)[number]["key"];
 
+// ─── Usuários helpers ──────────────────────────────────────────────────────────
+
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "Admin",
+  ADVOGADO: "Advogado",
+  SECRETARIA: "Secretaria",
+};
+
+const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
+  ADMIN:     { bg: "oklch(0.66 0.18 274 / 14%)", color: "oklch(0.75 0.14 274)", border: "oklch(0.66 0.18 274 / 30%)" },
+  ADVOGADO:  { bg: "oklch(0.72 0.15 150 / 12%)", color: "oklch(0.72 0.15 150)", border: "oklch(0.72 0.15 150 / 25%)" },
+  SECRETARIA:{ bg: "oklch(0.70 0.16 50 / 12%)",  color: "oklch(0.80 0.14 50)",  border: "oklch(0.70 0.16 50 / 25%)"  },
+};
+
+const AVATAR_GRADIENTS = [
+  ["oklch(0.45 0.10 274)", "oklch(0.35 0.08 300)"],
+  ["oklch(0.42 0.12 200)", "oklch(0.32 0.09 240)"],
+  ["oklch(0.40 0.12 150)", "oklch(0.30 0.09 170)"],
+  ["oklch(0.45 0.10 80)",  "oklch(0.35 0.08 60)" ],
+  ["oklch(0.45 0.10 300)", "oklch(0.35 0.08 320)"],
+  ["oklch(0.42 0.10 30)",  "oklch(0.32 0.07 20)" ],
+];
+
+function initials(name: string) {
+  return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
 const PAGE_SIZE = 50;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function ConfiguracoesPage({
   searchParams,
@@ -36,9 +77,11 @@ export default async function ConfiguracoesPage({
 
   const rawTab = sp.tab ?? "seguranca";
   const activeTab: Tab =
-    rawTab === "auditoria" && isAdmin ? "auditoria" : "seguranca";
+    rawTab === "usuarios" && isAdmin ? "usuarios" :
+    rawTab === "auditoria" && isAdmin ? "auditoria" :
+    "seguranca";
 
-  // --- Dados de Segurança ---
+  // --- Dados de Segurança (sempre carrega) ---
   const user = await db.user.findUnique({
     where: { id: session.user.id },
     select: { totpEnabled: true, totpPendingSecret: true, email: true },
@@ -58,7 +101,40 @@ export default async function ConfiguracoesPage({
     manualKey = plainSecret;
   }
 
-  // --- Dados de Auditoria (só carrega se for admin na aba certa) ---
+  // --- Dados de Usuários (só para admin na aba certa) ---
+  let users: Awaited<ReturnType<typeof db.user.findMany>> = [];
+  let pendingInvites: Awaited<ReturnType<typeof db.userInvite.findMany>> = [];
+  let org: { plan: string } | null = null;
+
+  if (isAdmin && activeTab === "usuarios") {
+    [users, pendingInvites, org] = await Promise.all([
+      db.user.findMany({
+        where: { organizationId: session.user.organizationId },
+        orderBy: { createdAt: "asc" },
+      }),
+      db.userInvite.findMany({
+        where: {
+          organizationId: session.user.organizationId,
+          acceptedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      db.organization.findUnique({
+        where: { id: session.user.organizationId },
+        select: { plan: true },
+      }),
+    ]);
+  }
+
+  const plan = org?.plan ?? "trial";
+  const limits = getPlanLimits(plan);
+  const canInvite = canInviteMoreUsers(plan, users.length);
+  const remaining = usersRemainingInPlan(plan, users.length);
+  const isAtLimit = !canInvite;
+  const hasLimit = limits.maxUsers !== Infinity;
+
+  // --- Dados de Auditoria (só para admin na aba certa) ---
   let auditLogs: Awaited<ReturnType<typeof db.auditLog.findMany>> = [];
   let auditTotal = 0;
   let auditTotalPages = 0;
@@ -87,14 +163,10 @@ export default async function ConfiguracoesPage({
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 12,
+            width: 40, height: 40, borderRadius: 12,
             background: "oklch(0.66 0.18 274 / 14%)",
             border: "1px solid oklch(0.66 0.18 274 / 25%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: "flex", alignItems: "center", justifyContent: "center",
           }}
         >
           <Settings size={18} color="oklch(0.75 0.14 274)" />
@@ -104,7 +176,7 @@ export default async function ConfiguracoesPage({
             Configurações
           </h1>
           <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 2 }}>
-            Segurança da conta e logs de auditoria
+            Segurança, usuários e logs de auditoria
           </p>
         </div>
       </div>
@@ -112,12 +184,10 @@ export default async function ConfiguracoesPage({
       {/* Tabs */}
       <div
         style={{
-          display: "flex",
-          gap: 4,
+          display: "flex", gap: 4,
           background: "oklch(0.11 0.016 264)",
           border: "1px solid oklch(1 0 0 / 7%)",
-          borderRadius: 12,
-          padding: 4,
+          borderRadius: 12, padding: 4,
           width: "fit-content",
         }}
       >
@@ -128,15 +198,9 @@ export default async function ConfiguracoesPage({
               key={key}
               href={`/configuracoes?tab=${key}`}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 7,
-                padding: "8px 16px",
-                borderRadius: 9,
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "none",
-                transition: "all 0.15s",
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "8px 16px", borderRadius: 9,
+                fontSize: 13, fontWeight: 600, textDecoration: "none",
                 background: isActive ? "oklch(0.155 0.02 264)" : "transparent",
                 color: isActive ? "oklch(0.92 0.01 264)" : "oklch(0.50 0.02 264)",
                 border: isActive ? "1px solid oklch(1 0 0 / 8%)" : "1px solid transparent",
@@ -150,41 +214,28 @@ export default async function ConfiguracoesPage({
         })}
       </div>
 
-      {/* Aba: Segurança */}
+      {/* ─── Aba: Segurança ────────────────────────────────────────────────── */}
       {activeTab === "seguranca" && (
         <div
           style={{
             background: "oklch(0.14 0.016 264 / 0.6)",
             border: "1px solid oklch(1 0 0 / 7%)",
-            borderRadius: 18,
-            padding: 24,
-            maxWidth: 520,
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
+            borderRadius: 18, padding: 24, maxWidth: 520,
+            display: "flex", flexDirection: "column", gap: 20,
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
-                background: user?.totpEnabled
-                  ? "oklch(0.72 0.15 150 / 14%)"
-                  : "oklch(0.22 0.018 264)",
+                width: 44, height: 44, borderRadius: 12,
+                background: user?.totpEnabled ? "oklch(0.72 0.15 150 / 14%)" : "oklch(0.22 0.018 264)",
                 border: `1px solid ${user?.totpEnabled ? "oklch(0.72 0.15 150 / 25%)" : "oklch(1 0 0 / 7%)"}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}
             >
-              {user?.totpEnabled ? (
-                <ShieldCheck size={20} color="oklch(0.72 0.15 150)" />
-              ) : (
-                <ShieldOff size={20} color="oklch(0.45 0.02 264)" />
-              )}
+              {user?.totpEnabled
+                ? <ShieldCheck size={20} color="oklch(0.72 0.15 150)" />
+                : <ShieldOff size={20} color="oklch(0.45 0.02 264)" />}
             </div>
             <div>
               <p style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.92 0.01 264)", margin: 0 }}>
@@ -207,14 +258,7 @@ export default async function ConfiguracoesPage({
                   1. Escaneie com Google Authenticator, Authy ou similar:
                 </p>
                 {qrDataUrl && (
-                  <div
-                    style={{
-                      display: "inline-block",
-                      borderRadius: 12,
-                      overflow: "hidden",
-                      border: "1px solid oklch(1 0 0 / 10%)",
-                    }}
-                  >
+                  <div style={{ display: "inline-block", borderRadius: 12, overflow: "hidden", border: "1px solid oklch(1 0 0 / 10%)" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={qrDataUrl} alt="QR Code 2FA" width={200} height={200} />
                   </div>
@@ -226,12 +270,8 @@ export default async function ConfiguracoesPage({
                 </p>
                 <code
                   style={{
-                    display: "block",
-                    borderRadius: 8,
-                    padding: "10px 14px",
-                    fontSize: 12,
-                    fontFamily: "monospace",
-                    wordBreak: "break-all",
+                    display: "block", borderRadius: 8, padding: "10px 14px",
+                    fontSize: 12, fontFamily: "monospace", wordBreak: "break-all",
                     background: "oklch(0.11 0.016 264 / 0.8)",
                     color: "oklch(0.75 0.12 274)",
                     border: "1px solid oklch(0.66 0.18 274 / 20%)",
@@ -250,109 +290,241 @@ export default async function ConfiguracoesPage({
         </div>
       )}
 
-      {/* Aba: Auditoria */}
-      {activeTab === "auditoria" && isAdmin && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      {/* ─── Aba: Usuários ─────────────────────────────────────────────────── */}
+      {activeTab === "usuarios" && isAdmin && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* Cabeçalho da aba */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
             <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", margin: 0 }}>
-              {auditTotal} registro{auditTotal !== 1 ? "s" : ""} de auditoria
+              {users.length} membro{users.length !== 1 ? "s" : ""} ativos
             </p>
-          </div>
-
-          {auditLogs.length === 0 ? (
             <div
               style={{
-                padding: "60px 32px",
-                textAlign: "center",
-                background: "oklch(0.115 0.018 264)",
-                border: "1px dashed oklch(0.25 0.018 264)",
-                borderRadius: 16,
+                display: "flex", alignItems: "center", gap: 7,
+                background: isAtLimit ? "oklch(0.70 0.18 30 / 10%)" : "oklch(0.66 0.18 274 / 8%)",
+                border: `1px solid ${isAtLimit ? "oklch(0.70 0.18 30 / 25%)" : "oklch(0.66 0.18 274 / 20%)"}`,
+                borderRadius: 9, padding: "6px 12px",
               }}
             >
+              <Crown size={12} color={isAtLimit ? "oklch(0.70 0.18 30)" : AC} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: isAtLimit ? "oklch(0.75 0.14 30)" : "oklch(0.72 0.12 274)" }}>
+                {hasLimit
+                  ? `${users.length} / ${limits.maxUsers} · Plano ${limits.label}`
+                  : `Plano ${limits.label} · ilimitado`}
+              </span>
+            </div>
+          </div>
+
+          {/* Aviso de limite */}
+          {isAtLimit && (
+            <div
+              style={{
+                background: "oklch(0.70 0.18 30 / 9%)",
+                border: "1px solid oklch(0.70 0.18 30 / 25%)",
+                borderRadius: 12, padding: "14px 18px",
+                display: "flex", alignItems: "center", gap: 12,
+              }}
+            >
+              <span style={{ fontSize: 18 }}>⚠️</span>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "oklch(0.82 0.14 50)", margin: 0 }}>
+                  Limite de usuários atingido
+                </p>
+                <p style={{ fontSize: 12, color: "oklch(0.65 0.10 50)", marginTop: 2 }}>
+                  O plano {limits.label} permite até {limits.maxUsers} usuários.{" "}
+                  <a href="/planos" style={{ color: AC, textDecoration: "underline" }}>
+                    Faça upgrade para adicionar mais.
+                  </a>
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Lista de membros */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "oklch(0.40 0.02 264)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+              Membros ativos
+            </p>
+            {users.map((u, i) => {
+              const [c1, c2] = AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length];
+              const roleStyle = ROLE_COLORS[u.role] ?? ROLE_COLORS.ADVOGADO;
+              const isMe = u.id === session.user.id;
+              return (
+                <div
+                  key={u.id}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 14,
+                    background: "oklch(0.155 0.02 264)",
+                    border: `1px solid ${isMe ? "oklch(0.66 0.18 274 / 20%)" : "oklch(1 0 0 / 7%)"}`,
+                    borderRadius: 14, padding: "13px 16px",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 40, height: 40, borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${c1}, ${c2})`,
+                      flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Geist', sans-serif",
+                    }}
+                  >
+                    {initials(u.name)}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "oklch(0.94 0.01 264)" }}>{u.name}</span>
+                      {isMe && (
+                        <span style={{ fontSize: 10, fontWeight: 700, background: "oklch(0.66 0.18 274 / 14%)", color: AC, border: "1px solid oklch(0.66 0.18 274 / 25%)", borderRadius: 99, padding: "2px 8px" }}>
+                          VOCÊ
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
+                      <Mail size={11} color="oklch(0.45 0.02 264)" />
+                      <span style={{ fontSize: 12, color: "oklch(0.55 0.02 264)" }}>{u.email}</span>
+                    </div>
+                  </div>
+                  <div style={{ flexShrink: 0 }}>
+                    {isMe ? (
+                      <span style={{ fontSize: 11, fontWeight: 600, background: roleStyle.bg, color: roleStyle.color, border: `1px solid ${roleStyle.border}`, borderRadius: 8, padding: "4px 10px" }}>
+                        {ROLE_LABELS[u.role]}
+                      </span>
+                    ) : (
+                      <UserRoleForm userId={u.id} currentRole={u.role} />
+                    )}
+                  </div>
+                  {!isMe && (
+                    <div style={{ flexShrink: 0 }}>
+                      <DeleteButton action={removeUser.bind(null, u.id)} label="Remover" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Convites pendentes */}
+          {pendingInvites.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "oklch(0.40 0.02 264)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+                Convites pendentes
+              </p>
+              {pendingInvites.map((invite) => {
+                const roleStyle = ROLE_COLORS[invite.role] ?? ROLE_COLORS.ADVOGADO;
+                return (
+                  <div
+                    key={invite.id}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 14,
+                      background: "oklch(0.135 0.016 264)",
+                      border: "1px dashed oklch(1 0 0 / 10%)",
+                      borderRadius: 14, padding: "13px 16px",
+                    }}
+                  >
+                    <div style={{ width: 40, height: 40, borderRadius: "50%", background: "oklch(0.22 0.018 264)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Clock size={15} color="oklch(0.45 0.02 264)" />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: 14, fontWeight: 500, color: "oklch(0.72 0.01 264)" }}>{invite.name}</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
+                        <Mail size={11} color="oklch(0.40 0.02 264)" />
+                        <span style={{ fontSize: 12, color: "oklch(0.48 0.02 264)" }}>{invite.email}</span>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, background: roleStyle.bg, color: roleStyle.color, border: `1px solid ${roleStyle.border}`, borderRadius: 8, padding: "4px 10px", flexShrink: 0 }}>
+                      {ROLE_LABELS[invite.role]}
+                    </span>
+                    <span style={{ fontSize: 11, color: "oklch(0.45 0.02 264)", flexShrink: 0, whiteSpace: "nowrap" }}>
+                      expira {formatDate(invite.expiresAt)}
+                    </span>
+                    <div style={{ flexShrink: 0 }}>
+                      <DeleteButton action={revokeInvite.bind(null, invite.id)} label="Revogar" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Convidar usuário */}
+          <div
+            style={{
+              background: canInvite ? "oklch(0.135 0.018 264)" : "oklch(0.11 0.014 264)",
+              border: canInvite ? "1px solid oklch(1 0 0 / 7%)" : "1px solid oklch(1 0 0 / 5%)",
+              borderRadius: 16, padding: "20px 22px", maxWidth: 460,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 5 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: canInvite ? "oklch(0.92 0.01 264)" : "oklch(0.45 0.02 264)", margin: 0 }}>
+                Convidar usuário
+              </h3>
+              {hasLimit && !isAtLimit && (
+                <span style={{ fontSize: 11, color: "oklch(0.50 0.02 264)" }}>
+                  {remaining === Infinity ? "" : `${remaining} vaga${remaining !== 1 ? "s" : ""} restante${remaining !== 1 ? "s" : ""}`}
+                </span>
+              )}
+            </div>
+            <p style={{ fontSize: 13, color: "oklch(0.50 0.02 264)", marginBottom: 16 }}>
+              {canInvite
+                ? "Um email será enviado com o link para o usuário criar sua senha."
+                : "Limite atingido. Faça upgrade para convidar mais pessoas."}
+            </p>
+            {canInvite ? (
+              <InviteUserForm />
+            ) : (
+              <a
+                href="/planos"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 7,
+                  background: "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.55 0.2 290))",
+                  color: "#fff", borderRadius: 10, padding: "10px 18px",
+                  fontSize: 13, fontWeight: 700, textDecoration: "none",
+                  boxShadow: "0 4px 16px oklch(0.66 0.18 274 / 35%)",
+                }}
+              >
+                ⚡ Ver planos e fazer upgrade
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Aba: Auditoria ────────────────────────────────────────────────── */}
+      {activeTab === "auditoria" && isAdmin && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", margin: 0 }}>
+            {auditTotal} registro{auditTotal !== 1 ? "s" : ""} de auditoria
+          </p>
+
+          {auditLogs.length === 0 ? (
+            <div style={{ padding: "60px 32px", textAlign: "center", background: "oklch(0.115 0.018 264)", border: "1px dashed oklch(0.25 0.018 264)", borderRadius: 16 }}>
               <p style={{ fontSize: 14, color: "oklch(0.45 0.02 264)", margin: 0 }}>
                 Nenhuma ação registrada ainda.
               </p>
             </div>
           ) : (
-            <div
-              style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(1 0 0 / 7%)",
-                borderRadius: 16,
-                overflow: "hidden",
-              }}
-            >
-              {/* Cabeçalho */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "160px 150px 180px 1fr",
-                  gap: 0,
-                  padding: "10px 20px",
-                  background: "oklch(0.11 0.016 264)",
-                  borderBottom: "1px solid oklch(1 0 0 / 7%)",
-                }}
-              >
+            <div style={{ background: "oklch(0.115 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "10px 20px", background: "oklch(0.11 0.016 264)", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
                 {["Data", "Usuário", "Ação", "Descrição"].map((h) => (
-                  <span
-                    key={h}
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      color: "oklch(0.40 0.02 264)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
+                  <span key={h} style={{ fontSize: 10, fontWeight: 600, color: "oklch(0.40 0.02 264)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                     {h}
                   </span>
                 ))}
               </div>
-
-              {/* Linhas */}
               {auditLogs.map((log, i) => (
-                <div
-                  key={log.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "160px 150px 180px 1fr",
-                    gap: 0,
-                    padding: "12px 20px",
-                    borderBottom: i < auditLogs.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", fontVariantNumeric: "tabular-nums" }}>
-                    {formatDate(log.createdAt)}
-                  </span>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: "oklch(0.82 0.01 264)" }}>
-                    {log.userName}
-                  </span>
+                <div key={log.id} style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "12px 20px", borderBottom: i < auditLogs.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", fontVariantNumeric: "tabular-nums" }}>{formatDate(log.createdAt)}</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "oklch(0.82 0.01 264)" }}>{log.userName}</span>
                   <span>
-                    <span
-                      style={{
-                        borderRadius: 6,
-                        padding: "3px 8px",
-                        fontSize: 11,
-                        fontFamily: "monospace",
-                        fontWeight: 600,
-                        background: "oklch(0.66 0.18 274 / 10%)",
-                        color: "oklch(0.75 0.12 274)",
-                        border: "1px solid oklch(0.66 0.18 274 / 20%)",
-                      }}
-                    >
+                    <span style={{ borderRadius: 6, padding: "3px 8px", fontSize: 11, fontFamily: "monospace", fontWeight: 600, background: "oklch(0.66 0.18 274 / 10%)", color: "oklch(0.75 0.12 274)", border: "1px solid oklch(0.66 0.18 274 / 20%)" }}>
                       {log.action}
                     </span>
                   </span>
-                  <span style={{ fontSize: 12, color: "oklch(0.55 0.02 264)" }}>
-                    {log.description}
-                  </span>
+                  <span style={{ fontSize: 12, color: "oklch(0.55 0.02 264)" }}>{log.description}</span>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Paginação */}
           {auditTotalPages > 1 && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 4 }}>
               <span style={{ fontSize: 13, color: "oklch(0.45 0.02 264)" }}>
@@ -360,20 +532,10 @@ export default async function ConfiguracoesPage({
               </span>
               <div style={{ display: "flex", gap: 8 }}>
                 {auditPage > 1 && (
-                  <a
-                    href={`?tab=auditoria&page=${auditPage - 1}`}
-                    style={{ fontSize: 13, color: AC, textDecoration: "none", fontWeight: 500 }}
-                  >
-                    ← Anterior
-                  </a>
+                  <a href={`?tab=auditoria&page=${auditPage - 1}`} style={{ fontSize: 13, color: AC, textDecoration: "none", fontWeight: 500 }}>← Anterior</a>
                 )}
                 {auditPage < auditTotalPages && (
-                  <a
-                    href={`?tab=auditoria&page=${auditPage + 1}`}
-                    style={{ fontSize: 13, color: AC, textDecoration: "none", fontWeight: 500 }}
-                  >
-                    Próxima →
-                  </a>
+                  <a href={`?tab=auditoria&page=${auditPage + 1}`} style={{ fontSize: 13, color: AC, textDecoration: "none", fontWeight: 500 }}>Próxima →</a>
                 )}
               </div>
             </div>
