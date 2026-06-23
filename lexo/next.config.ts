@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // Render free tier tem 512MB RAM — limita workers para evitar OOM no build
+    cpus: 1,
+  },
   async headers() {
     return [
       {
