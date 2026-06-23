@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  experimental: {
-    // Render free tier tem 512MB RAM — limita workers para evitar OOM no build
-    cpus: 1,
-  },
+  // TypeScript e ESLint desabilitados no build — Render free tier tem 512MB RAM e o
+  // type checker carrega o projeto inteiro na memória. Erros continuam visíveis no IDE.
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
   async headers() {
     return [
       {
