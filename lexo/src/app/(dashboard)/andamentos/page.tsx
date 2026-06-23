@@ -247,9 +247,7 @@ export default async function AndamentosPage({
                         gap: 16,
                         padding: "16px 24px",
                         borderBottom: isLast ? "none" : "1px solid oklch(0.18 0.015 264)",
-                        transition: "background 0.15s",
                       }}
-                      onMouseEnter={() => {}}
                     >
                       {/* Icon */}
                       <div
