@@ -6,8 +6,9 @@ import { SidebarNav } from "@/components/sidebar-nav";
 import { logout } from "@/actions/logout";
 import { FlashToast } from "@/components/flash-toast";
 import { TrialBanner } from "@/components/trial-banner";
-import { LogOut, Bell, Search, Sparkles } from "lucide-react";
+import { LogOut, Bell, Sparkles } from "lucide-react";
 import { LogoWordmark } from "@/components/ui/logo";
+import { CommandPalette } from "@/components/command-palette";
 
 const AC = "oklch(0.66 0.18 274)";
 
@@ -182,47 +183,8 @@ export default async function DashboardLayout({
             flexShrink: 0,
           }}
         >
-          {/* Search bar */}
-          <div
-            style={{
-              flex: 1,
-              maxWidth: 420,
-              height: 38,
-              border: "1px solid oklch(1 0 0 / 9%)",
-              borderRadius: 10,
-              display: "flex",
-              alignItems: "center",
-              padding: "0 13px",
-              gap: 9,
-              background: "oklch(0.14 0.018 264)",
-            }}
-          >
-            <Search size={15} color="oklch(0.5 0.02 264)" />
-            <span
-              style={{
-                fontFamily: "'Geist', sans-serif",
-                fontSize: 13,
-                color: "oklch(0.5 0.02 264)",
-                flex: 1,
-              }}
-            >
-              Buscar processo, cliente, prazo…
-            </span>
-            <span
-              style={{
-                marginLeft: "auto",
-                fontFamily: "'Geist Mono', monospace",
-                fontSize: 11,
-                fontWeight: 500,
-                color: "oklch(0.45 0.02 264)",
-                border: "1px solid oklch(1 0 0 / 9%)",
-                borderRadius: 5,
-                padding: "1px 6px",
-              }}
-            >
-              ⌘K
-            </span>
-          </div>
+          {/* Search bar → Command Palette */}
+          <CommandPalette />
 
           {/* Right actions */}
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
