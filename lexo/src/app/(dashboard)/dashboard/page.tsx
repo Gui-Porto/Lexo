@@ -312,7 +312,6 @@ export default async function DashboardPage() {
             border: `1px solid color-mix(in oklab, ${AC} 30%, transparent)`,
           }}
         >
-          <span style={{ position: "absolute", top: 13, right: 13, fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab, ${AC} 20%, transparent)`, padding: "1px 7px", borderRadius: 999 }}>NOVO</span>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.7 0.04 274)" }}>Horas faturáveis</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>{horasFaturaveis}h</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: SUCCESS }}>este mês</div>
@@ -327,7 +326,6 @@ export default async function DashboardPage() {
             border: `1px solid color-mix(in oklab, ${AC} 30%, transparent)`,
           }}
         >
-          <span style={{ position: "absolute", top: 13, right: 13, fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab, ${AC} 20%, transparent)`, padding: "1px 7px", borderRadius: 999 }}>NOVO</span>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.7 0.04 274)" }}>Taxa de êxito prevista</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>74%</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: TEAL }}>carteira ativa · IA</div>

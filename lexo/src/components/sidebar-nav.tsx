@@ -48,21 +48,21 @@ const NAV: NavGroup[] = [
     label: "IA & INTELIGÊNCIA",
     items: [
       { href: "/pesquisa-juridica", label: "Lexo IA",    icon: Sparkles,  roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
-      { href: "/jurimetria",        label: "Jurimetria", icon: BarChart2, roles: ["ADMIN", "ADVOGADO"], novo: true },
+      { href: "/jurimetria",        label: "Jurimetria", icon: BarChart2, roles: ["ADMIN", "ADVOGADO"] },
     ],
   },
   {
     label: "PRODUTIVIDADE",
     items: [
-      { href: "/timesheet",  label: "Timesheet",  icon: Timer,        roles: ["ADMIN", "ADVOGADO"],                novo: true },
-      { href: "/tarefas",    label: "Tarefas",    icon: CheckSquare,  roles: ["ADMIN", "ADVOGADO", "SECRETARIA"],  novo: true },
-      { href: "/andamentos", label: "Andamentos", icon: Activity,     roles: ["ADMIN", "ADVOGADO", "SECRETARIA"],  novo: true },
+      { href: "/timesheet",  label: "Timesheet",  icon: Timer,        roles: ["ADMIN", "ADVOGADO"] },
+      { href: "/tarefas",    label: "Tarefas",    icon: CheckSquare,  roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
+      { href: "/andamentos", label: "Andamentos", icon: Activity,     roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
     ],
   },
   {
     label: "RELACIONAMENTO",
     items: [
-      { href: "/portal-cliente",         label: "Portal Cliente", icon: Globe,        roles: ["ADMIN", "ADVOGADO"],   novo: true },
+      { href: "/portal-cliente",         label: "Portal Cliente", icon: Globe,        roles: ["ADMIN", "ADVOGADO"] },
       { href: "/configuracoes/usuarios", label: "Usuários",       icon: UserCog,      roles: ["ADMIN"] },
     ],
   },
