@@ -12,33 +12,40 @@ const pool = new Pool({
 });
 const db = new PrismaClient({ adapter: new PrismaPg(pool) });
 
-async function main() {
-  console.log("🌱 Iniciando seed...");
+const hash = (pw: string) => bcrypt.hashSync(pw, 10);
 
-  // Limpeza de dados anteriores do seed
-  const existing = await db.user.findFirst({ where: { email: "admin@lexo.dev" } });
+const d = (daysOffset: number) => {
+  const today = new Date();
+  const dt = new Date(today);
+  dt.setDate(dt.getDate() + daysOffset);
+  dt.setUTCHours(0, 0, 0, 0);
+  return dt;
+};
+
+async function cleanOrg(email: string) {
+  const existing = await db.user.findFirst({ where: { email } });
   if (existing) {
     await db.organization.delete({ where: { id: existing.organizationId } });
-    console.log("✓ Dados anteriores removidos");
+    console.log(`✓ Org de ${email} removida`);
   }
+}
 
-  // Organização
+async function seedTrial() {
+  await cleanOrg("trial@lexo.dev");
+
   const org = await db.organization.create({
     data: {
-      name: "Escritório Teste & Advogados",
+      name: "Advocacia Silva & Associados",
       plan: "trial",
+      trialEndsAt: d(7), // 7 dias restantes
     },
   });
-  console.log(`✓ Organização criada: ${org.name} (${org.id})`);
-
-  // Usuários
-  const hash = (pw: string) => bcrypt.hashSync(pw, 10);
 
   const admin = await db.user.create({
     data: {
       organizationId: org.id,
       name: "Ana Carolina Lima",
-      email: "admin@lexo.dev",
+      email: "trial@lexo.dev",
       passwordHash: hash("senha123"),
       role: "ADMIN",
     },
@@ -48,7 +55,78 @@ async function main() {
     data: {
       organizationId: org.id,
       name: "Rafael Mendonça",
-      email: "rafael@lexo.dev",
+      email: "trial.advogado@lexo.dev",
+      passwordHash: hash("senha123"),
+      role: "ADVOGADO",
+    },
+  });
+
+  console.log(`✓ Org Trial criada: ${org.name} (plano: ${org.plan}, expira em 7 dias)`);
+
+  // Clientes básicos
+  const clientes = await Promise.all([
+    db.client.create({ data: { organizationId: org.id, name: "João Pedro Alves", document: "123.456.789-09", email: "joao@gmail.com", phone: "(11) 98765-4321" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Maria Fernanda Souza", document: "987.654.321-00", email: "maria@hotmail.com", phone: "(21) 99123-5678" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Construtora Nobre Ltda", document: "12.345.678/0001-99", email: "juridico@nobre.com.br" } }),
+  ]);
+  console.log(`✓ ${clientes.length} clientes criados (Trial)`);
+
+  // Processos (limitado a 5 de 10 do trial)
+  const casos = await Promise.all([
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[0].id, number: "0001234-12.2024.8.26.0100", area: "Trabalhista", status: "ATIVO", description: "Reclamação trabalhista por verbas rescisórias.", responsavelId: advogado.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[1].id, number: "0005678-45.2023.8.26.0100", area: "Trabalhista", status: "ATIVO", description: "Horas extras não reconhecidas.", responsavelId: advogado.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[2].id, number: "0009999-01.2024.8.26.0200", area: "Cível", status: "SUSPENSO", description: "Ação de cobrança.", responsavelId: admin.id } }),
+  ]);
+  console.log(`✓ ${casos.length} processos criados (Trial)`);
+
+  // Alguns andamentos
+  for (const caso of casos) {
+    await db.activityLog.create({
+      data: {
+        organizationId: org.id,
+        caseId: caso.id,
+        userName: admin.name,
+        action: `Processo criado — ${caso.area}`,
+        createdAt: d(-3),
+      },
+    });
+  }
+
+  // Prazos
+  await db.deadline.create({ data: { organizationId: org.id, caseId: casos[0].id, type: "PRAZO", title: "Contestação", date: d(5), status: "PENDENTE" } });
+  await db.deadline.create({ data: { organizationId: org.id, caseId: casos[1].id, type: "AUDIENCIA", title: "Audiência de instrução", date: d(12), status: "PENDENTE" } });
+
+  // Honorários
+  await db.invoice.create({ data: { organizationId: org.id, clientId: clientes[0].id, caseId: casos[0].id, description: "Honorários iniciais", amount: 2500, status: "PENDENTE", dueDate: d(10) } });
+
+  return { admin, advogado };
+}
+
+async function seedPro() {
+  await cleanOrg("pro@lexo.dev");
+
+  const org = await db.organization.create({
+    data: {
+      name: "Escritório Borges & Associados",
+      plan: "pro",
+    },
+  });
+
+  const admin = await db.user.create({
+    data: {
+      organizationId: org.id,
+      name: "Beatriz Borges",
+      email: "pro@lexo.dev",
+      passwordHash: hash("senha123"),
+      role: "ADMIN",
+    },
+  });
+
+  const advogado = await db.user.create({
+    data: {
+      organizationId: org.id,
+      name: "Carlos Eduardo Rodrigues",
+      email: "pro.advogado@lexo.dev",
       passwordHash: hash("senha123"),
       role: "ADVOGADO",
     },
@@ -58,194 +136,123 @@ async function main() {
     data: {
       organizationId: org.id,
       name: "Fernanda Costa",
-      email: "fernanda@lexo.dev",
+      email: "pro.secretaria@lexo.dev",
       passwordHash: hash("senha123"),
       role: "SECRETARIA",
     },
   });
 
-  console.log(`✓ Usuários criados: ${admin.email}, ${advogado.email}, ${secretaria.email}`);
+  const advogado2 = await db.user.create({
+    data: {
+      organizationId: org.id,
+      name: "Lucas Mendes",
+      email: "pro.advogado2@lexo.dev",
+      passwordHash: hash("senha123"),
+      role: "ADVOGADO",
+    },
+  });
+
+  console.log(`✓ Org Pro criada: ${org.name} (plano: ${org.plan})`);
 
   // Clientes
-  const clientesData = [
-    {
-      name: "João Pedro Alves",
-      document: "123.456.789-09",
-      email: "joao.alves@gmail.com",
-      phone: "(11) 98765-4321",
-      notes: "Cliente desde 2022. Prefere contato por WhatsApp.",
-    },
-    {
-      name: "Maria Fernanda Souza",
-      document: "987.654.321-00",
-      email: "maria.souza@hotmail.com",
-      phone: "(21) 99123-5678",
-      notes: "Caso trabalhista em andamento.",
-    },
-    {
-      name: "Construtora Nobre Ltda",
-      document: "12.345.678/0001-99",
-      email: "juridico@construtora-nobre.com.br",
-      phone: "(11) 3456-7890",
-      notes: "Empresa do setor civil. CNPJ verificado.",
-    },
-    {
-      name: "Carlos Eduardo Rodrigues",
-      document: "456.789.123-05",
-      email: "carlos.rodrigues@outlook.com",
-      phone: "(31) 97654-3210",
-      notes: "Processo de divórcio litigioso.",
-    },
-    {
-      name: "Beatriz Oliveira Martins",
-      document: "321.654.987-12",
-      email: "beatriz.martins@yahoo.com.br",
-      phone: "(85) 98811-2233",
-      notes: "Inventário do pai, três herdeiros.",
-    },
-    {
-      name: "Tech Solutions EIRELI",
-      document: "98.765.432/0001-10",
-      email: "contato@techsolutions.io",
-      phone: "(11) 4567-8901",
-      notes: "Startup de tecnologia. Contrato de prestação de serviços.",
-    },
-  ];
-
-  const clientes = await Promise.all(
-    clientesData.map((c) =>
-      db.client.create({ data: { organizationId: org.id, ...c } })
-    )
-  );
-  console.log(`✓ ${clientes.length} clientes criados`);
+  const clientes = await Promise.all([
+    db.client.create({ data: { organizationId: org.id, name: "Tech Solutions EIRELI", document: "98.765.432/0001-10", email: "contato@techsolutions.io", phone: "(11) 4567-8901" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Maria Fernanda Souza", document: "987.654.321-00", email: "maria.souza@hotmail.com", phone: "(21) 99123-5678", notes: "Caso trabalhista." } }),
+    db.client.create({ data: { organizationId: org.id, name: "Construtora Horizonte Ltda", document: "11.222.333/0001-44", email: "juridico@horizonte.com.br" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Roberto Fonseca", document: "234.567.890-12", email: "roberto.fonseca@gmail.com", phone: "(31) 97654-3210" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Beatriz Oliveira", document: "321.654.987-12", email: "beatriz.oliveira@yahoo.com.br" } }),
+    db.client.create({ data: { organizationId: org.id, name: "Grupo Empresarial Norte S/A", document: "55.666.777/0001-88", email: "juridico@gruponorte.com.br" } }),
+  ]);
+  console.log(`✓ ${clientes.length} clientes criados (Pro)`);
 
   // Processos
-  const casosData = [
-    {
-      clientId: clientes[0].id,
-      number: "0001234-12.2024.8.26.0100",
-      area: "Trabalhista",
-      status: "ATIVO" as const,
-      description: "Reclamação trabalhista por verbas rescisórias não pagas.",
-      responsavelId: advogado.id,
-    },
-    {
-      clientId: clientes[1].id,
-      number: "0005678-45.2023.8.26.0100",
-      area: "Trabalhista",
-      status: "ATIVO" as const,
-      description: "Horas extras e adicional noturno não reconhecidos.",
-      responsavelId: advogado.id,
-    },
-    {
-      clientId: clientes[2].id,
-      number: "0009999-01.2024.8.26.0200",
-      area: "Cível",
-      status: "SUSPENSO" as const,
-      description: "Ação de cobrança por inadimplemento contratual na obra Residencial das Flores.",
-      responsavelId: admin.id,
-    },
-    {
-      clientId: clientes[3].id,
-      number: "0002345-67.2025.8.26.0100",
-      area: "Família",
-      status: "ATIVO" as const,
-      description: "Divórcio litigioso com partilha de bens e guarda compartilhada.",
-      responsavelId: admin.id,
-    },
-    {
-      clientId: clientes[4].id,
-      number: "0003456-78.2024.8.26.0300",
-      area: "Sucessões",
-      status: "ATIVO" as const,
-      description: "Inventário extrajudicial com três herdeiros e imóvel rural.",
-      responsavelId: advogado.id,
-    },
-    {
-      clientId: clientes[5].id,
-      number: "0007777-22.2025.8.26.0100",
-      area: "Empresarial",
-      status: "ATIVO" as const,
-      description: "Revisão e elaboração de contratos de prestação de serviços de TI.",
-      responsavelId: admin.id,
-    },
-    {
-      clientId: clientes[0].id,
-      number: "0008888-33.2023.8.26.0100",
-      area: "Previdenciário",
-      status: "ENCERRADO" as const,
-      description: "Revisão de benefício de aposentadoria por invalidez. Processo encerrado com êxito.",
-      responsavelId: advogado.id,
-    },
+  const casos = await Promise.all([
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[0].id, number: "0001111-12.2024.8.26.0100", area: "Empresarial", status: "ATIVO", description: "Elaboração de contratos de TI.", responsavelId: advogado.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[1].id, number: "0002222-45.2023.8.26.0100", area: "Trabalhista", status: "ATIVO", description: "Horas extras e adicional noturno.", responsavelId: advogado.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[2].id, number: "0003333-01.2024.8.26.0200", area: "Cível", status: "ATIVO", description: "Ação de cobrança contratual.", responsavelId: advogado2.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[3].id, number: "0004444-67.2025.8.26.0100", area: "Família", status: "ATIVO", description: "Divórcio consensual.", responsavelId: admin.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[4].id, number: "0005555-78.2024.8.26.0300", area: "Sucessões", status: "ATIVO", description: "Inventário extrajudicial.", responsavelId: advogado2.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[5].id, number: "0006666-22.2025.8.26.0100", area: "Tributário", status: "ATIVO", description: "Planejamento tributário.", responsavelId: advogado.id } }),
+    db.case.create({ data: { organizationId: org.id, clientId: clientes[0].id, number: "0007777-33.2023.8.26.0100", area: "Empresarial", status: "ENCERRADO", description: "Due diligence — encerrado com êxito.", responsavelId: advogado.id } }),
+  ]);
+  console.log(`✓ ${casos.length} processos criados (Pro)`);
+
+  // Andamentos
+  const actionsByCase = [
+    { caseId: casos[0].id, actions: ["Processo criado — Empresarial", "Status atualizado para ATIVO", "Documentação recebida do cliente"] },
+    { caseId: casos[1].id, actions: ["Processo criado — Trabalhista", "Petição inicial protocolada"] },
+    { caseId: casos[2].id, actions: ["Processo criado — Cível", "Audiência de conciliação agendada", "Status atualizado"] },
+    { caseId: casos[3].id, actions: ["Processo criado — Família"] },
+    { caseId: casos[4].id, actions: ["Processo criado — Sucessões", "Inventariante nomeado"] },
+    { caseId: casos[6].id, actions: ["Processo criado — Empresarial", "Processo encerrado com êxito"] },
   ];
 
-  const casos = await Promise.all(
-    casosData.map((c) =>
-      db.case.create({ data: { organizationId: org.id, ...c } })
-    )
-  );
-  console.log(`✓ ${casos.length} processos criados`);
-
-  // Prazos e audiências
-  const today = new Date();
-  const d = (daysOffset: number) => {
-    const dt = new Date(today);
-    dt.setDate(dt.getDate() + daysOffset);
-    dt.setUTCHours(0, 0, 0, 0);
-    return dt;
-  };
-
-  const prazoData = [
-    { caseId: casos[0].id, type: "PRAZO" as const, title: "Manifestação sobre contestação", date: d(5), status: "PENDENTE" as const },
-    { caseId: casos[0].id, type: "AUDIENCIA" as const, title: "Audiência de instrução e julgamento", date: d(15), status: "PENDENTE" as const },
-    { caseId: casos[1].id, type: "PRAZO" as const, title: "Interposição de recurso ordinário", date: d(3), status: "PENDENTE" as const },
-    { caseId: casos[2].id, type: "PRAZO" as const, title: "Contestação — prazo fatal", date: d(-2), status: "PERDIDO" as const },
-    { caseId: casos[3].id, type: "AUDIENCIA" as const, title: "Audiência de mediação", date: d(8), status: "PENDENTE" as const },
-    { caseId: casos[3].id, type: "REUNIAO" as const, title: "Reunião com cliente para coleta de documentos", date: d(2), status: "PENDENTE" as const },
-    { caseId: casos[4].id, type: "OUTRO" as const, title: "Envio de escritura ao cartório", date: d(20), status: "PENDENTE" as const },
-    { caseId: casos[5].id, type: "REUNIAO" as const, title: "Revisão final do contrato com o cliente", date: d(1), status: "PENDENTE" as const },
-    { caseId: casos[0].id, type: "PRAZO" as const, title: "Juntada de procuração", date: d(-10), status: "CONCLUIDO" as const },
-  ];
-
-  await Promise.all(
-    prazoData.map((p) =>
-      db.deadline.create({ data: { organizationId: org.id, ...p } })
-    )
-  );
-  console.log(`✓ ${prazoData.length} prazos/audiências criados`);
-
-  // Honorários / Faturas
-  const invoiceData = [
-    { clientId: clientes[0].id, caseId: casos[0].id, description: "Honorários iniciais — proc. trabalhista", amount: 3500, status: "PAGO" as const, dueDate: d(-30), paidAt: d(-28) },
-    { clientId: clientes[0].id, caseId: casos[0].id, description: "Honorários mensais — Maio/2026", amount: 800, status: "PENDENTE" as const, dueDate: d(5) },
-    { clientId: clientes[1].id, caseId: casos[1].id, description: "Honorários contratuais", amount: 4200, status: "ATRASADO" as const, dueDate: d(-15) },
-    { clientId: clientes[2].id, caseId: casos[2].id, description: "Consultoria jurídica — Construtora Nobre", amount: 12000, status: "PAGO" as const, dueDate: d(-60), paidAt: d(-58) },
-    { clientId: clientes[3].id, caseId: casos[3].id, description: "Honorários — divórcio litigioso", amount: 6000, status: "PENDENTE" as const, dueDate: d(10) },
-    { clientId: clientes[4].id, caseId: casos[4].id, description: "Honorários — inventário (1ª parcela)", amount: 5000, status: "PAGO" as const, dueDate: d(-45), paidAt: d(-44) },
-    { clientId: clientes[4].id, caseId: casos[4].id, description: "Honorários — inventário (2ª parcela)", amount: 5000, status: "PENDENTE" as const, dueDate: d(30) },
-    { clientId: clientes[5].id, caseId: casos[5].id, description: "Elaboração de contratos — Tech Solutions", amount: 2800, status: "PENDENTE" as const, dueDate: d(7) },
-    { clientId: clientes[0].id, caseId: casos[6].id, description: "Êxito previdenciário (20%)", amount: 9600, status: "PAGO" as const, dueDate: d(-90), paidAt: d(-85) },
-  ];
-
-  await Promise.all(
-    invoiceData.map(({ paidAt, amount, ...rest }) =>
-      db.invoice.create({
+  for (const { caseId, actions } of actionsByCase) {
+    for (let j = 0; j < actions.length; j++) {
+      await db.activityLog.create({
         data: {
           organizationId: org.id,
-          amount,
-          ...rest,
-          ...(paidAt ? { paidAt } : {}),
+          caseId,
+          userName: admin.name,
+          action: actions[j],
+          createdAt: d(-30 + j * 5),
         },
-      })
-    )
-  );
-  console.log(`✓ ${invoiceData.length} faturas criadas`);
+      });
+    }
+  }
+
+  // Prazos
+  await Promise.all([
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[0].id, type: "PRAZO", title: "Prazo para manifestação", date: d(5), status: "PENDENTE" } }),
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[1].id, type: "AUDIENCIA", title: "Audiência de instrução", date: d(15), status: "PENDENTE" } }),
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[2].id, type: "PRAZO", title: "Contestação", date: d(3), status: "PENDENTE" } }),
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[3].id, type: "REUNIAO", title: "Reunião com cliente", date: d(2), status: "PENDENTE" } }),
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[4].id, type: "OUTRO", title: "Envio de escritura ao cartório", date: d(20), status: "PENDENTE" } }),
+    db.deadline.create({ data: { organizationId: org.id, caseId: casos[0].id, type: "PRAZO", title: "Juntada de documentos", date: d(-10), status: "CONCLUIDO" } }),
+  ]);
+
+  // Honorários
+  await Promise.all([
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[0].id, caseId: casos[0].id, description: "Honorários — contratos TI", amount: 8000, status: "PAGO", dueDate: d(-30), paidAt: d(-28) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[0].id, caseId: casos[0].id, description: "Honorários mensais — Jun/2026", amount: 1200, status: "PENDENTE", dueDate: d(5) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[1].id, caseId: casos[1].id, description: "Honorários contratuais", amount: 4500, status: "ATRASADO", dueDate: d(-15) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[2].id, caseId: casos[2].id, description: "Consultoria jurídica", amount: 12000, status: "PAGO", dueDate: d(-60), paidAt: d(-58) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[3].id, caseId: casos[3].id, description: "Honorários — divórcio", amount: 5500, status: "PENDENTE", dueDate: d(10) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[4].id, caseId: casos[4].id, description: "Honorários — inventário", amount: 7000, status: "PENDENTE", dueDate: d(30) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[5].id, caseId: casos[5].id, description: "Planejamento tributário", amount: 15000, status: "PAGO", dueDate: d(-45), paidAt: d(-40) } }),
+    db.invoice.create({ data: { organizationId: org.id, clientId: clientes[0].id, caseId: casos[6].id, description: "Êxito — due diligence", amount: 20000, status: "PAGO", dueDate: d(-90), paidAt: d(-85) } }),
+  ]);
+
+  // Tarefas
+  await Promise.all([
+    db.task.create({ data: { organizationId: org.id, title: "Revisar contrato Tech Solutions", caseId: casos[0].id, assignedToId: advogado.id, assignedToName: advogado.name, status: "EM_ANDAMENTO", priority: "ALTA", dueDate: d(3) } }),
+    db.task.create({ data: { organizationId: org.id, title: "Preparar petição trabalhista", caseId: casos[1].id, assignedToId: advogado.id, assignedToName: advogado.name, status: "PENDENTE", priority: "ALTA", dueDate: d(2) } }),
+    db.task.create({ data: { organizationId: org.id, title: "Ligar para cliente — atualização", assignedToId: secretaria.id, assignedToName: secretaria.name, status: "PENDENTE", priority: "MEDIA", dueDate: d(1) } }),
+    db.task.create({ data: { organizationId: org.id, title: "Organizar documentos do inventário", caseId: casos[4].id, assignedToId: advogado2.id, assignedToName: advogado2.name, status: "PENDENTE", priority: "BAIXA", dueDate: d(7) } }),
+  ]);
+
+  return { admin, advogado, secretaria };
+}
+
+async function main() {
+  console.log("🌱 Iniciando seed...\n");
+
+  const trial = await seedTrial();
+  const pro = await seedPro();
 
   console.log("\n✅ Seed concluído!\n");
-  console.log("Credenciais de acesso:");
-  console.log("  Admin      → admin@lexo.dev     / senha123");
-  console.log("  Advogado   → rafael@lexo.dev    / senha123");
-  console.log("  Secretaria → fernanda@lexo.dev  / senha123");
+  console.log("╔══════════════════════════════════════════════════╗");
+  console.log("║           CREDENCIAIS DE ACESSO                 ║");
+  console.log("╠══════════════════════════════════════════════════╣");
+  console.log("║  PLANO TRIAL (7 dias, 3 usuários max, sem IA)   ║");
+  console.log("║  Admin   → trial@lexo.dev       / senha123      ║");
+  console.log("║  Advogado→ trial.advogado@lexo.dev / senha123   ║");
+  console.log("╠══════════════════════════════════════════════════╣");
+  console.log("║  PLANO PRO (ilimitado, todas as features)       ║");
+  console.log("║  Admin   → pro@lexo.dev         / senha123      ║");
+  console.log("║  Advogado→ pro.advogado@lexo.dev  / senha123    ║");
+  console.log("║  Secretar→ pro.secretaria@lexo.dev / senha123   ║");
+  console.log("╚══════════════════════════════════════════════════╝");
 }
 
 main()

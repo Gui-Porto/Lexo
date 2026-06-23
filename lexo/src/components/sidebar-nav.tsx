@@ -16,8 +16,7 @@ import {
   Globe,
   UserCog,
   CreditCard,
-  Shield,
-  ClipboardList,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,9 +67,8 @@ const NAV: NavGroup[] = [
   },
   {
     items: [
-      { href: "/planos",                  label: "Planos",   icon: CreditCard,    roles: ["ADMIN"] },
-      { href: "/configuracoes/seguranca", label: "Segurança", icon: Shield,       roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
-      { href: "/configuracoes/auditoria", label: "Auditoria", icon: ClipboardList, roles: ["ADMIN"] },
+      { href: "/planos",          label: "Planos",        icon: CreditCard, roles: ["ADMIN"] },
+      { href: "/configuracoes",   label: "Configurações", icon: Settings,   roles: ["ADMIN", "ADVOGADO", "SECRETARIA"] },
     ],
   },
 ];
@@ -95,7 +93,10 @@ export function SidebarNav({ role }: { role?: string }) {
 
             <div className="flex flex-col gap-0.5">
               {visible.map(({ href, label, icon: Icon, novo }) => {
-                const active = pathname.startsWith(href);
+                const active =
+                  pathname === href ||
+                  pathname.startsWith(href + "/") ||
+                  pathname.startsWith(href + "?");
                 const delay = `${itemIndex++ * 35}ms`;
 
                 return (

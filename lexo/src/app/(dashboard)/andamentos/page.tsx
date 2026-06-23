@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
+import { Activity } from "lucide-react";
 
 const PAGE_SIZE = 30;
 
@@ -40,18 +41,21 @@ function dayKey(date: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-// Maps keywords in `action` to icon + color config
-function iconForAction(action: string): { symbol: string; color: string; bg: string } {
+type IconConfig = { symbol: string; color: string; bg: string; border: string };
+
+function iconForAction(action: string): IconConfig {
   const a = action.toLowerCase();
-  if (a.includes("criado")) return { symbol: "＋", color: "#059669", bg: "rgb(5 150 105 / 0.12)" };
-  if (a.includes("status")) return { symbol: "↺", color: "#0891b2", bg: "rgb(8 145 178 / 0.12)" };
+  if (a.includes("criado"))
+    return { symbol: "＋", color: "oklch(0.62 0.18 150)", bg: "oklch(0.62 0.18 150 / 12%)", border: "oklch(0.62 0.18 150 / 22%)" };
+  if (a.includes("status"))
+    return { symbol: "↺", color: "oklch(0.68 0.18 215)", bg: "oklch(0.68 0.18 215 / 12%)", border: "oklch(0.68 0.18 215 / 22%)" };
   if (a.includes("prazo") || a.includes("audiência") || a.includes("audiencia"))
-    return { symbol: "⏱", color: "#d97706", bg: "rgb(217 119 6 / 0.10)" };
+    return { symbol: "⏱", color: "oklch(0.75 0.16 55)", bg: "oklch(0.75 0.16 55 / 10%)", border: "oklch(0.75 0.16 55 / 20%)" };
   if (a.includes("encerrado") || a.includes("arquivado"))
-    return { symbol: "✓", color: "#7c3aed", bg: "rgb(124 58 237 / 0.10)" };
+    return { symbol: "✓", color: "oklch(0.68 0.18 274)", bg: "oklch(0.68 0.18 274 / 12%)", border: "oklch(0.68 0.18 274 / 22%)" };
   if (a.includes("excluído") || a.includes("removido"))
-    return { symbol: "−", color: "#be123c", bg: "rgb(190 18 60 / 0.10)" };
-  return { symbol: "•", color: "#64748b", bg: "rgb(100 116 139 / 0.10)" };
+    return { symbol: "−", color: "oklch(0.62 0.20 20)", bg: "oklch(0.62 0.20 20 / 10%)", border: "oklch(0.62 0.20 20 / 20%)" };
+  return { symbol: "•", color: "oklch(0.55 0.02 264)", bg: "oklch(0.22 0.018 264)", border: "oklch(1 0 0 / 8%)" };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -90,7 +94,7 @@ export default async function AndamentosPage({
     db.activityLog.count({ where }),
   ]);
 
-  // Group by day
+  // Agrupar por dia
   const groups: Map<string, typeof logs> = new Map();
   for (const log of logs) {
     const key = dayKey(log.createdAt);
@@ -99,45 +103,55 @@ export default async function AndamentosPage({
   }
 
   const AC = "oklch(0.66 0.18 274)";
-  const AC2 = "oklch(0.72 0.14 300)";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Header */}
-      <div>
-        <h1
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div
             style={{
-              fontSize: 28,
-              fontWeight: 700,
-              color: "oklch(0.97 0.008 264)",
-              letterSpacing: "-0.5px",
-              margin: 0,
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              background: "oklch(0.66 0.18 274 / 14%)",
+              border: "1px solid oklch(0.66 0.18 274 / 25%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
           >
-            Andamentos
-          </h1>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
-          Histórico de movimentações de todos os processos do escritório.
-        </p>
-      </div>
+            <Activity size={18} color="oklch(0.75 0.14 274)" />
+          </div>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.4px", margin: 0 }}>
+              Andamentos
+            </h1>
+            <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 2 }}>
+              Histórico de movimentações do escritório
+            </p>
+          </div>
+        </div>
 
-      {/* Toolbar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <Suspense fallback={null}>
-          <SearchFilters />
-        </Suspense>
-
-        <span style={{ fontSize: 13, color: "oklch(0.45 0.02 264)" }}>
-          {total} movimentaç{total === 1 ? "ão" : "ões"}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <Suspense fallback={null}>
+            <SearchFilters />
+          </Suspense>
+          <span
+            style={{
+              fontSize: 12,
+              color: "oklch(0.45 0.02 264)",
+              background: "oklch(0.155 0.018 264)",
+              border: "1px solid oklch(1 0 0 / 7%)",
+              borderRadius: 8,
+              padding: "6px 12px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {total} movimentaç{total === 1 ? "ão" : "ões"}
+          </span>
+        </div>
       </div>
 
       {/* Timeline */}
@@ -157,124 +171,113 @@ export default async function AndamentosPage({
         >
           <div
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: `${AC}12`,
-              border: `1px solid ${AC}25`,
+              width: 52,
+              height: 52,
+              borderRadius: 14,
+              background: "oklch(0.66 0.18 274 / 10%)",
+              border: "1px solid oklch(0.66 0.18 274 / 20%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 24,
             }}
           >
-            📋
+            <Activity size={22} color="oklch(0.66 0.18 274)" />
           </div>
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.85 0.01 264)", margin: 0 }}>
               {q ? "Nenhum resultado encontrado" : "Nenhum andamento registrado"}
             </p>
             <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
               {q
-                ? `Tente outro termo de busca.`
+                ? "Tente outro termo de busca."
                 : "As movimentações aparecerão aqui conforme os processos forem atualizados."}
             </p>
           </div>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {Array.from(groups.entries()).map(([day, entries]) => (
             <div key={day}>
-              {/* Day label */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  marginBottom: 16,
-                }}
-              >
+              {/* Divisor do dia */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
                 <span
                   style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "oklch(0.55 0.02 264)",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "oklch(0.50 0.02 264)",
                     textTransform: "uppercase",
-                    letterSpacing: "0.06em",
+                    letterSpacing: "0.08em",
                     whiteSpace: "nowrap",
+                    fontFamily: "'Geist Mono', monospace",
                   }}
                 >
                   {formatDayLabel(day)}
                 </span>
-                <div style={{ flex: 1, height: 1, background: "oklch(0.22 0.018 264)" }} />
+                <div style={{ flex: 1, height: 1, background: "oklch(0.20 0.016 264)" }} />
+                <span style={{ fontSize: 11, color: "oklch(0.35 0.02 264)", whiteSpace: "nowrap" }}>
+                  {entries.length} movimentaç{entries.length === 1 ? "ão" : "ões"}
+                </span>
               </div>
 
-              {/* Entries */}
+              {/* Cartão do grupo */}
               <div
                 style={{
                   background: "oklch(0.115 0.018 264)",
-                  border: "1px solid oklch(0.22 0.018 264)",
-                  borderRadius: 16,
+                  border: "1px solid oklch(0.20 0.016 264)",
+                  borderRadius: 14,
                   overflow: "hidden",
                 }}
               >
                 {entries.map((log, i) => {
-                  const { symbol, color, bg } = iconForAction(log.action);
+                  const { symbol, color, bg, border } = iconForAction(log.action);
                   const isLast = i === entries.length - 1;
+                  const timeOnly = formatDateTime(log.createdAt).split(", ")[1] ?? formatDateTime(log.createdAt);
+
                   return (
                     <div
                       key={log.id}
                       style={{
                         display: "flex",
-                        gap: 16,
-                        padding: "16px 24px",
-                        borderBottom: isLast ? "none" : "1px solid oklch(0.18 0.015 264)",
+                        gap: 14,
+                        padding: "14px 20px",
+                        alignItems: "flex-start",
+                        borderBottom: isLast ? "none" : "1px solid oklch(0.17 0.014 264)",
                       }}
                     >
-                      {/* Icon */}
+                      {/* Ícone */}
                       <div
                         style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 10,
+                          width: 34,
+                          height: 34,
+                          borderRadius: 9,
                           background: bg,
-                          border: `1px solid ${color}30`,
+                          border: `1px solid ${border}`,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          fontSize: 14,
+                          fontSize: 13,
                           color,
                           flexShrink: 0,
-                          marginTop: 2,
+                          marginTop: 1,
+                          fontFamily: "monospace",
                         }}
                       >
                         {symbol}
                       </div>
 
-                      {/* Content */}
+                      {/* Conteúdo */}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 14, fontWeight: 500, color: "white" }}>
-                            {log.action}
-                          </span>
-                          {/* AUTO badge para ações futuras do tribunal */}
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            marginTop: 4,
-                            flexWrap: "wrap",
-                          }}
-                        >
+                        <p style={{ fontSize: 14, fontWeight: 500, color: "oklch(0.90 0.01 264)", margin: 0, lineHeight: 1.4 }}>
+                          {log.action}
+                        </p>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5, flexWrap: "wrap" }}>
                           <Link
                             href={`/processos/${log.case.id}`}
                             style={{
                               fontSize: 12,
                               color: AC,
                               textDecoration: "none",
-                              fontFamily: "monospace",
+                              fontFamily: "'Geist Mono', monospace",
                               fontWeight: 500,
                             }}
                           >
@@ -285,33 +288,35 @@ export default async function AndamentosPage({
                               style={{
                                 fontSize: 11,
                                 background: "oklch(0.20 0.018 264)",
-                                color: "oklch(0.55 0.02 264)",
-                                borderRadius: 4,
-                                padding: "1px 6px",
+                                color: "oklch(0.50 0.02 264)",
+                                borderRadius: 5,
+                                padding: "2px 7px",
+                                border: "1px solid oklch(1 0 0 / 6%)",
                               }}
                             >
                               {log.case.area}
                             </span>
                           )}
-                          <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)" }}>·</span>
+                          <span style={{ fontSize: 12, color: "oklch(0.40 0.02 264)" }}>·</span>
                           <span style={{ fontSize: 12, color: "oklch(0.50 0.02 264)" }}>
                             {log.userName}
                           </span>
                         </div>
                       </div>
 
-                      {/* Time */}
+                      {/* Hora */}
                       <span
                         style={{
-                          fontSize: 12,
-                          color: "oklch(0.40 0.02 264)",
+                          fontSize: 11,
+                          color: "oklch(0.38 0.02 264)",
                           whiteSpace: "nowrap",
                           flexShrink: 0,
                           marginTop: 2,
                           fontVariantNumeric: "tabular-nums",
+                          fontFamily: "'Geist Mono', monospace",
                         }}
                       >
-                        {formatDateTime(log.createdAt).split(", ")[1] ?? formatDateTime(log.createdAt)}
+                        {timeOnly}
                       </span>
                     </div>
                   );
@@ -322,7 +327,7 @@ export default async function AndamentosPage({
         </div>
       )}
 
-      {/* Pagination */}
+      {/* Paginação */}
       <Suspense fallback={null}>
         <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
       </Suspense>
