@@ -128,6 +128,25 @@ export async function updateCase(
   redirect(`/processos/${caseId}?toast=${encodeURIComponent("Processo atualizado com sucesso")}`);
 }
 
+export async function updateCaseStatus(
+  caseId: string,
+  status: "ATIVO" | "SUSPENSO" | "ARQUIVADO" | "ENCERRADO"
+): Promise<void> {
+  const session = await requireSession();
+  await db.case.updateMany({
+    where: { id: caseId, organizationId: session.user.organizationId },
+    data: { status },
+  });
+  await logActivity({
+    organizationId: session.user.organizationId,
+    caseId,
+    userId: session.user.id,
+    userName: session.user.name ?? "Usuário",
+    action: `Status alterado para ${status}`,
+  });
+  revalidatePath("/processos");
+}
+
 export async function deleteCase(caseId: string) {
   const session = await requireSession();
   try {
