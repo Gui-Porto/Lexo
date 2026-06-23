@@ -257,10 +257,7 @@ export default async function ProcessosPage({
                     padding: "14px 20px",
                     borderBottom: i < cases.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none",
                     alignItems: "center",
-                    transition: "background 0.15s",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "oklch(1 0 0 / 2%)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
                 >
                   <div>
                     <Link
