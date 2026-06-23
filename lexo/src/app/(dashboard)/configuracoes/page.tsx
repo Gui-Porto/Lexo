@@ -22,15 +22,18 @@ import {
   Crown,
   Mail,
   Clock,
+  Link2,
+  Link2Off,
 } from "lucide-react";
 import { ConfirmTwoFactorForm, DisableTwoFactorForm } from "./seguranca/totp-forms";
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
 const TABS = [
-  { key: "seguranca",  label: "Segurança",  icon: Lock,          adminOnly: false },
-  { key: "usuarios",   label: "Usuários",   icon: UserCog,       adminOnly: true  },
-  { key: "auditoria",  label: "Auditoria",  icon: ClipboardList, adminOnly: true  },
+  { key: "seguranca",    label: "Segurança",     icon: Lock,          adminOnly: false },
+  { key: "integracoes",  label: "Integrações",   icon: Link2,         adminOnly: false },
+  { key: "usuarios",     label: "Usuários",      icon: UserCog,       adminOnly: true  },
+  { key: "auditoria",    label: "Auditoria",     icon: ClipboardList, adminOnly: true  },
 ] as const;
 
 type Tab = (typeof TABS)[number]["key"];
@@ -77,14 +80,15 @@ export default async function ConfiguracoesPage({
 
   const rawTab = sp.tab ?? "seguranca";
   const activeTab: Tab =
-    rawTab === "usuarios" && isAdmin ? "usuarios" :
-    rawTab === "auditoria" && isAdmin ? "auditoria" :
+    rawTab === "usuarios"   && isAdmin ? "usuarios"   :
+    rawTab === "auditoria"  && isAdmin ? "auditoria"  :
+    rawTab === "integracoes"           ? "integracoes":
     "seguranca";
 
-  // --- Dados de Segurança (sempre carrega) ---
+  // --- Dados de Segurança + Integrações (sempre carrega) ---
   const user = await db.user.findUnique({
     where: { id: session.user.id },
-    select: { totpEnabled: true, totpPendingSecret: true, email: true },
+    select: { totpEnabled: true, totpPendingSecret: true, email: true, googleCalendarEnabled: true },
   });
 
   let qrDataUrl: string | null = null;
@@ -287,6 +291,128 @@ export default async function ConfiguracoesPage({
               <Button type="submit">Configurar 2FA</Button>
             </form>
           )}
+        </div>
+      )}
+
+      {/* ─── Aba: Integrações ─────────────────────────────────────────────── */}
+      {activeTab === "integracoes" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 540 }}>
+          {/* Google Calendar card */}
+          <div
+            style={{
+              background: "oklch(0.14 0.016 264 / 0.6)",
+              border: "1px solid oklch(1 0 0 / 7%)",
+              borderRadius: 18, padding: 24,
+              display: "flex", flexDirection: "column", gap: 20,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              {/* Google Calendar colorful icon */}
+              <div
+                style={{
+                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                  background: user?.googleCalendarEnabled ? "oklch(0.55 0.18 145 / 15%)" : "oklch(0.22 0.018 264)",
+                  border: `1px solid ${user?.googleCalendarEnabled ? "oklch(0.55 0.18 145 / 30%)" : "oklch(1 0 0 / 7%)"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}
+              >
+                {user?.googleCalendarEnabled
+                  ? <Link2 size={20} color="oklch(0.65 0.18 145)" />
+                  : <Link2Off size={20} color="oklch(0.45 0.02 264)" />}
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.92 0.01 264)", margin: 0 }}>
+                  Google Agenda
+                </p>
+                <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 3 }}>
+                  {user?.googleCalendarEnabled
+                    ? "Conectado — prazos são sincronizados automaticamente."
+                    : "Desconectado — conecte para sincronizar prazos e audiências."}
+                </p>
+              </div>
+              {user?.googleCalendarEnabled && (
+                <span style={{
+                  fontSize: 11, fontWeight: 700,
+                  background: "oklch(0.55 0.18 145 / 14%)",
+                  color: "oklch(0.68 0.16 145)",
+                  border: "1px solid oklch(0.55 0.18 145 / 28%)",
+                  borderRadius: 99, padding: "3px 10px", flexShrink: 0,
+                }}>
+                  Ativo
+                </span>
+              )}
+            </div>
+
+            {/* What gets synced */}
+            <div style={{ background: "oklch(0.11 0.016 264 / 0.7)", borderRadius: 12, padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "oklch(0.40 0.02 264)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
+                O que é sincronizado
+              </p>
+              {[
+                { icon: "⏰", text: "Prazos processuais" },
+                { icon: "⚖️", text: "Audiências e sessões" },
+                { icon: "🤝", text: "Reuniões agendadas" },
+                { icon: "📌", text: "Outros compromissos" },
+              ].map(({ icon, text }) => (
+                <div key={text} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 14 }}>{icon}</span>
+                  <span style={{ fontSize: 13, color: "oklch(0.65 0.02 264)" }}>{text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Action button */}
+            {user?.googleCalendarEnabled ? (
+              <form
+                action="/api/google-calendar/disconnect"
+                method="POST"
+              >
+                <button
+                  type="submit"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    background: "oklch(0.70 0.18 30 / 10%)",
+                    color: "oklch(0.75 0.14 30)",
+                    border: "1px solid oklch(0.70 0.18 30 / 25%)",
+                    borderRadius: 10, padding: "10px 18px",
+                    fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  }}
+                >
+                  <Link2Off size={14} />
+                  Desconectar Google Agenda
+                </button>
+              </form>
+            ) : (
+              <a
+                href="/api/google-calendar/connect"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 10,
+                  background: "oklch(0.66 0.18 274)",
+                  color: "#fff",
+                  borderRadius: 10, padding: "11px 20px",
+                  fontSize: 13, fontWeight: 700, textDecoration: "none",
+                  boxShadow: "0 4px 16px oklch(0.66 0.18 274 / 35%)",
+                  width: "fit-content",
+                }}
+              >
+                {/* Google "G" logo */}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Conectar Google Agenda
+              </a>
+            )}
+
+            {!user?.googleCalendarEnabled && (
+              <p style={{ fontSize: 12, color: "oklch(0.40 0.02 264)", margin: 0 }}>
+                Você será redirecionado para a página de autorização do Google.
+                Nenhuma senha do Google é armazenada no Lexo.
+              </p>
+            )}
+          </div>
         </div>
       )}
 
