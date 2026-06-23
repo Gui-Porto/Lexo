@@ -135,8 +135,13 @@ export default function LandingPage() {
         }}
       >
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-          <span style={{ width: 32, height: 32, borderRadius: 9, background: `linear-gradient(135deg,${AC},${AC2})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontFamily: F, fontSize: 17, fontWeight: 800, boxShadow: `0 4px 16px color-mix(in oklab,${AC} 45%,transparent)` }}>L</span>
-          <span style={{ fontFamily: F, fontSize: 21, fontWeight: 700, letterSpacing: "-.5px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
+          <span style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 4.5V15H15" />
+              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+            </svg>
+          </span>
+          <span style={{ fontFamily: F, fontSize: 21, fontWeight: 700, letterSpacing: "-.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14 }}>
@@ -429,8 +434,13 @@ export default function LandingPage() {
       <footer style={{ borderTop: "1px solid oklch(1 0 0 / 7%)" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: 40, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <span style={{ width: 28, height: 28, borderRadius: 8, background: `linear-gradient(135deg,${AC},${AC2})`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontFamily: F, fontSize: 15, fontWeight: 800 }}>L</span>
-            <span style={{ fontFamily: F, fontSize: 18, fontWeight: 700, color: "oklch(0.95 0.01 264)" }}>Lexo</span>
+            <span style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+              <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 4.5V15H15" />
+                <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+              </svg>
+            </span>
+            <span style={{ fontFamily: F, fontSize: 18, fontWeight: 700, color: "oklch(0.98 0.008 264)", letterSpacing: "-.5px" }}>Lexo</span>
           </Link>
           <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.5 0.02 264)" }}>
             © 2026 Lexo Tecnologia Jurídica · LGPD &amp; ISO 27001
