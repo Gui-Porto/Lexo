@@ -32,36 +32,18 @@ export default async function PortalClientePage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
       {/* Header */}
       <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-          <h1
+        <h1
             style={{
               fontSize: 28,
               fontWeight: 700,
-              background: `linear-gradient(135deg, ${AC}, ${AC2})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
+              color: "oklch(0.97 0.008 264)",
+              letterSpacing: "-0.5px",
+              margin: 0,
             }}
           >
             Portal Cliente
           </h1>
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              background: `${AC}18`,
-              color: "oklch(0.72 0.18 274)",
-              border: `1px solid ${AC}30`,
-              borderRadius: 6,
-              padding: "3px 8px",
-            }}
-          >
-            NOVO
-          </span>
-        </div>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)" }}>
+        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
           Compartilhe um link seguro com seus clientes para que acompanhem os processos em tempo real.
         </p>
       </div>
