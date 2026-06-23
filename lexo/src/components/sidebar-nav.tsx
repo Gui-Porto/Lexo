@@ -14,7 +14,6 @@ import {
   CheckSquare,
   Activity,
   Globe,
-  UserCog,
   CreditCard,
   Settings,
 } from "lucide-react";
@@ -61,8 +60,7 @@ const NAV: NavGroup[] = [
   {
     label: "RELACIONAMENTO",
     items: [
-      { href: "/portal-cliente",         label: "Portal Cliente", icon: Globe,        roles: ["ADMIN", "ADVOGADO"] },
-      { href: "/configuracoes/usuarios", label: "Usuários",       icon: UserCog,      roles: ["ADMIN"] },
+      { href: "/portal-cliente", label: "Portal Cliente", icon: Globe, roles: ["ADMIN", "ADVOGADO"] },
     ],
   },
   {
