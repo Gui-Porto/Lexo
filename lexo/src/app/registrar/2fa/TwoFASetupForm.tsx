@@ -72,14 +72,28 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
   ];
 
   return (
-    <div style={{
+    <div className="auth-root" style={{
       fontFamily: F, color: "oklch(0.95 0.01 264)", minHeight: "100vh",
       display: "grid", gridTemplateColumns: "1fr 1.12fr",
       background: "oklch(0.10 0.018 264)",
     }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @media (max-width: 900px) {
+          .auth-root { grid-template-columns: 1fr !important; }
+          .auth-brand { display: none !important; }
+          .auth-form { padding: 48px 24px !important; min-height: 100vh; }
+        }
+        @media (max-width: 560px) {
+          .twofa-qrrow { flex-direction: column !important; align-items: flex-start !important; }
+        }
+        @media (max-width: 480px) {
+          .auth-form { padding: 40px 18px !important; }
+        }
+      ` }} />
 
       {/* ── LEFT BRAND ─────────────────────────────────────────────── */}
-      <div style={{
+      <div className="auth-brand" style={{
         position: "relative", overflow: "hidden", padding: "48px 52px",
         display: "flex", flexDirection: "column",
         background: `radial-gradient(900px 600px at 20% 0%, color-mix(in oklab,${AC} 22%,transparent), transparent 60%), linear-gradient(155deg, oklch(0.14 0.03 280), oklch(0.10 0.018 264))`,
@@ -137,7 +151,7 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
       </div>
 
       {/* ── RIGHT FORM ─────────────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
+      <div className="auth-form" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
         <div style={{ width: "100%", maxWidth: 448 }}>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
@@ -192,7 +206,7 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
             </div>
 
             {/* QR + steps */}
-            <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "18px 16px" }}>
+            <div className="twofa-qrrow" style={{ display: "flex", alignItems: "center", gap: 18, padding: "18px 16px" }}>
               <div style={{ width: 156, height: 156, flexShrink: 0, background: "#fff", borderRadius: 12, padding: 13, boxShadow: "0 6px 18px oklch(0 0 0 / 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrDataUrl} alt="QR Code Google Authenticator" width={130} height={130} style={{ display: "block" }} />

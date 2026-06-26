@@ -179,6 +179,18 @@ export default function TwoFactorPage() {
       padding: "24px 16px",
       position: "relative",
     }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @media (max-width: 480px) {
+          .twofa-card { padding: 32px 20px !important; }
+          .otp-wrap { gap: 6px !important; }
+          .otp-box { width: 42px !important; height: 52px !important; font-size: 19px !important; }
+        }
+        @media (max-width: 360px) {
+          .otp-wrap { gap: 4px !important; }
+          .otp-box { width: 36px !important; height: 46px !important; font-size: 17px !important; }
+        }
+      ` }} />
       {/* Luz ambiente radial */}
       <div style={{
         position: "fixed",
@@ -213,7 +225,7 @@ export default function TwoFactorPage() {
       </div>
 
       {/* Card */}
-      <div style={{
+      <div className="twofa-card" style={{
         width: "100%",
         maxWidth: 440,
         background: "oklch(0.13 0.018 264)",
