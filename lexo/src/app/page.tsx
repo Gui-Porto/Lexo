@@ -337,6 +337,24 @@ const CSS = `
     .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
     .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
   }
+  @keyframes gradient-flow {
+    0%   { background-position:   0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position:   0% 50%; }
+  }
+  .text-flow {
+    background: linear-gradient(100deg,
+      oklch(0.98 0.01 264) 0%,
+      oklch(0.74 0.16 200) 30%,
+      oklch(0.72 0.20 300) 55%,
+      oklch(0.70 0.22 330) 80%,
+      oklch(0.98 0.01 264) 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-flow 9s ease-in-out infinite;
+  }
   @keyframes beam-sweep {
     0%   { transform: translate3d(-40%, -40%, 0) rotate(8deg); opacity: 0; }
     15%  { opacity: 0.6; }
@@ -592,7 +610,7 @@ export default function LandingPage() {
               {" "}Agora com Lexo IA &amp; Jurimetria
             </span>
 
-            <h1 style={{ fontFamily: F, fontSize: 64, fontWeight: 800, lineHeight: 1.02, letterSpacing: "-2px", color: "oklch(0.98 0.008 264)", margin: "22px 0 0" }}>
+            <h1 className="text-flow" style={{ fontFamily: F, fontSize: 64, fontWeight: 800, lineHeight: 1.02, letterSpacing: "-2px", margin: "22px 0 0" }}>
               O sistema que cuida do escritório enquanto você cuida da causa.
             </h1>
 
