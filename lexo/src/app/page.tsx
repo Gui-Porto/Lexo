@@ -158,6 +158,12 @@ const CSS = `
     66%  { transform: translate(-20px,-10px) scale(1.07); }
     100% { transform: translate(0,0) scale(1); }
   }
+  @keyframes aurora-d {
+    0%   { transform: translate(0,0) scale(1); }
+    33%  { transform: translate(-20px,-25px) scale(1.05); }
+    66%  { transform: translate(25px,15px) scale(0.95); }
+    100% { transform: translate(0,0) scale(1); }
+  }
   [data-reveal] {
     opacity: 0;
     transform: translateY(12px);
@@ -335,6 +341,7 @@ const CSS = `
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function LandingPage() {
+  const auroraRef      = useRef<HTMLDivElement>(null);
   const heroMockupRef  = useRef<HTMLDivElement>(null);
   const heroCardRef    = useRef<HTMLDivElement>(null);
   const statsRef       = useRef<HTMLDivElement>(null);
@@ -465,11 +472,13 @@ export default function LandingPage() {
       {/* eslint-disable-next-line react/no-danger */}
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
-      {/* ── AURORA ── */}
-      <div style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-        <div className="aurora-blob" style={{ position: "absolute", top: "-15%", right: "-8%",  width: 320, height: 380, borderRadius: "50%", background: "oklch(0.48 0.30 274)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-a 35s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "20%",  left: "-10%", width: 280, height: 320, borderRadius: "50%", background: "oklch(0.42 0.28 310)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-b 42s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", bottom: "5%", left: "40%",  width: 360, height: 240, borderRadius: "50%", background: "oklch(0.45 0.24 240)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-c 28s ease-in-out infinite" }} />
+      {/* ── BG: AURORA (camada 1) ── */}
+      <div ref={auroraRef} className="bg-aurora" style={{ position: "fixed", inset: "-10% 0 0 0", overflow: "hidden", zIndex: 0, pointerEvents: "none", willChange: "transform" }}>
+        <div className="aurora-blob" style={{ position: "absolute", top: "-12%", right: "-6%",  width: 360, height: 420, borderRadius: "50%", background: "oklch(0.50 0.30 274)", filter: "blur(120px)", opacity: 0.26, animation: "aurora-a 35s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "16%",  left: "-9%",  width: 320, height: 360, borderRadius: "50%", background: "oklch(0.46 0.28 310)", filter: "blur(120px)", opacity: 0.24, animation: "aurora-b 42s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "44%",  left: "44%",  width: 380, height: 300, borderRadius: "50%", background: "oklch(0.50 0.20 200)", filter: "blur(130px)", opacity: 0.20, animation: "aurora-c 30s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "68%",  right: "2%",   width: 340, height: 320, borderRadius: "50%", background: "oklch(0.48 0.26 330)", filter: "blur(125px)", opacity: 0.18, animation: "aurora-d 38s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "88%",  left: "12%",   width: 360, height: 300, borderRadius: "50%", background: "oklch(0.46 0.24 274)", filter: "blur(130px)", opacity: 0.18, animation: "aurora-b 46s ease-in-out infinite" }} />
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
