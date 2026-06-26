@@ -392,20 +392,12 @@ const CSS = `
     0%, 100% { transform: scaleY(0.18); }
     50%      { transform: scaleY(1); }
   }
-  @keyframes wf-flow {
-    0%   { background-position: 0 -24px; }
-    100% { background-position: 0 24px; }
-  }
+  @keyframes wf-dash { to { stroke-dashoffset: -24; } }
   @keyframes wf-arrow {
     0%, 100% { transform: translateY(0);   opacity: 0.45; }
     50%      { transform: translateY(4px); opacity: 1; }
   }
-  .wf-line {
-    background-image: linear-gradient(oklch(1 0 0 / 0.30) 45%, transparent 45%);
-    background-size: 2px 12px;
-    background-repeat: repeat-y;
-    animation: wf-flow 1.1s linear infinite;
-  }
+  .wf-curve { stroke-dasharray: 5 7; animation: wf-dash 0.9s linear infinite; }
   .wf-arrow { animation: wf-arrow 1.5s ease-in-out infinite; }
   .wf-row   { animation: wf-populate 4.5s ease-in-out infinite; }
   .wf-pop   { animation: wf-pop 4s ease-in-out infinite; }
@@ -421,7 +413,7 @@ const CSS = `
     .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
     .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
     .nav-pill, .nav-hover-pill { transition: none !important; }
-    .wf-line, .wf-arrow, .wf-row, .wf-pop { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .wf-curve, .wf-arrow, .wf-row, .wf-pop { animation: none !important; opacity: 1 !important; transform: none !important; }
     .wf-bar { animation: none !important; transform: scaleY(1) !important; }
   }
   @keyframes gradient-flow {
@@ -534,6 +526,20 @@ function Wireframe({ i, hue }: { i: number; hue: string }) {
         ))}
       </div>
     </div>
+  );
+}
+
+// Seta curva animada que costura uma etapa à próxima (zigue-zague)
+function CurvedArrow({ toRight, hue }: { toRight: boolean; hue: string }) {
+  const W = 760, H = 84;
+  const x1 = toRight ? W * 0.3 : W * 0.7;
+  const x2 = toRight ? W * 0.7 : W * 0.3;
+  const d = `M ${x1} 0 C ${x1} ${H * 0.55} ${x2} ${H * 0.45} ${x2} ${H - 2}`;
+  return (
+    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} fill="none" aria-hidden="true" style={{ display: "block", margin: "2px 0" }}>
+      <path className="wf-curve" d={d} stroke={hue} strokeWidth={2.2} strokeLinecap="round" opacity={0.7} />
+      <polyline points={`${x2 - 7},${H - 12} ${x2},${H - 2} ${x2 + 7},${H - 12}`} stroke={hue} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -971,30 +977,31 @@ export default function LandingPage() {
             <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: "14px 0 0" }}>Três etapas — veja o que acontece em cada tela.</p>
           </div>
           <div style={{ maxWidth: 760, margin: "0 auto" }}>
-            {steps.map(({ n, hue, title, desc }, i) => (
-              <div key={n}>
-                <div
-                  data-reveal=""
-                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 24, display: "grid", gridTemplateColumns: "0.82fr 1fr", gap: 26, alignItems: "center", transitionDelay: `${i * 90}ms` }}
-                >
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 13 }}>
-                      <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 700, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 26%,transparent)`, borderRadius: 8, padding: "4px 9px" }}>{n}</span>
-                      <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 500, letterSpacing: "2px", color: "oklch(0.5 0.02 264)" }}>ETAPA</span>
-                    </div>
-                    <h3 style={{ fontFamily: F, fontSize: 21, fontWeight: 600, letterSpacing: "-0.3px", color: "oklch(0.96 0.01 264)", margin: "0 0 8px" }}>{title}</h3>
-                    <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
+            {steps.map(({ n, hue, title, desc }, i) => {
+              const onRight = i % 2 === 1;
+              const textBlock = (
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 13 }}>
+                    <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 700, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 26%,transparent)`, borderRadius: 8, padding: "4px 9px" }}>{n}</span>
+                    <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 500, letterSpacing: "2px", color: "oklch(0.5 0.02 264)" }}>ETAPA</span>
                   </div>
-                  <Wireframe i={i} hue={hue} />
+                  <h3 style={{ fontFamily: F, fontSize: 21, fontWeight: 600, letterSpacing: "-0.3px", color: "oklch(0.96 0.01 264)", margin: "0 0 8px" }}>{title}</h3>
+                  <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
                 </div>
-                {i < steps.length - 1 && (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "8px 0" }} aria-hidden="true">
-                    <span className="wf-line" style={{ width: 2, height: 30 }} />
-                    <svg className="wf-arrow" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={steps[i + 1].hue} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+              );
+              const wf = <Wireframe i={i} hue={hue} />;
+              return (
+                <div key={n}>
+                  <div
+                    data-reveal=""
+                    style={{ width: "74%", marginLeft: onRight ? "auto" : 0, marginRight: onRight ? 0 : "auto", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 22, display: "grid", gridTemplateColumns: onRight ? "1fr 0.8fr" : "0.8fr 1fr", gap: 22, alignItems: "center", transitionDelay: `${i * 90}ms` }}
+                  >
+                    {onRight ? <>{wf}{textBlock}</> : <>{textBlock}{wf}</>}
                   </div>
-                )}
-              </div>
-            ))}
+                  {i < steps.length - 1 && <CurvedArrow toRight={!onRight} hue={steps[i + 1].hue} />}
+                </div>
+              );
+            })}
           </div>
         </section>
 
