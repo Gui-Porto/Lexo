@@ -118,7 +118,7 @@ export default function RegisterPage() {
 
           {/* Stats */}
           <div style={{ display: "flex", marginTop: 26, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 13, overflow: "hidden" }}>
-            {[["620+", "escritórios"], ["4.9 ★", "avaliação"], ["2 min", "p/ configurar"]].map(([n, l], i) => (
+            {[["620+", "escritórios"], ["4.9 ★", "avaliação média"], ["2 min", "p/ configurar"]].map(([n, l], i) => (
               <div key={i} style={{ flex: 1, textAlign: "center", padding: "14px 10px", background: "oklch(1 0 0 / 4%)", borderLeft: i > 0 ? "1px solid oklch(1 0 0 / 8%)" : undefined }}>
                 <div style={{ font: `700 22px ${F}`, color: "oklch(0.98 0.008 264)" }}>{n}</div>
                 <div style={{ font: `400 11px ${F}`, color: "oklch(0.52 0.02 264)", marginTop: 2 }}>{l}</div>

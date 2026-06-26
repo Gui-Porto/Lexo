@@ -88,8 +88,8 @@ type StatItem = {
 };
 
 const statsData: StatItem[] = [
-  { display: "+2.400",  target: 2400,  prefix: "+", thousands: true, label: "escritórios usando o Lexo" },
-  { display: "1,2 mi", target: 1.2,   suffix: " mi", decimal: 1,    label: "processos monitorados" },
+  { display: "620+",    target: 620,   suffix: "+",                  label: "escritórios usando o Lexo" },
+  { display: "+1.200",  target: 1200, prefix: "+", thousands: true,  label: "processos monitorados" },
   { display: "9h",     target: 9,     suffix: "h",                   label: "economizadas por advogado/semana" },
   { display: "99,9%",  target: 99.9,  suffix: "%",   decimal: 1,    label: "de disponibilidade (SLA)" },
 ];
@@ -304,15 +304,22 @@ const CSS = `
     opacity: 0;
     animation: chat-appear 400ms ease-out 1.4s forwards;
   }
-  .nav-link { transition: color 200ms; }
-  .nav-link:hover { color: oklch(0.88 0.01 264) !important; }
+  .nav-link {
+    transition: color 250ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
   .nav-pill {
-    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
-                width 380ms cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 220ms ease;
+    transition: transform 520ms cubic-bezier(0.34, 1.18, 0.64, 1),
+                width 400ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 240ms ease,
+                box-shadow 300ms ease;
+  }
+  .nav-hover-pill {
+    transition: transform 160ms cubic-bezier(0.25, 1, 0.5, 1),
+                width 160ms cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 110ms ease;
   }
   @media (prefers-reduced-motion: reduce) {
-    .nav-pill { transition: none !important; }
+    .nav-pill, .nav-hover-pill { transition: none !important; }
   }
   @media (prefers-reduced-motion: reduce) {
     .aurora-blob { animation: none !important; }
@@ -332,9 +339,13 @@ export default function LandingPage() {
   const statValueRefs  = useRef<(HTMLSpanElement | null)[]>([]);
   const featureCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const navLinkRefs    = useRef<(HTMLAnchorElement | null)[]>([]);
   const navContainerRef = useRef<HTMLDivElement>(null);
   const pillRef        = useRef<HTMLDivElement>(null);
+  const hoverPillRef   = useRef<HTMLDivElement>(null);
+  const scrollTargetRef = useRef<string | null>(null);
+  const scrollTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Scroll reveals
   useEffect(() => {
@@ -366,7 +377,7 @@ export default function LandingPage() {
         else intersecting.delete(id);
       });
       const active = NAV_ITEMS.map(([href]) => href).find(href => intersecting.has(href)) ?? null;
-      setActiveSection(active);
+      if (!scrollTargetRef.current) setActiveSection(active);
     }, { threshold: 0.3 });
     NAV_ITEMS.forEach(([href]) => {
       const el = document.getElementById(href.slice(1));
@@ -375,7 +386,7 @@ export default function LandingPage() {
     return () => obs.disconnect();
   }, []);
 
-  // Pill position update
+  // Active pill position
   useEffect(() => {
     const pill = pillRef.current;
     const container = navContainerRef.current;
@@ -389,7 +400,25 @@ export default function LandingPage() {
     pill.style.opacity = "1";
     pill.style.transform = `translateX(${lRect.left - cRect.left}px)`;
     pill.style.width = `${lRect.width}px`;
+    pill.style.boxShadow = `0 0 12px color-mix(in oklab,${AC} 20%,transparent)`;
   }, [activeSection]);
+
+  // Hover pill position
+  useEffect(() => {
+    const pill = hoverPillRef.current;
+    const container = navContainerRef.current;
+    if (!pill || !container) return;
+    if (!hoveredHref) { pill.style.opacity = "0"; return; }
+    const idx = NAV_ITEMS.findIndex(([href]) => href === hoveredHref);
+    if (idx === -1) { pill.style.opacity = "0"; return; }
+    const link = navLinkRefs.current[idx];
+    if (!link) return;
+    const cRect = container.getBoundingClientRect();
+    const lRect = link.getBoundingClientRect();
+    pill.style.opacity = "1";
+    pill.style.transform = `translateX(${lRect.left - cRect.left}px)`;
+    pill.style.width = `${lRect.width}px`;
+  }, [hoveredHref]);
 
   // Count-up on stats enter
   useEffect(() => {
@@ -455,16 +484,31 @@ export default function LandingPage() {
             <span style={{ fontFamily: F, fontSize: 21, fontWeight: 700, letterSpacing: "-.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
           </Link>
 
-          <div ref={navContainerRef} style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14, position: "relative" }}>
-            <div ref={pillRef} className="nav-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`, opacity: 0, pointerEvents: "none", zIndex: 0 }} />
+          <div
+            ref={navContainerRef}
+            onMouseLeave={() => setHoveredHref(null)}
+            style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14, position: "relative" }}
+          >
+            {/* Hover pill — aparece imediatamente ao hover */}
+            <div ref={hoverPillRef} className="nav-hover-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: "oklch(1 0 0 / 5%)", opacity: 0, pointerEvents: "none", zIndex: 0 }} />
+            {/* Active pill — desliza com spring ao rolar */}
+            <div ref={pillRef} className="nav-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: `color-mix(in oklab,${AC} 14%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 24%,transparent)`, opacity: 0, pointerEvents: "none", zIndex: 1 }} />
             {NAV_ITEMS.map(([href, label], i) => (
               <a
                 key={href}
                 href={href}
                 ref={el => { navLinkRefs.current[i] = el; }}
-                onClick={e => { e.preventDefault(); setActiveSection(href); document.querySelector(href)?.scrollIntoView({ behavior: "smooth" }); }}
+                onClick={e => {
+                  e.preventDefault();
+                  if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+                  scrollTargetRef.current = href;
+                  setActiveSection(href);
+                  document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+                  scrollTimerRef.current = setTimeout(() => { scrollTargetRef.current = null; }, 1400);
+                }}
+                onMouseEnter={() => setHoveredHref(href)}
                 className="nav-link"
-                style={{ fontFamily: F, fontSize: 14, fontWeight: 500, color: activeSection === href ? "oklch(0.92 0.01 264)" : "oklch(0.66 0.02 264)", padding: "8px 13px", borderRadius: 8, textDecoration: "none", position: "relative", zIndex: 1 }}
+                style={{ fontFamily: F, fontSize: 14, fontWeight: 500, color: activeSection === href ? "oklch(0.93 0.01 264)" : "oklch(0.62 0.02 264)", padding: "8px 13px", borderRadius: 8, textDecoration: "none", position: "relative", zIndex: 2 }}
               >
                 {label}
               </a>
