@@ -505,6 +505,12 @@ export default function LandingPage() {
         <div className="bg-beam" />
       </div>
 
+      {/* ── BG: VINHETA + GRÃO (camada 3) ── */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 100% 100% at 50% 30%, transparent 55%, oklch(0.05 0.02 264 / 0.55) 100%)" }} />
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", opacity: 0.03,
+        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
+
       <div style={{ position: "relative", zIndex: 1 }}>
 
         {/* ── NAV ── */}
