@@ -391,6 +391,23 @@ export default function LandingPage() {
     });
   }, []);
 
+  // Parallax leve da aurora
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = auroraRef.current;
+    if (!el) return;
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        el.style.transform = `translateY(${window.scrollY * 0.08}px)`;
+        raf = 0;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+
   // Active section via IntersectionObserver
   useEffect(() => {
     const intersecting = new Set<string>();
