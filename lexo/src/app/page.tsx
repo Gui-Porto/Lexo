@@ -355,6 +355,26 @@ const CSS = `
     -webkit-text-fill-color: transparent;
     animation: gradient-flow 9s ease-in-out infinite;
   }
+  .flow-border {
+    position: relative;
+  }
+  .flow-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(120deg,
+      oklch(0.68 0.24 274), oklch(0.74 0.16 200),
+      oklch(0.70 0.22 330), oklch(0.68 0.24 274));
+    background-size: 220% auto;
+    animation: gradient-flow 10s ease-in-out infinite;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+  }
   @keyframes beam-sweep {
     0%   { transform: translate3d(-40%, -40%, 0) rotate(8deg); opacity: 0; }
     15%  { opacity: 0.6; }
@@ -800,7 +820,7 @@ export default function LandingPage() {
 
         {/* ── LEXO IA ── */}
         <section id="ia" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div style={{ borderRadius: 22, border: `1px solid color-mix(in oklab,${AC} 26%,transparent)`, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
+          <div className="flow-border" style={{ borderRadius: 22, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
             <div>
               <span data-reveal="" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: FM, fontSize: 11, fontWeight: 600, color: AC, border: `1px solid color-mix(in oklab,${AC} 32%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: "1.5px" }}>✦ LEXO IA</span>
               <h2 data-reveal="" style={{ fontFamily: F, fontSize: 34, fontWeight: 800, letterSpacing: "-1px", color: "oklch(0.98 0.008 264)", margin: "18px 0 0", lineHeight: 1.1, transitionDelay: "100ms" }}>
@@ -862,7 +882,7 @@ export default function LandingPage() {
 
         {/* ── STATS ── */}
         <section style={{ maxWidth: 1180, margin: "0 auto", padding: "0px 40px 96px" }}>
-          <div ref={statsRef} data-reveal="" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, borderTop: "1px solid oklch(1 0 0 / 8%)", paddingTop: 48 }}>
+          <div ref={statsRef} data-reveal="" className="flow-border" style={{ borderRadius: 18, padding: "40px 32px", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
             {statsData.map((s, i) => (
               <div key={s.display} style={{ padding: "0 32px 0 0", borderRight: i < 3 ? "1px solid oklch(1 0 0 / 8%)" : "none", marginRight: i < 3 ? 32 : 0 }}>
                 <div style={{ fontFamily: F, fontSize: 72, fontWeight: 800, letterSpacing: "-2.5px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 60%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1 }}>
