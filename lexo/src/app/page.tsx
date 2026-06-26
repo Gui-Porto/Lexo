@@ -337,6 +337,21 @@ const CSS = `
     .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
     .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
   }
+  @keyframes beam-sweep {
+    0%   { transform: translate3d(-40%, -40%, 0) rotate(8deg); opacity: 0; }
+    15%  { opacity: 0.6; }
+    85%  { opacity: 0.6; }
+    100% { transform: translate3d(40%, 40%, 0) rotate(8deg); opacity: 0; }
+  }
+  .bg-beam {
+    position: absolute;
+    top: -30%; left: -30%;
+    width: 160%; height: 160%;
+    background: linear-gradient(115deg, transparent 42%, oklch(0.74 0.16 200 / 0.10) 50%, transparent 58%);
+    mix-blend-mode: screen;
+    animation: beam-sweep 14s linear infinite;
+    will-change: transform, opacity;
+  }
 `;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
@@ -479,6 +494,15 @@ export default function LandingPage() {
         <div className="aurora-blob" style={{ position: "absolute", top: "44%",  left: "44%",  width: 380, height: 300, borderRadius: "50%", background: "oklch(0.50 0.20 200)", filter: "blur(130px)", opacity: 0.20, animation: "aurora-c 30s ease-in-out infinite" }} />
         <div className="aurora-blob" style={{ position: "absolute", top: "68%",  right: "2%",   width: 340, height: 320, borderRadius: "50%", background: "oklch(0.48 0.26 330)", filter: "blur(125px)", opacity: 0.18, animation: "aurora-d 38s ease-in-out infinite" }} />
         <div className="aurora-blob" style={{ position: "absolute", top: "88%",  left: "12%",   width: 360, height: 300, borderRadius: "50%", background: "oklch(0.46 0.24 274)", filter: "blur(130px)", opacity: 0.18, animation: "aurora-b 46s ease-in-out infinite" }} />
+      </div>
+
+      {/* ── BG: DOT GRID + BEAM (camada 2) ── */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden",
+        backgroundImage: "radial-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px)",
+        backgroundSize: "32px 32px",
+        WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 35%, black, transparent 75%)",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 35%, black, transparent 75%)" }}>
+        <div className="bg-beam" />
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
