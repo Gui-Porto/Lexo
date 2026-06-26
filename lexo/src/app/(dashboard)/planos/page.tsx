@@ -231,7 +231,7 @@ export default async function PlanosPage({
       </div>
 
       {/* Plan cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+      <div className="r-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
         {PLANS.map((plan) => {
           const priceId = process.env[plan.priceEnvKey];
           const isCurrent = currentPlan === plan.key;
@@ -430,6 +430,7 @@ export default async function PlanosPage({
 
       {/* Feature comparison table */}
       <div
+        className="r-tablewrap"
         style={{
           background: "oklch(0.155 0.02 264)",
           border: "1px solid oklch(1 0 0 / 7%)",
@@ -443,6 +444,7 @@ export default async function PlanosPage({
           </h3>
         </div>
         <div
+          className="r-tablegrid"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 140px 140px",
@@ -459,6 +461,7 @@ export default async function PlanosPage({
         {FEATURES_COMPARE.map((feat, i) => (
           <div
             key={feat.label}
+            className="r-tablegrid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 140px 140px",

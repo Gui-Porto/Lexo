@@ -628,8 +628,8 @@ export default async function ConfiguracoesPage({
               </p>
             </div>
           ) : (
-            <div style={{ background: "oklch(0.115 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "10px 20px", background: "oklch(0.11 0.016 264)", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
+            <div className="r-tablewrap" style={{ background: "oklch(0.115 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
+              <div className="r-tablegrid" style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "10px 20px", background: "oklch(0.11 0.016 264)", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
                 {["Data", "Usuário", "Ação", "Descrição"].map((h) => (
                   <span key={h} style={{ fontSize: 10, fontWeight: 600, color: "oklch(0.40 0.02 264)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                     {h}
@@ -637,7 +637,7 @@ export default async function ConfiguracoesPage({
                 ))}
               </div>
               {auditLogs.map((log, i) => (
-                <div key={log.id} style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "12px 20px", borderBottom: i < auditLogs.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none", alignItems: "center" }}>
+                <div key={log.id} className="r-tablegrid" style={{ display: "grid", gridTemplateColumns: "160px 150px 180px 1fr", padding: "12px 20px", borderBottom: i < auditLogs.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none", alignItems: "center" }}>
                   <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", fontVariantNumeric: "tabular-nums" }}>{formatDate(log.createdAt)}</span>
                   <span style={{ fontSize: 13, fontWeight: 500, color: "oklch(0.82 0.01 264)" }}>{log.userName}</span>
                   <span>

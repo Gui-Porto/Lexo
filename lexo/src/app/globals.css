@@ -221,3 +221,38 @@
     animation: shimmer 3s linear infinite;
   }
 }
+
+/* ─── Responsivo — colapsa grids inline em telas menores ──────────── */
+/* Usa !important porque as páginas definem gridTemplateColumns inline.  */
+
+/* Layouts em colunas (chart+side, donut+bar+feed) → empilha */
+@media (max-width: 1024px) {
+  .r-split { grid-template-columns: 1fr !important; }
+  .r-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* KPIs e cards → 2 colunas */
+@media (max-width: 768px) {
+  .r-grid-3,
+  .r-grid-4,
+  .r-grid-5 { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Tudo em coluna única */
+@media (max-width: 560px) {
+  .r-grid-2,
+  .r-grid-3,
+  .r-grid-4,
+  .r-grid-5 { grid-template-columns: 1fr !important; }
+}
+
+/* "Tabelas" feitas com grid → rolagem horizontal em vez de espremer */
+@media (max-width: 860px) {
+  .r-tablewrap { overflow-x: auto !important; }
+  .r-tablegrid { min-width: 680px; }
+}
+
+/* Painéis laterais secundários (ex.: chat IA) → ocultos no mobile/tablet */
+@media (max-width: 1023px) {
+  .r-hide-lg { display: none !important; }
+}

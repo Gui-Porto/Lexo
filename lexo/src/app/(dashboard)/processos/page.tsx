@@ -130,7 +130,7 @@ export default async function ProcessosPage({
       </div>
 
       {/* 4 KPIs */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+      <div className="r-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {kpis.map((k) => (
           <div
             key={k.label}
@@ -154,9 +154,9 @@ export default async function ProcessosPage({
       {/* Table view */}
       {view === "table" && (
         <>
-          <div style={{ background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 14, overflow: "hidden" }}>
+          <div className="r-tablewrap" style={{ background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 14, overflow: "hidden" }}>
             {/* Header row */}
-            <div style={{
+            <div className="r-tablegrid" style={{
               display: "grid",
               gridTemplateColumns: "1.6fr 1.5fr 1.1fr 1.2fr 0.9fr 0.9fr",
               gap: 12, padding: "13px 18px",
@@ -184,6 +184,7 @@ export default async function ProcessosPage({
               return (
                 <div
                   key={c.id}
+                  className="r-tablegrid"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1.6fr 1.5fr 1.1fr 1.2fr 0.9fr 0.9fr",

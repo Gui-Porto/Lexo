@@ -128,6 +128,7 @@ export default async function PortalClientePage() {
         </div>
       ) : (
         <div
+          className="r-tablewrap"
           style={{
             background: "oklch(0.115 0.018 264)",
             border: "1px solid oklch(0.22 0.018 264)",
@@ -137,6 +138,7 @@ export default async function PortalClientePage() {
         >
           {/* Header row */}
           <div
+            className="r-tablegrid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr auto auto auto",
@@ -159,6 +161,7 @@ export default async function PortalClientePage() {
           {clients.map((client, i) => (
             <div
               key={client.id}
+              className="r-tablegrid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr auto auto auto",

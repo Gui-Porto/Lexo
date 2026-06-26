@@ -286,7 +286,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── KPIs ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
+      <div className="r-grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
         {/* Processos ativos */}
         <Card style={{ padding: 16 }}>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.6 0.02 264)" }}>Processos ativos</div>
@@ -340,7 +340,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Row 2: Chart + AI ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 16 }}>
+      <div className="r-split" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 16 }}>
 
         {/* Line chart */}
         <Card style={{ padding: 18 }}>
@@ -424,7 +424,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Row 3: Donut + Bar + Feed ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.5fr", gap: 16 }}>
+      <div className="r-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.5fr", gap: 16 }}>
 
         {/* Donut — Processos por área */}
         <Card style={{ padding: 18 }}>

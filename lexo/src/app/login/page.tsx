@@ -59,7 +59,6 @@ export default function LoginPage() {
 
   return (
     <div className="auth-root" style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
-      {/* eslint-disable-next-line react/no-danger */}
       <style dangerouslySetInnerHTML={{ __html: `
         html, body { max-width: 100%; overflow-x: hidden; }
         @media (max-width: 860px) {
