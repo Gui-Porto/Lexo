@@ -111,7 +111,7 @@ export default async function ClientesPage({
           <p style={{ fontSize: 14, color: "oklch(0.50 0.02 264)", margin: 0 }}>Nenhum cliente encontrado.</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+        <div className="r-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           {clients.map((client, i) => {
             const [c1, c2] = AVATAR_COLORS[i % AVATAR_COLORS.length];
             const pj = isPJ(client.document);

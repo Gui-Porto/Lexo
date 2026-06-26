@@ -215,7 +215,7 @@ export default async function AgendaPage({
       </div>
 
       {/* KPI row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+      <div className="r-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {kpis.map((k) => {
           const s = accentStyle(k.accent);
           return (

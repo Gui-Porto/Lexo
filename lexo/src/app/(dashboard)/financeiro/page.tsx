@@ -159,7 +159,7 @@ export default async function FinanceiroPage({
       </div>
 
       {/* KPI cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+      <div className="r-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {kpis.map((k) => {
           const s = accentStyle(k.accent);
           return (
@@ -198,6 +198,7 @@ export default async function FinanceiroPage({
 
       {/* Table */}
       <div
+        className="r-tablewrap"
         style={{
           background: "oklch(0.155 0.02 264)",
           border: "1px solid oklch(1 0 0 / 7%)",
@@ -207,6 +208,7 @@ export default async function FinanceiroPage({
       >
         {/* Header */}
         <div
+          className="r-tablegrid"
           style={{
             display: "grid",
             gridTemplateColumns: "2fr 1.5fr 1.2fr 1.2fr 1.1fr 1fr 120px",
@@ -243,6 +245,7 @@ export default async function FinanceiroPage({
           return (
             <div
               key={inv.id}
+              className="r-tablegrid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "2fr 1.5fr 1.2fr 1.2fr 1.1fr 1fr 120px",

@@ -174,7 +174,7 @@ export function LexoAIChat({ userEmail }: { userEmail?: string }) {
     <div style={{ display: "flex", height: "100%", minHeight: 0, fontFamily: F }}>
 
       {/* ── Sidebar ────────────────────────────────────────────────────── */}
-      <aside style={{ width: 236, flexShrink: 0, borderRight: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.10 0.016 264)", display: "flex", flexDirection: "column" }}>
+      <aside className="r-hide-lg" style={{ width: 236, flexShrink: 0, borderRight: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.10 0.016 264)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "16px 12px 10px", borderBottom: "1px solid oklch(1 0 0 / 6%)" }}>
           <button
             onClick={newThread}
@@ -323,7 +323,7 @@ export function LexoAIChat({ userEmail }: { userEmail?: string }) {
       </div>
 
       {/* ── Context panel ────────────────────────────────────────────────── */}
-      <aside style={{ width: 240, flexShrink: 0, borderLeft: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.10 0.016 264)", padding: "20px 14px", display: "flex", flexDirection: "column", gap: 18 }}>
+      <aside className="r-hide-lg" style={{ width: 240, flexShrink: 0, borderLeft: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.10 0.016 264)", padding: "20px 14px", display: "flex", flexDirection: "column", gap: 18 }}>
         <div>
           <div style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, color: "oklch(0.45 0.02 264)", letterSpacing: "1px", marginBottom: 10 }}>FONTES DE CONTEXTO</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

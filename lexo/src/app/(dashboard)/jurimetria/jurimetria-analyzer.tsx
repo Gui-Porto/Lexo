@@ -192,7 +192,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
           <span style={{ fontSize: 14, fontWeight: 600, color: "white" }}>Parâmetros da análise</span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 12, alignItems: "end" }}>
+        <div className="r-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 12, alignItems: "end" }}>
           {/* Processo */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <label style={{ fontSize: 11, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
@@ -311,7 +311,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
 
       {/* Loading skeleton */}
       {loading && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+        <div className="r-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
@@ -368,7 +368,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
           </div>
 
           {/* KPI cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+          <div className="r-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
             {/* Probabilidade de êxito */}
             <div
               style={{
