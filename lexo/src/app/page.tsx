@@ -966,7 +966,7 @@ export default function LandingPage() {
                   borderRadius: 18, padding: 28, position: "relative",
                   border: plan.accent ? `1px solid color-mix(in oklab,${AC} 40%,transparent)` : "1px solid oklch(1 0 0 / 9%)",
                   background: plan.accent ? `linear-gradient(160deg,color-mix(in oklab,${AC} 14%,oklch(0.13 0.018 264)),oklch(0.13 0.018 264))` : "oklch(0.13 0.018 264)",
-                  boxShadow: plan.popular ? `0 0 60px color-mix(in oklab,${AC} 20%,transparent), 0 0 120px color-mix(in oklab,${AC} 10%,transparent)` : "none",
+                  boxShadow: plan.popular ? `0 0 60px color-mix(in oklab,${AC} 20%,transparent), 0 0 120px color-mix(in oklab,${AC_MG} 12%,transparent)` : "none",
                   transitionDelay: `${i * 100}ms`,
                 }}
               >
@@ -1000,7 +1000,7 @@ export default function LandingPage() {
             {/* Static outer orb */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 320, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 18%,transparent),transparent)`, filter: "blur(40px)", opacity: 0.5, pointerEvents: "none" }} />
             {/* Pulsing inner orb */}
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 400, height: 180, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 32%,transparent),transparent)`, filter: "blur(28px)", animation: "glow-pulse 3s ease-in-out infinite", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 400, height: 180, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC_MG} 26%,transparent),transparent)`, filter: "blur(28px)", animation: "glow-pulse 3s ease-in-out infinite", pointerEvents: "none" }} />
             <div style={{ position: "relative", zIndex: 1 }}>
               <h2 data-reveal="" style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
                 Pronto para tirar o escritório do caos?
