@@ -333,15 +333,16 @@ const CSS = `
                 opacity 110ms ease;
   }
   @media (prefers-reduced-motion: reduce) {
-    .nav-pill, .nav-hover-pill { transition: none !important; }
-  }
-  @media (prefers-reduced-motion: reduce) {
     .aurora-blob { animation: none !important; }
+    .bg-beam { animation: none !important; opacity: 0 !important; }
+    .text-flow { animation: none !important; }
+    .flow-border::before { animation: none !important; }
     [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
     .marquee-inner { animation: none !important; }
     .hero-panel, .hero-card { opacity: 1 !important; transform: none !important; transition: none !important; }
     .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
     .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
+    .nav-pill, .nav-hover-pill { transition: none !important; }
   }
   @keyframes gradient-flow {
     0%   { background-position:   0% 50%; }
