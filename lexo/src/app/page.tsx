@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
 const BG    = "oklch(0.07 0.022 264)";
@@ -128,6 +128,13 @@ const plans = [
 ];
 
 const trustNames = ["Andrade Adv.", "Mendonça & Cruz", "Vector Legal", "Bittencourt Adv.", "Núcleo Jurídico"];
+
+const NAV_ITEMS = [
+  ["#recursos", "Recursos"],
+  ["#ia", "Lexo IA"],
+  ["#portal", "Portal do Cliente"],
+  ["#precos", "Preços"],
+] as const;
 
 // ── CSS ────────────────────────────────────────────────────────────────────────
 const CSS = `
@@ -299,6 +306,14 @@ const CSS = `
   }
   .nav-link { transition: color 200ms; }
   .nav-link:hover { color: oklch(0.88 0.01 264) !important; }
+  .nav-pill {
+    transition: transform 320ms cubic-bezier(0.34,1.56,0.64,1),
+                width 320ms cubic-bezier(0.34,1.56,0.64,1),
+                opacity 200ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-pill { transition: none !important; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .aurora-blob { animation: none !important; }
     [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
@@ -316,6 +331,10 @@ export default function LandingPage() {
   const statsRef       = useRef<HTMLDivElement>(null);
   const statValueRefs  = useRef<(HTMLSpanElement | null)[]>([]);
   const featureCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const navLinkRefs    = useRef<(HTMLAnchorElement | null)[]>([]);
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const pillRef        = useRef<HTMLDivElement>(null);
 
   // Scroll reveals
   useEffect(() => {
@@ -336,6 +355,41 @@ export default function LandingPage() {
       heroCardRef.current?.classList.add("mounted");
     });
   }, []);
+
+  // Active section via IntersectionObserver
+  useEffect(() => {
+    const intersecting = new Set<string>();
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        const id = "#" + e.target.id;
+        if (e.isIntersecting) intersecting.add(id);
+        else intersecting.delete(id);
+      });
+      const active = NAV_ITEMS.map(([href]) => href).find(href => intersecting.has(href)) ?? null;
+      setActiveSection(active);
+    }, { threshold: 0.3 });
+    NAV_ITEMS.forEach(([href]) => {
+      const el = document.getElementById(href.slice(1));
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
+  // Pill position update
+  useEffect(() => {
+    const pill = pillRef.current;
+    const container = navContainerRef.current;
+    if (!pill || !container) return;
+    const idx = NAV_ITEMS.findIndex(([href]) => href === activeSection);
+    if (idx === -1) { pill.style.opacity = "0"; return; }
+    const link = navLinkRefs.current[idx];
+    if (!link) return;
+    const cRect = container.getBoundingClientRect();
+    const lRect = link.getBoundingClientRect();
+    pill.style.opacity = "1";
+    pill.style.transform = `translateX(${lRect.left - cRect.left}px)`;
+    pill.style.width = `${lRect.width}px`;
+  }, [activeSection]);
 
   // Count-up on stats enter
   useEffect(() => {
@@ -376,7 +430,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div style={{ fontFamily: F, color: "oklch(0.97 0.005 264)", background: BG, minHeight: "100vh", scrollBehavior: "smooth", position: "relative" }}>
+    <div style={{ fontFamily: F, color: "oklch(0.97 0.005 264)", background: BG, minHeight: "100vh", position: "relative" }}>
       {/* eslint-disable-next-line react/no-danger */}
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
@@ -401,9 +455,19 @@ export default function LandingPage() {
             <span style={{ fontFamily: F, fontSize: 21, fontWeight: 700, letterSpacing: "-.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
           </Link>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14 }}>
-            {[["#recursos", "Recursos"], ["#ia", "Lexo IA"], ["#portal", "Portal do Cliente"], ["#precos", "Preços"]].map(([href, label]) => (
-              <a key={href} href={href} className="nav-link" style={{ fontFamily: F, fontSize: 14, fontWeight: 500, color: "oklch(0.66 0.02 264)", padding: "8px 13px", borderRadius: 8, textDecoration: "none" }}>{label}</a>
+          <div ref={navContainerRef} style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14, position: "relative" }}>
+            <div ref={pillRef} className="nav-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`, opacity: 0, pointerEvents: "none", zIndex: 0 }} />
+            {NAV_ITEMS.map(([href, label], i) => (
+              <a
+                key={href}
+                href={href}
+                ref={el => { navLinkRefs.current[i] = el; }}
+                onClick={e => { e.preventDefault(); setActiveSection(href); document.querySelector(href)?.scrollIntoView({ behavior: "smooth" }); }}
+                className="nav-link"
+                style={{ fontFamily: F, fontSize: 14, fontWeight: 500, color: activeSection === href ? "oklch(0.92 0.01 264)" : "oklch(0.66 0.02 264)", padding: "8px 13px", borderRadius: 8, textDecoration: "none", position: "relative", zIndex: 1 }}
+              >
+                {label}
+              </a>
             ))}
           </div>
 
