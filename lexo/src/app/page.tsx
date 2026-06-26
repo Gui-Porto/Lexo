@@ -20,6 +20,7 @@ const features = [
   {
     title: "Gestão de processos",
     novo: false,
+    hue: AC,
     desc: "Todos os processos, partes, prazos e documentos organizados e pesquisáveis em um clique.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -30,6 +31,7 @@ const features = [
   {
     title: "Prazos & agenda",
     novo: false,
+    hue: AC3,
     desc: "Captura automática de publicações do diário oficial e cálculo de prazos sem digitação manual.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -40,6 +42,7 @@ const features = [
   {
     title: "Lexo IA",
     novo: true,
+    hue: AC2,
     desc: "Resume autos, gera minutas e responde perguntas sobre qualquer processo do escritório.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -50,6 +53,7 @@ const features = [
   {
     title: "Jurimetria",
     novo: true,
+    hue: AC_CY,
     desc: "Probabilidade de êxito e tempo médio por vara, comarca e relator com base em dados reais.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -60,6 +64,7 @@ const features = [
   {
     title: "Financeiro & honorários",
     novo: false,
+    hue: AC_MG,
     desc: "Faturamento, timesheet, cobrança recorrente e relatórios de rentabilidade por cliente.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -70,6 +75,7 @@ const features = [
   {
     title: "Portal do cliente",
     novo: true,
+    hue: AC3,
     desc: "Seus clientes acompanham processos, documentos e pagamentos por uma área dedicada.",
     icon: (
       <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
@@ -779,7 +785,7 @@ export default function LandingPage() {
           >
             {/* Row 1: 2 featured cards */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-              {features.slice(0, 2).map(({ title, novo, desc, icon }, i) => (
+              {features.slice(0, 2).map(({ title, novo, desc, icon, hue }, i) => (
                 <div
                   key={title}
                   className="feature-card"
@@ -787,7 +793,7 @@ export default function LandingPage() {
                   data-reveal=""
                   style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 32, transitionDelay: `${i * 80}ms` }}
                 >
-                  <span style={{ width: 48, height: 48, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 13%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 22%,transparent)` }}>{icon}</span>
+                  <span style={{ width: 48, height: 48, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", color: hue, background: `color-mix(in oklab,${hue} 13%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 22%,transparent)` }}>{icon}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "20px 0 9px" }}>
                     <span style={{ fontFamily: F, fontSize: 19, fontWeight: 600, color: "oklch(0.96 0.01 264)" }}>{title}</span>
                     {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
@@ -798,7 +804,7 @@ export default function LandingPage() {
             </div>
             {/* Row 2: 4 detail cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
-              {features.slice(2).map(({ title, novo, desc, icon }, i) => (
+              {features.slice(2).map(({ title, novo, desc, icon, hue }, i) => (
                 <div
                   key={title}
                   className="feature-card"
@@ -806,7 +812,7 @@ export default function LandingPage() {
                   data-reveal=""
                   style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 16, padding: 22, transitionDelay: `${(i + 2) * 80}ms` }}
                 >
-                  <span style={{ width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 12%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 20%,transparent)` }}>{icon}</span>
+                  <span style={{ width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: hue, background: `color-mix(in oklab,${hue} 13%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 22%,transparent)` }}>{icon}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "14px 0 6px" }}>
                     <span style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>{title}</span>
                     {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
