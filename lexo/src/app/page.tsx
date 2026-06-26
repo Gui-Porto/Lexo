@@ -445,7 +445,8 @@ export default function LandingPage() {
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
-        el.style.transform = `translateY(${window.scrollY * 0.08}px)`;
+        const max = window.innerHeight * 0.1;
+        el.style.transform = `translateY(${Math.min(window.scrollY * 0.08, max)}px)`;
         raf = 0;
       });
     };
