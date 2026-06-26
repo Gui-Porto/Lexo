@@ -137,8 +137,54 @@ const plans = [
 
 const trustNames = ["Andrade Adv.", "Mendonça & Cruz", "Vector Legal", "Bittencourt Adv.", "Núcleo Jurídico"];
 
+const steps = [
+  {
+    n: "01",
+    hue: AC,
+    title: "Migre em minutos",
+    desc: "Importe processos, clientes e prazos. A Lexo organiza tudo automaticamente — sem planilhas e sem retrabalho.",
+  },
+  {
+    n: "02",
+    hue: AC2,
+    title: "A IA assume a rotina",
+    desc: "Captura publicações do diário, calcula prazos, resume autos e gera minutas enquanto você foca na estratégia.",
+  },
+  {
+    n: "03",
+    hue: AC_MG,
+    title: "Acompanhe e cresça",
+    desc: "Dashboards, jurimetria e portal do cliente em um só lugar. Decisões baseadas em dados reais do escritório.",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "Reduzi em 70% o tempo gasto com controle de prazos. A captação automática do diário sozinha já paga o sistema.",
+    name: "Dra. Camila Andrade",
+    role: "Sócia · Andrade Advocacia",
+    initial: "CA",
+    hue: AC,
+  },
+  {
+    quote: "A Lexo IA resume um processo de 300 páginas em segundos. Minha equipe ganhou horas de volta toda semana.",
+    name: "Dr. Rafael Mendonça",
+    role: "Sócio · Mendonça & Cruz",
+    initial: "RM",
+    hue: AC2,
+  },
+  {
+    quote: "O portal acabou com as ligações de 'como está meu processo?'. Os clientes adoram a transparência em tempo real.",
+    name: "Dra. Letícia Bittencourt",
+    role: "Titular · Bittencourt Advocacia",
+    initial: "LB",
+    hue: AC_MG,
+  },
+];
+
 const NAV_ITEMS = [
   ["#recursos", "Recursos"],
+  ["#como-funciona", "Como funciona"],
   ["#ia", "Lexo IA"],
   ["#portal", "Portal do Cliente"],
   ["#precos", "Preços"],
@@ -826,6 +872,30 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── COMO FUNCIONA ── */}
+        <section id="como-funciona" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
+            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>COMO FUNCIONA</div>
+            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do caos à clareza em três passos</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+            {steps.map(({ n, hue, title, desc }, i) => (
+              <div
+                key={n}
+                data-reveal=""
+                style={{ position: "relative", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 32, transitionDelay: `${i * 90}ms` }}
+              >
+                <div style={{ fontFamily: FM, fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-1px", background: `linear-gradient(135deg,${hue},color-mix(in oklab,${hue} 45%,oklch(0.98 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{n}</div>
+                <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 600, color: "oklch(0.96 0.01 264)", margin: "18px 0 9px" }}>{title}</h3>
+                <p style={{ fontFamily: F, fontSize: 15, fontWeight: 400, lineHeight: 1.65, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
+                {i < steps.length - 1 && (
+                  <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={hue} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", top: 38, right: -18, opacity: 0.5, zIndex: 2 }} aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── LEXO IA ── */}
         <section id="ia" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div className="flow-border" style={{ borderRadius: 22, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
@@ -949,6 +1019,37 @@ export default function LandingPage() {
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* ── RELATOS DE CLIENTES ── */}
+        <section id="depoimentos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
+            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>RELATOS DE CLIENTES</div>
+            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Escritórios que já vivem sem retrabalho</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+            {testimonials.map(({ quote, name, role, initial, hue }, i) => (
+              <figure
+                key={name}
+                data-reveal=""
+                style={{ display: "flex", flexDirection: "column", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 28, margin: 0, transitionDelay: `${i * 90}ms` }}
+              >
+                <div style={{ display: "flex", gap: 3, marginBottom: 16 }} aria-label="5 de 5 estrelas">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <svg key={s} width={15} height={15} viewBox="0 0 24 24" fill="oklch(0.80 0.13 85)" stroke="none" aria-hidden="true"><path d="M12 2l3 6.5 7 .9-5.1 4.8 1.3 7-6.2-3.4-6.2 3.4 1.3-7L2 9.4l7-.9z"/></svg>
+                  ))}
+                </div>
+                <blockquote style={{ flex: 1, fontFamily: F, fontSize: 15.5, fontWeight: 400, lineHeight: 1.62, color: "oklch(0.84 0.012 264)", margin: 0 }}>“{quote}”</blockquote>
+                <figcaption style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 22 }}>
+                  <span style={{ width: 40, height: 40, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: F, fontSize: 13, fontWeight: 600, color: "#fff", background: `linear-gradient(135deg,${hue},color-mix(in oklab,${hue} 55%,oklch(0.30 0.04 274)))` }}>{initial}</span>
+                  <span>
+                    <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>{name}</span>
+                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: "oklch(0.55 0.02 264)" }}>{role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
 
