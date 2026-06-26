@@ -68,7 +68,7 @@ export default async function RelatorioFinanceiroPage({
         </div>
 
         {/* Resumo */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
             { label: "Total geral", value: totalGeral, color: "oklch(0.66 0.18 274)" },
             { label: "Recebido (PAGO)", value: totalPago, color: "oklch(0.65 0.15 150)" },
