@@ -67,6 +67,18 @@ Dates are stored as UTC midnight. Always display them with `formatDate()` from `
 - Toasts via `sonner` (`<Toaster />` in root layout).
 - Currency: `formatCurrency()` from `src/lib/format.ts` formats as BRL.
 
+## graphify
+
+A knowledge graph of this codebase lives at `graphify-out/graph.json` (1374 nodes, 2065 edges, 44 communities).
+
+**Before answering any question about the codebase** — architecture, data flow, what calls what, where something is defined — run:
+```
+graphify query "<question>"
+```
+using the Python interpreter at `graphify-out/.graphify_python`. This replaces reading raw files and saves context window.
+
+To rebuild after significant code changes: `/graphify .` from the project root.
+
 ### Route structure
 
 ```
