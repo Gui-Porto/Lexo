@@ -158,8 +158,8 @@ const CSS = `
   }
   [data-reveal] {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 600ms ease-out, transform 600ms ease-out;
+    transform: translateY(12px);
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   [data-reveal].reveal-visible {
     opacity: 1;
@@ -208,14 +208,14 @@ const CSS = `
   }
   .hero-panel {
     opacity: 0;
-    transform: translateX(60px);
-    transition: opacity 700ms ease-out 300ms, transform 700ms ease-out 300ms;
+    transform: translateX(20px);
+    transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms, transform 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms;
   }
   .hero-panel.mounted { opacity: 1; transform: translateX(0); }
   .hero-card {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 600ms ease-out 600ms, transform 600ms ease-out 600ms;
+    transform: translateY(14px);
+    transition: opacity 750ms cubic-bezier(0.22, 1, 0.36, 1) 500ms, transform 750ms cubic-bezier(0.22, 1, 0.36, 1) 500ms;
   }
   .hero-card.mounted { opacity: 1; transform: translateY(0); }
   @keyframes marquee {
@@ -307,9 +307,9 @@ const CSS = `
   .nav-link { transition: color 200ms; }
   .nav-link:hover { color: oklch(0.88 0.01 264) !important; }
   .nav-pill {
-    transition: transform 320ms cubic-bezier(0.34,1.56,0.64,1),
-                width 320ms cubic-bezier(0.34,1.56,0.64,1),
-                opacity 200ms ease;
+    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                width 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 220ms ease;
   }
   @media (prefers-reduced-motion: reduce) {
     .nav-pill { transition: none !important; }
@@ -436,15 +436,15 @@ export default function LandingPage() {
 
       {/* ── AURORA ── */}
       <div style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-        <div className="aurora-blob" style={{ position: "absolute", top: "-15%", right: "-8%",  width: 320, height: 380, borderRadius: "50%", background: "oklch(0.48 0.30 274)", filter: "blur(90px)", opacity: 0.55, animation: "aurora-a 35s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "20%",  left: "-10%", width: 280, height: 320, borderRadius: "50%", background: "oklch(0.42 0.28 310)", filter: "blur(90px)", opacity: 0.55, animation: "aurora-b 42s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", bottom: "5%", left: "40%",  width: 360, height: 240, borderRadius: "50%", background: "oklch(0.45 0.24 240)", filter: "blur(90px)", opacity: 0.55, animation: "aurora-c 28s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "-15%", right: "-8%",  width: 320, height: 380, borderRadius: "50%", background: "oklch(0.48 0.30 274)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-a 35s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", top: "20%",  left: "-10%", width: 280, height: 320, borderRadius: "50%", background: "oklch(0.42 0.28 310)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-b 42s ease-in-out infinite" }} />
+        <div className="aurora-blob" style={{ position: "absolute", bottom: "5%", left: "40%",  width: 360, height: 240, borderRadius: "50%", background: "oklch(0.45 0.24 240)", filter: "blur(120px)", opacity: 0.25, animation: "aurora-c 28s ease-in-out infinite" }} />
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
 
         {/* ── NAV ── */}
-        <nav style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", alignItems: "center", gap: 22, padding: "15px 40px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.07 0.022 264 / 0.80)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+        <nav style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", alignItems: "center", gap: 22, padding: "15px 40px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.07 0.022 264 / 0.82)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
             <span style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
               <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
@@ -622,10 +622,10 @@ export default function LandingPage() {
         </div>
 
         {/* ── FEATURES ── */}
-        <section id="recursos" style={{ maxWidth: 1180, margin: "0 auto", padding: "72px 40px 20px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 44px" }}>
-            <div style={{ fontFamily: FM, fontSize: 12, fontWeight: 500, color: AC, letterSpacing: "1.5px", marginBottom: 12 }}>PLATAFORMA COMPLETA</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0 }}>Tudo que o escritório precisa, sem trocar de aba</h2>
+        <section id="recursos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px 32px" }}>
+          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
+            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLATAFORMA COMPLETA</div>
+            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Tudo que o escritório precisa, sem trocar de aba</h2>
           </div>
           <div
             onMouseMove={(e) => {
@@ -636,32 +636,53 @@ export default function LandingPage() {
                 card.style.setProperty("--my", `${e.clientY - rect.top}px`);
               });
             }}
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}
           >
-            {features.map(({ title, novo, desc, icon }, i) => (
-              <div
-                key={title}
-                className="feature-card"
-                ref={el => { featureCardRefs.current[i] = el; }}
-                data-reveal=""
-                style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 16, padding: 24, transitionDelay: `${i * 80}ms` }}
-              >
-                <span style={{ width: 42, height: 42, borderRadius: 11, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 14%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 26%,transparent)` }}>{icon}</span>
-                <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "16px 0 7px" }}>
-                  <span style={{ fontFamily: F, fontSize: 17, fontWeight: 600, color: "oklch(0.95 0.01 264)" }}>{title}</span>
-                  {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
+            {/* Row 1: 2 featured cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+              {features.slice(0, 2).map(({ title, novo, desc, icon }, i) => (
+                <div
+                  key={title}
+                  className="feature-card"
+                  ref={el => { featureCardRefs.current[i] = el; }}
+                  data-reveal=""
+                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 32, transitionDelay: `${i * 80}ms` }}
+                >
+                  <span style={{ width: 48, height: 48, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 13%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 22%,transparent)` }}>{icon}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "20px 0 9px" }}>
+                    <span style={{ fontFamily: F, fontSize: 19, fontWeight: 600, color: "oklch(0.96 0.01 264)" }}>{title}</span>
+                    {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
+                  </div>
+                  <p style={{ fontFamily: F, fontSize: 15, fontWeight: 400, lineHeight: 1.65, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
                 </div>
-                <p style={{ fontFamily: F, fontSize: 14, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.62 0.02 264)", margin: 0 }}>{desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* Row 2: 4 detail cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+              {features.slice(2).map(({ title, novo, desc, icon }, i) => (
+                <div
+                  key={title}
+                  className="feature-card"
+                  ref={el => { featureCardRefs.current[i + 2] = el; }}
+                  data-reveal=""
+                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 16, padding: 22, transitionDelay: `${(i + 2) * 80}ms` }}
+                >
+                  <span style={{ width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 12%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 20%,transparent)` }}>{icon}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "14px 0 6px" }}>
+                    <span style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>{title}</span>
+                    {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
+                  </div>
+                  <p style={{ fontFamily: F, fontSize: 13, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.60 0.02 264)", margin: 0 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ── LEXO IA ── */}
-        <section id="ia" style={{ maxWidth: 1180, margin: "0 auto", padding: "72px 40px" }}>
+        <section id="ia" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div style={{ borderRadius: 22, border: `1px solid color-mix(in oklab,${AC} 26%,transparent)`, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
             <div>
-              <span data-reveal="" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: FM, fontSize: 11, fontWeight: 600, color: AC, border: `1px solid color-mix(in oklab,${AC} 32%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: ".5px" }}>✦ LEXO IA</span>
+              <span data-reveal="" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: FM, fontSize: 11, fontWeight: 600, color: AC, border: `1px solid color-mix(in oklab,${AC} 32%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: "1.5px" }}>✦ LEXO IA</span>
               <h2 data-reveal="" style={{ fontFamily: F, fontSize: 34, fontWeight: 800, letterSpacing: "-1px", color: "oklch(0.98 0.008 264)", margin: "18px 0 0", lineHeight: 1.1, transitionDelay: "100ms" }}>
                 Uma inteligência treinada para o jurídico brasileiro
               </h2>
@@ -720,26 +741,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── STATS ── */}
-        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "8px 40px 40px" }}>
-          <div ref={statsRef} data-reveal="" style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "0px 40px 96px" }}>
+          <div ref={statsRef} data-reveal="" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, borderTop: "1px solid oklch(1 0 0 / 8%)", paddingTop: 48 }}>
             {statsData.map((s, i) => (
-              <div key={s.display} style={{ display: "contents" }}>
-                {i > 0 && (
-                  <div style={{ width: 1, height: 64, background: `linear-gradient(to bottom, transparent, color-mix(in oklab,${AC} 30%,transparent), transparent)`, flexShrink: 0 }} />
-                )}
-                <div style={{ flex: 1, padding: 18 }}>
-                  <div style={{ fontFamily: F, fontSize: 64, fontWeight: 800, letterSpacing: "-2px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 70%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1.1 }}>
-                    <span ref={el => { statValueRefs.current[i] = el; }}>{s.display}</span>
-                  </div>
-                  <div style={{ fontFamily: F, fontSize: 14, color: "oklch(0.6 0.02 264)", marginTop: 6 }}>{s.label}</div>
+              <div key={s.display} style={{ padding: "0 32px 0 0", borderRight: i < 3 ? "1px solid oklch(1 0 0 / 8%)" : "none", marginRight: i < 3 ? 32 : 0 }}>
+                <div style={{ fontFamily: F, fontSize: 72, fontWeight: 800, letterSpacing: "-2.5px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 60%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1 }}>
+                  <span ref={el => { statValueRefs.current[i] = el; }}>{s.display}</span>
                 </div>
+                <div style={{ fontFamily: F, fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 10, lineHeight: 1.45 }}>{s.label}</div>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── PORTAL DO CLIENTE ── */}
-        <section id="portal" style={{ maxWidth: 1180, margin: "0 auto", padding: "60px 40px" }}>
+        <section id="portal" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 50, alignItems: "center" }}>
             <div style={{ borderRadius: 16, border: "1px solid oklch(1 0 0 / 10%)", background: SURF1, boxShadow: "0 24px 60px oklch(0 0 0 / 0.45)", padding: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 16 }}>
@@ -773,7 +789,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div data-reveal="">
-              <div style={{ fontFamily: FM, fontSize: 12, fontWeight: 500, color: AC, letterSpacing: "1.5px", marginBottom: 12 }}>PORTAL DO CLIENTE</div>
+              <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PORTAL DO CLIENTE</div>
               <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
                 Seu cliente acompanha tudo, sem ligar para o escritório
               </h2>
@@ -789,9 +805,9 @@ export default function LandingPage() {
         </section>
 
         {/* ── PRICING ── */}
-        <section id="precos" style={{ maxWidth: 1180, margin: "0 auto", padding: "60px 40px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 44px" }}>
-            <div style={{ fontFamily: FM, fontSize: 12, fontWeight: 500, color: AC, letterSpacing: "1.5px", marginBottom: 12 }}>PLANOS</div>
+        <section id="precos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+          <div data-reveal="" style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 52px" }}>
+            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLANOS</div>
             <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0 }}>Preço por usuário, sem surpresas</h2>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, alignItems: "start" }}>
@@ -833,7 +849,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── CTA FINAL ── */}
-        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "40px 40px 70px" }}>
+        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "40px 40px 96px" }}>
           <div style={{ borderRadius: 22, border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`, background: "oklch(0.10 0.018 264)", padding: "56px 40px", textAlign: "center", position: "relative", overflow: "hidden" }}>
             {/* Static outer orb */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 320, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 18%,transparent),transparent)`, filter: "blur(40px)", opacity: 0.5, pointerEvents: "none" }} />
