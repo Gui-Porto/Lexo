@@ -625,7 +625,7 @@ export default function LandingPage() {
               Área do Cliente
             </Link>
             <Link href="/registrar" className="cta-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "#fff", borderRadius: 10, padding: "10px 17px", background: AC, boxShadow: `0 6px 18px color-mix(in oklab,${AC} 40%,transparent)`, textDecoration: "none" }}>
-              Agendar demo
+              Criar conta grátis
             </Link>
           </div>
         </nav>
