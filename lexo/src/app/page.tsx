@@ -378,6 +378,38 @@ const CSS = `
                 width 160ms cubic-bezier(0.25, 1, 0.5, 1),
                 opacity 110ms ease;
   }
+  @keyframes wf-populate {
+    0%, 10%  { opacity: 0; transform: translateY(7px); }
+    26%, 82% { opacity: 1; transform: translateY(0); }
+    100%     { opacity: 0; transform: translateY(7px); }
+  }
+  @keyframes wf-pop {
+    0%, 38%  { opacity: 0; transform: scale(0.82); }
+    50%, 90% { opacity: 1; transform: scale(1); }
+    100%     { opacity: 0; transform: scale(0.82); }
+  }
+  @keyframes wf-bar {
+    0%, 100% { transform: scaleY(0.18); }
+    50%      { transform: scaleY(1); }
+  }
+  @keyframes wf-flow {
+    0%   { background-position: 0 -24px; }
+    100% { background-position: 0 24px; }
+  }
+  @keyframes wf-arrow {
+    0%, 100% { transform: translateY(0);   opacity: 0.45; }
+    50%      { transform: translateY(4px); opacity: 1; }
+  }
+  .wf-line {
+    background-image: linear-gradient(oklch(1 0 0 / 0.30) 45%, transparent 45%);
+    background-size: 2px 12px;
+    background-repeat: repeat-y;
+    animation: wf-flow 1.1s linear infinite;
+  }
+  .wf-arrow { animation: wf-arrow 1.5s ease-in-out infinite; }
+  .wf-row   { animation: wf-populate 4.5s ease-in-out infinite; }
+  .wf-pop   { animation: wf-pop 4s ease-in-out infinite; }
+  .wf-bar   { transform-origin: bottom; animation: wf-bar 2.4s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) {
     .aurora-blob { animation: none !important; }
     .bg-beam { animation: none !important; opacity: 0 !important; }
@@ -389,6 +421,8 @@ const CSS = `
     .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
     .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
     .nav-pill, .nav-hover-pill { transition: none !important; }
+    .wf-line, .wf-arrow, .wf-row, .wf-pop { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .wf-bar { animation: none !important; transform: scaleY(1) !important; }
   }
   @keyframes gradient-flow {
     0%   { background-position:   0% 50%; }
@@ -446,6 +480,63 @@ const CSS = `
 `;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
+// Mini-wireframe animado que demonstra a funcionalidade de cada etapa
+function Wireframe({ i, hue }: { i: number; hue: string }) {
+  if (i === 0) {
+    // Importação de processos: linhas populando em cascata
+    return (
+      <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, height: "100%" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, letterSpacing: "1.5px", color: "oklch(0.55 0.02 264)" }}>PROCESSOS</span>
+          <span style={{ fontFamily: FM, fontSize: 10, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, borderRadius: 99, padding: "2px 8px" }}>+128 importados</span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {[0, 1, 2, 3].map((r) => (
+            <div key={r} className="wf-row" style={{ display: "flex", alignItems: "center", gap: 9, animationDelay: `${r * 0.35}s` }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: hue, flexShrink: 0 }} />
+              <span style={{ height: 7, borderRadius: 4, background: "oklch(0.42 0.02 264)", flex: 1 }} />
+              <span style={{ height: 7, width: 46, borderRadius: 4, background: "oklch(0.28 0.015 264)" }} />
+              <span style={{ height: 14, width: 38, borderRadius: 5, background: `color-mix(in oklab,${hue} 18%,oklch(0.16 0.02 264))`, flexShrink: 0 }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (i === 1) {
+    // Captura do diário → cálculo de prazo (chip que estoura)
+    return (
+      <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ background: "oklch(0.13 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 9, padding: "10px 12px" }}>
+          <div style={{ fontFamily: FM, fontSize: 9.5, fontWeight: 600, letterSpacing: "1.3px", color: "oklch(0.5 0.02 264)", marginBottom: 7 }}>DIÁRIO OFICIAL · INTIMAÇÃO</div>
+          <div style={{ height: 6, width: "92%", borderRadius: 3, background: "oklch(0.34 0.02 264)", marginBottom: 5 }} />
+          <div style={{ height: 6, width: "64%", borderRadius: 3, background: "oklch(0.26 0.015 264)" }} />
+        </div>
+        <svg className="wf-arrow" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={hue} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" style={{ alignSelf: "center" }}><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        <div className="wf-pop" style={{ display: "flex", alignItems: "center", gap: 9, alignSelf: "center", background: `color-mix(in oklab,${hue} 14%,oklch(0.12 0.018 264))`, border: `1px solid color-mix(in oklab,${hue} 30%,transparent)`, borderRadius: 10, padding: "9px 14px" }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "oklch(0.80 0.13 85)" }} />
+          <span style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: "oklch(0.92 0.01 264)" }}>Prazo calculado:</span>
+          <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 600, color: hue }}>5 dias</span>
+        </div>
+      </div>
+    );
+  }
+  // Dashboard: barras subindo + índice de êxito
+  return (
+    <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, height: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+        <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, letterSpacing: "1.5px", color: "oklch(0.55 0.02 264)" }}>JURIMETRIA</span>
+        <span style={{ fontFamily: FM, fontSize: 11, fontWeight: 600, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, borderRadius: 99, padding: "2px 9px" }}>68% êxito</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 64 }}>
+        {[34, 52, 42, 64, 48].map((h, b) => (
+          <div key={b} className="wf-bar" style={{ flex: 1, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(${hue},color-mix(in oklab,${hue} 40%,transparent))`, animationDelay: `${b * 0.18}s` }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const auroraRef      = useRef<HTMLDivElement>(null);
   const heroMockupRef  = useRef<HTMLDivElement>(null);
@@ -874,22 +965,33 @@ export default function LandingPage() {
 
         {/* ── COMO FUNCIONA ── */}
         <section id="como-funciona" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
+          <div data-reveal="" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 56px" }}>
             <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>COMO FUNCIONA</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do caos à clareza em três passos</h2>
+            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do primeiro processo ao escritório no automático</h2>
+            <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: "14px 0 0" }}>Três etapas — veja o que acontece em cada tela.</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          <div style={{ maxWidth: 760, margin: "0 auto" }}>
             {steps.map(({ n, hue, title, desc }, i) => (
-              <div
-                key={n}
-                data-reveal=""
-                style={{ position: "relative", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 32, transitionDelay: `${i * 90}ms` }}
-              >
-                <div style={{ fontFamily: FM, fontSize: 40, fontWeight: 700, lineHeight: 1, letterSpacing: "-1px", background: `linear-gradient(135deg,${hue},color-mix(in oklab,${hue} 45%,oklch(0.98 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{n}</div>
-                <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 600, color: "oklch(0.96 0.01 264)", margin: "18px 0 9px" }}>{title}</h3>
-                <p style={{ fontFamily: F, fontSize: 15, fontWeight: 400, lineHeight: 1.65, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
+              <div key={n}>
+                <div
+                  data-reveal=""
+                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 24, display: "grid", gridTemplateColumns: "0.82fr 1fr", gap: 26, alignItems: "center", transitionDelay: `${i * 90}ms` }}
+                >
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 13 }}>
+                      <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 700, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 26%,transparent)`, borderRadius: 8, padding: "4px 9px" }}>{n}</span>
+                      <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 500, letterSpacing: "2px", color: "oklch(0.5 0.02 264)" }}>ETAPA</span>
+                    </div>
+                    <h3 style={{ fontFamily: F, fontSize: 21, fontWeight: 600, letterSpacing: "-0.3px", color: "oklch(0.96 0.01 264)", margin: "0 0 8px" }}>{title}</h3>
+                    <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
+                  </div>
+                  <Wireframe i={i} hue={hue} />
+                </div>
                 {i < steps.length - 1 && (
-                  <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={hue} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", top: 38, right: -18, opacity: 0.5, zIndex: 2 }} aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "8px 0" }} aria-hidden="true">
+                    <span className="wf-line" style={{ width: 2, height: 30 }} />
+                    <svg className="wf-arrow" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={steps[i + 1].hue} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+                  </div>
                 )}
               </div>
             ))}
