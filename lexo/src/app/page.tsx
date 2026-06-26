@@ -469,6 +469,33 @@ const CSS = `
     animation: beam-sweep 14s linear infinite;
     will-change: transform, opacity;
   }
+
+  /* ── RESPONSIVO ─────────────────────────────────────────────── */
+  html, body { max-width: 100%; overflow-x: hidden; }
+  @media (max-width: 1024px) {
+    .lp-hero { grid-template-columns: 1fr !important; gap: 40px !important; padding-top: 54px !important; }
+    .lp-grid-3 { grid-template-columns: 1fr 1fr !important; }
+    .lp-grid-4 { grid-template-columns: 1fr 1fr !important; }
+    .lp-ia, .lp-portal { grid-template-columns: 1fr !important; }
+    .lp-ia { padding: 34px !important; gap: 34px !important; }
+    .hero-card { left: auto !important; right: 0 !important; }
+  }
+  @media (max-width: 768px) {
+    .lp-nav { padding-left: 18px !important; padding-right: 18px !important; gap: 12px !important; }
+    .lp-navlinks { display: none !important; }
+    .lp-section { padding-left: 20px !important; padding-right: 20px !important; }
+    .lp-grid-2, .lp-grid-3 { grid-template-columns: 1fr !important; }
+    .lp-step { width: 100% !important; grid-template-columns: 1fr !important; }
+    .lp-stats { grid-template-columns: 1fr 1fr !important; gap: 28px 16px !important; }
+    .lp-stats > div { border-right: none !important; margin-right: 0 !important; padding-right: 0 !important; }
+    .hero-card { display: none !important; }
+    .lp-ia { padding: 24px !important; }
+  }
+  @media (max-width: 480px) {
+    .lp-grid-4 { grid-template-columns: 1fr !important; }
+    .lp-stats { grid-template-columns: 1fr !important; }
+    .lp-navcta-label { display: none !important; }
+  }
 `;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
@@ -720,7 +747,7 @@ export default function LandingPage() {
       <div style={{ position: "relative", zIndex: 1 }}>
 
         {/* ── NAV ── */}
-        <nav style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", alignItems: "center", gap: 22, padding: "15px 40px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.07 0.022 264 / 0.82)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
+        <nav className="lp-nav" style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", alignItems: "center", gap: 22, padding: "15px 40px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.07 0.022 264 / 0.82)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
             <span style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
               <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
@@ -733,6 +760,7 @@ export default function LandingPage() {
 
           <div
             ref={navContainerRef}
+            className="lp-navlinks"
             onMouseLeave={() => setHoveredHref(null)}
             style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14, position: "relative" }}
           >
@@ -765,7 +793,7 @@ export default function LandingPage() {
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
             <Link href="/login" style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.92 0.01 264)", border: "1px solid oklch(1 0 0 / 14%)", borderRadius: 10, padding: "9px 16px", background: "oklch(0.155 0.02 264)", textDecoration: "none" }}>
               <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round"><circle cx={12} cy={8} r={4}/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-              Área do Cliente
+              <span className="lp-navcta-label">Área do Cliente</span>
             </Link>
             <Link href="/registrar" className="cta-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "#fff", borderRadius: 10, padding: "10px 17px", background: AC, boxShadow: `0 6px 18px color-mix(in oklab,${AC} 40%,transparent)`, textDecoration: "none" }}>
               Criar conta grátis
@@ -774,14 +802,14 @@ export default function LandingPage() {
         </nav>
 
         {/* ── HERO ── */}
-        <header style={{ maxWidth: 1180, margin: "0 auto", padding: "78px 40px 60px", display: "grid", gridTemplateColumns: "1.05fr 1fr", gap: 54, alignItems: "center" }}>
+        <header className="lp-hero lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "78px 40px 60px", display: "grid", gridTemplateColumns: "1.05fr 1fr", gap: 54, alignItems: "center" }}>
           <div>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: FM, fontSize: 12, fontWeight: 500, color: "oklch(0.78 0.06 274)", border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "6px 13px", letterSpacing: ".3px" }}>
               <span className="badge-pulse" style={{ fontSize: 14, lineHeight: 1 }}>✦</span>
               {" "}Agora com Lexo IA &amp; Jurimetria
             </span>
 
-            <h1 className="text-flow" style={{ fontFamily: F, fontSize: 64, fontWeight: 800, lineHeight: 1.02, letterSpacing: "-2px", margin: "22px 0 0" }}>
+            <h1 className="text-flow" style={{ fontFamily: F, fontSize: "clamp(38px, 6vw, 64px)", fontWeight: 800, lineHeight: 1.02, letterSpacing: "-2px", margin: "22px 0 0" }}>
               O sistema que cuida do escritório enquanto você cuida da causa.
             </h1>
 
@@ -899,7 +927,7 @@ export default function LandingPage() {
         </header>
 
         {/* ── TRUST BAR ── */}
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "8px 40px 18px" }}>
+        <div className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "8px 40px 18px" }}>
           <div style={{ fontFamily: FM, fontSize: 12, fontWeight: 500, color: "oklch(0.45 0.02 264)", textAlign: "center", letterSpacing: "1px", marginBottom: 18 }}>
             USADO POR ESCRITÓRIOS E DEPARTAMENTOS JURÍDICOS EM TODO O BRASIL
           </div>
@@ -913,10 +941,10 @@ export default function LandingPage() {
         </div>
 
         {/* ── FEATURES ── */}
-        <section id="recursos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px 32px" }}>
+        <section id="recursos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px 32px" }}>
           <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
             <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLATAFORMA COMPLETA</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Tudo que o escritório precisa, sem trocar de aba</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Tudo que o escritório precisa, sem trocar de aba</h2>
           </div>
           <div
             onMouseMove={(e) => {
@@ -929,7 +957,7 @@ export default function LandingPage() {
             }}
           >
             {/* Row 1: 2 featured cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+            <div className="lp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               {features.slice(0, 2).map(({ title, novo, desc, icon, hue }, i) => (
                 <div
                   key={title}
@@ -948,7 +976,7 @@ export default function LandingPage() {
               ))}
             </div>
             {/* Row 2: 4 detail cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+            <div className="lp-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
               {features.slice(2).map(({ title, novo, desc, icon, hue }, i) => (
                 <div
                   key={title}
@@ -970,10 +998,10 @@ export default function LandingPage() {
         </section>
 
         {/* ── COMO FUNCIONA ── */}
-        <section id="como-funciona" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+        <section id="como-funciona" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div data-reveal="" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 56px" }}>
             <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>COMO FUNCIONA</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do primeiro processo ao escritório no automático</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do primeiro processo ao escritório no automático</h2>
             <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: "14px 0 0" }}>Três etapas — veja o que acontece em cada tela.</p>
           </div>
           <div style={{ maxWidth: 760, margin: "0 auto" }}>
@@ -994,6 +1022,7 @@ export default function LandingPage() {
                 <div key={n}>
                   <div
                     data-reveal=""
+                    className="lp-step"
                     style={{ width: "74%", marginLeft: onRight ? "auto" : 0, marginRight: onRight ? 0 : "auto", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 22, display: "grid", gridTemplateColumns: onRight ? "1fr 0.8fr" : "0.8fr 1fr", gap: 22, alignItems: "center", transitionDelay: `${i * 90}ms` }}
                   >
                     {onRight ? <>{wf}{textBlock}</> : <>{textBlock}{wf}</>}
@@ -1006,11 +1035,11 @@ export default function LandingPage() {
         </section>
 
         {/* ── LEXO IA ── */}
-        <section id="ia" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div className="flow-border" style={{ borderRadius: 22, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
+        <section id="ia" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+          <div className="flow-border lp-ia" style={{ borderRadius: 22, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
             <div>
               <span data-reveal="" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: FM, fontSize: 11, fontWeight: 600, color: AC, border: `1px solid color-mix(in oklab,${AC} 32%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: "1.5px" }}>✦ LEXO IA</span>
-              <h2 data-reveal="" style={{ fontFamily: F, fontSize: 34, fontWeight: 800, letterSpacing: "-1px", color: "oklch(0.98 0.008 264)", margin: "18px 0 0", lineHeight: 1.1, transitionDelay: "100ms" }}>
+              <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(26px, 4vw, 34px)", fontWeight: 800, letterSpacing: "-1px", color: "oklch(0.98 0.008 264)", margin: "18px 0 0", lineHeight: 1.1, transitionDelay: "100ms" }}>
                 Uma inteligência treinada para o jurídico brasileiro
               </h2>
               <p data-reveal="" style={{ fontFamily: F, fontSize: 16, lineHeight: 1.62, color: "oklch(0.68 0.02 264)", margin: "16px 0 0", transitionDelay: "200ms" }}>
@@ -1068,11 +1097,11 @@ export default function LandingPage() {
         </section>
 
         {/* ── STATS ── */}
-        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "0px 40px 96px" }}>
-          <div ref={statsRef} data-reveal="" className="flow-border" style={{ borderRadius: 18, padding: "40px 32px", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
+        <section className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "0px 40px 96px" }}>
+          <div ref={statsRef} data-reveal="" className="flow-border lp-stats" style={{ borderRadius: 18, padding: "40px 32px", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
             {statsData.map((s, i) => (
               <div key={s.display} style={{ padding: "0 32px 0 0", borderRight: i < 3 ? "1px solid oklch(1 0 0 / 8%)" : "none", marginRight: i < 3 ? 32 : 0 }}>
-                <div style={{ fontFamily: F, fontSize: 72, fontWeight: 800, letterSpacing: "-2.5px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 60%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1 }}>
+                <div style={{ fontFamily: F, fontSize: "clamp(44px, 7vw, 72px)", fontWeight: 800, letterSpacing: "-2.5px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 60%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1 }}>
                   <span ref={el => { statValueRefs.current[i] = el; }}>{s.display}</span>
                 </div>
                 <div style={{ fontFamily: F, fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 10, lineHeight: 1.45 }}>{s.label}</div>
@@ -1082,8 +1111,8 @@ export default function LandingPage() {
         </section>
 
         {/* ── PORTAL DO CLIENTE ── */}
-        <section id="portal" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 50, alignItems: "center" }}>
+        <section id="portal" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+          <div className="lp-portal" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 50, alignItems: "center" }}>
             <div style={{ borderRadius: 16, border: "1px solid oklch(1 0 0 / 10%)", background: SURF1, boxShadow: "0 24px 60px oklch(0 0 0 / 0.45)", padding: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 16 }}>
                 <span style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,oklch(0.55 0.1 210),oklch(0.6 0.1 230))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: F, fontSize: 13, fontWeight: 600, color: "#fff" }}>MS</span>
@@ -1117,7 +1146,7 @@ export default function LandingPage() {
             </div>
             <div data-reveal="">
               <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PORTAL DO CLIENTE</div>
-              <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
+              <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
                 Seu cliente acompanha tudo, sem ligar para o escritório
               </h2>
               <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.62, color: "oklch(0.68 0.02 264)", margin: "16px 0 0" }}>
@@ -1132,12 +1161,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── RELATOS DE CLIENTES ── */}
-        <section id="depoimentos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+        <section id="depoimentos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
             <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>RELATOS DE CLIENTES</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Escritórios que já vivem sem retrabalho</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Escritórios que já vivem sem retrabalho</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          <div className="lp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
             {testimonials.map(({ quote, name, role, initial, hue }, i) => (
               <figure
                 key={name}
@@ -1163,12 +1192,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── PRICING ── */}
-        <section id="precos" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
+        <section id="precos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
           <div data-reveal="" style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 52px" }}>
             <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLANOS</div>
-            <h2 style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0 }}>Preço por usuário, sem surpresas</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0 }}>Preço por usuário, sem surpresas</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, alignItems: "start" }}>
+          <div className="lp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, alignItems: "start" }}>
             {plans.map((plan, i) => (
               <div
                 key={plan.name}
@@ -1207,14 +1236,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── CTA FINAL ── */}
-        <section style={{ maxWidth: 1180, margin: "0 auto", padding: "40px 40px 96px" }}>
+        <section className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "40px 40px 96px" }}>
           <div style={{ borderRadius: 22, border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`, background: "oklch(0.10 0.018 264)", padding: "56px 40px", textAlign: "center", position: "relative", overflow: "hidden" }}>
             {/* Static outer orb */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 320, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 18%,transparent),transparent)`, filter: "blur(40px)", opacity: 0.5, pointerEvents: "none" }} />
             {/* Pulsing inner orb */}
             <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 400, height: 180, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC_MG} 26%,transparent),transparent)`, filter: "blur(28px)", animation: "glow-pulse 3s ease-in-out infinite", pointerEvents: "none" }} />
             <div style={{ position: "relative", zIndex: 1 }}>
-              <h2 data-reveal="" style={{ fontFamily: F, fontSize: 42, fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
+              <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
                 Pronto para tirar o escritório do caos?
               </h2>
               <p data-reveal="" style={{ fontFamily: F, fontSize: 17, color: "oklch(0.68 0.02 264)", margin: "14px auto 0", maxWidth: 480, transitionDelay: "100ms" }}>
@@ -1234,7 +1263,7 @@ export default function LandingPage() {
 
         {/* ── FOOTER ── */}
         <footer style={{ borderTop: "1px solid oklch(1 0 0 / 7%)" }}>
-          <div style={{ maxWidth: 1180, margin: "0 auto", padding: 40, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+          <div className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: 40, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
               <span style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.16 0.020 264)" }}>
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">

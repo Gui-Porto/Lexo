@@ -75,12 +75,14 @@ function OtpInputs({ onChange }: { onChange: (code: string) => void }) {
 
   return (
     <div
+      className="otp-wrap"
       style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}
       onPaste={handlePaste}
     >
       {[0, 1, 2].map((i) => (
         <input
           key={i}
+          className="otp-box"
           ref={(el) => { inputRefs.current[i] = el; }}
           type="text"
           inputMode="numeric"
@@ -97,6 +99,7 @@ function OtpInputs({ onChange }: { onChange: (code: string) => void }) {
       {[3, 4, 5].map((i) => (
         <input
           key={i}
+          className="otp-box"
           ref={(el) => { inputRefs.current[i] = el; }}
           type="text"
           inputMode="numeric"

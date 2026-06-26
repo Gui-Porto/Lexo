@@ -58,10 +58,22 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
+    <div className="auth-root" style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
+      {/* eslint-disable-next-line react/no-danger */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @media (max-width: 860px) {
+          .auth-root { flex-direction: column !important; }
+          .auth-brand { display: none !important; }
+          .auth-form { flex: 1 1 auto !important; padding: 56px 24px !important; min-height: 100vh; }
+        }
+        @media (max-width: 480px) {
+          .auth-form { padding: 48px 18px !important; }
+        }
+      ` }} />
 
       {/* ── Brand panel (esquerda) ───────────────────────────────── */}
-      <div style={{
+      <div className="auth-brand" style={{
         flex: "1.05",
         background: "oklch(0.09 0.022 264)",
         position: "relative",
@@ -173,7 +185,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Form panel (direita) ─────────────────────────────────── */}
-      <div style={{
+      <div className="auth-form" style={{
         flex: "1",
         background: "oklch(0.115 0.018 264)",
         display: "flex",
