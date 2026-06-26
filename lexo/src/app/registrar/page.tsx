@@ -74,10 +74,22 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
+    <div className="auth-root" style={{ display: "flex", minHeight: "100vh", fontFamily: F }}>
+      {/* eslint-disable-next-line react/no-danger */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        html, body { max-width: 100%; overflow-x: hidden; }
+        @media (max-width: 900px) {
+          .auth-root { flex-direction: column !important; }
+          .auth-brand { display: none !important; }
+          .auth-form { flex: 1 1 auto !important; padding: 48px 24px !important; min-height: 100vh; }
+        }
+        @media (max-width: 480px) {
+          .auth-form { padding: 40px 18px !important; }
+        }
+      ` }} />
 
       {/* ── LEFT BRAND ─────────────────────────────────────────────── */}
-      <div style={{
+      <div className="auth-brand" style={{
         flex: 1,
         position: "relative",
         overflow: "hidden",
@@ -156,7 +168,7 @@ export default function RegisterPage() {
       </div>
 
       {/* ── RIGHT FORM ─────────────────────────────────────────────── */}
-      <div style={{ flex: 1.12, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
+      <div className="auth-form" style={{ flex: 1.12, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
         <div style={{ width: "100%", maxWidth: 440 }}>
 
           {/* Top nav */}
