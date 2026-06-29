@@ -96,13 +96,10 @@ npm install
 npx prisma migrate dev
 npx prisma generate
 
-# (Opcional) popular com dados de exemplo
-node seed-local.mjs
-
 npm run dev
 ```
 
-Acesse [http://localhost:3000](http://localhost:3000) e crie sua organização em `/registrar`.
+Acesse [http://localhost:3000](http://localhost:3000) e **crie sua própria organização** em `/registrar` — o cadastro gera o escritório e o primeiro usuário ADMIN atomicamente.
 
 ## Estrutura
 
