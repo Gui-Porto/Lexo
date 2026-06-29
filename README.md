@@ -106,38 +106,6 @@ Acesse **http://localhost:3000** — você será redirecionado para `/login`.
 
 **Crie sua própria conta:** acesse `/registrar`. O cadastro cria, de forma atômica, a organização do seu escritório e o primeiro usuário **Admin**. A partir daí você convida o restante da equipe pela própria interface.
 
-### Variáveis de ambiente (`.env.local`)
-
-```env
-# Banco de dados PostgreSQL
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/lexo_dev"
-
-# Auth
-AUTH_SECRET="qualquer-string-aleatória-longa"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Google Gemini (funcionalidades de IA) — gratuito em https://aistudio.google.com/apikey
-GEMINI_API_KEY="..."
-
-# Resend (notificações de email) — opcional para dev
-RESEND_API_KEY="re_..."
-RESEND_FROM="Lexo <noreply@seudominio.com>"
-
-# Stripe (billing) — opcional para dev
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-STRIPE_PRICE_ESSENCIAL="price_..."
-STRIPE_PRICE_PRO="price_..."
-
-# Cron (proteção do endpoint de notificações)
-CRON_SECRET="qualquer-string-aleatória"
-```
-
-> Os clientes de SDK (Gemini, Stripe, Resend) são instanciados de forma **lazy** —
-> a ausência de uma chave não quebra o build, apenas desativa a feature em runtime.
-
----
-
 ## Estrutura do projeto
 
 ```
