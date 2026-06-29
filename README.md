@@ -2,6 +2,8 @@
 
 > Sistema de gestão para escritórios de advocacia — SaaS multi-tenant com IA integrada, focado em simplicidade e produtividade para advogados.
 
+🔗 **Em produção:** [https://lexo-45tf.onrender.com](https://lexo-45tf.onrender.com)
+
 ---
 
 ## A ideia
@@ -28,8 +30,8 @@ Controle de prazos processuais, audiências, reuniões e outros compromissos. Ca
 ### Financeiro
 Registro de honorários com valor, vencimento, status (Pendente / Pago / Atrasado / Cancelado) e vínculo com cliente e processo. Inclui **relatório financeiro** com exportação em CSV e impressão em PDF, com resumo por período.
 
-### Inteligência Artificial (Claude)
-Ferramentas de IA integradas diretamente nos processos, via API da Anthropic:
+### Inteligência Artificial (Google Gemini)
+Ferramentas de IA integradas diretamente nos processos, via Google Gemini (free tier):
 
 - **Gerador de minutas** — gera petições e documentos jurídicos com base nos dados do processo
 - **Extrator de documentos PDF** — extrai e estrutura informações de peças processuais em PDF
@@ -61,11 +63,12 @@ Integração com **Stripe** para gestão de assinaturas. Planos Essencial e Pro 
 | Banco de dados | PostgreSQL via Prisma + adapter-pg |
 | Autenticação | Auth.js v5 (next-auth) — JWT + Credentials + TOTP |
 | UI | shadcn/ui sobre Base UI + Tailwind CSS v4 |
-| IA | Anthropic Claude (via `@anthropic-ai/sdk`) |
+| IA | Google Gemini (via `@google/genai`, free tier) |
 | Email | Resend |
 | Pagamentos | Stripe |
 | Validação | Zod |
 | Notificações | Sonner |
+| Deploy | Render (web service + PostgreSQL), auto-deploy na branch `master` |
 | Runtime | Node.js 20+ |
 
 ---
@@ -81,8 +84,8 @@ Integração com **Stripe** para gestão de assinaturas. Planos Essencial e Pro 
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/Gui-Porto/Lexo-Placeholder.git
-cd Lexo-Placeholder/lexo
+git clone https://github.com/Gui-Porto/Lexo.git
+cd Lexo/lexo
 
 # 2. Instale as dependências
 npm install
@@ -95,17 +98,13 @@ cp .env .env.local
 npx prisma generate
 npx prisma migrate deploy
 
-# 5. (Opcional) Popule o banco com dados de demonstração
-npx tsx prisma/seed.ts
-
-# 6. Inicie o servidor de desenvolvimento
+# 5. Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
 Acesse **http://localhost:3000** — você será redirecionado para `/login`.
 
-- Para criar seu próprio escritório: acesse `/registrar`
-- Para usar os dados de demo (após o seed): `admin@lexo.dev` / `senha123`
+**Crie sua própria conta:** acesse `/registrar`. O cadastro cria, de forma atômica, a organização do seu escritório e o primeiro usuário **Admin**. A partir daí você convida o restante da equipe pela própria interface.
 
 ### Variáveis de ambiente (`.env.local`)
 
@@ -117,8 +116,8 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/lexo_dev"
 AUTH_SECRET="qualquer-string-aleatória-longa"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Anthropic (funcionalidades de IA)
-ANTHROPIC_API_KEY="sk-ant-..."
+# Google Gemini (funcionalidades de IA) — gratuito em https://aistudio.google.com/apikey
+GEMINI_API_KEY="..."
 
 # Resend (notificações de email) — opcional para dev
 RESEND_API_KEY="re_..."
@@ -134,6 +133,9 @@ STRIPE_PRICE_PRO="price_..."
 CRON_SECRET="qualquer-string-aleatória"
 ```
 
+> Os clientes de SDK (Gemini, Stripe, Resend) são instanciados de forma **lazy** —
+> a ausência de uma chave não quebra o build, apenas desativa a feature em runtime.
+
 ---
 
 ## Estrutura do projeto
@@ -142,8 +144,7 @@ CRON_SECRET="qualquer-string-aleatória"
 lexo/
 ├── prisma/
 │   ├── schema.prisma          # modelos: Organization, User, Client, Case, Deadline, Invoice, ActivityLog, AuditLog, UserInvite
-│   ├── migrations/
-│   └── seed.ts                # dados de demonstração
+│   └── migrations/
 ├── src/
 │   ├── actions/               # Server Actions (mutations por domínio)
 │   │   ├── auth.ts            # registro de organização
@@ -184,6 +185,7 @@ lexo/
 │   │   ├── audit.ts           # log de auditoria
 │   │   ├── billing.ts         # helpers Stripe
 │   │   ├── document.ts        # extração de PDF
+│   │   ├── gemini.ts          # cliente Gemini (lazy) — IA
 │   │   ├── resend.ts          # envio de emails
 │   │   ├── risk.ts            # score de risco de prazo
 │   │   └── stripe.ts          # cliente Stripe
