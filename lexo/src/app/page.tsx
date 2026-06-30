@@ -471,7 +471,7 @@ const CSS = `
   }
 
   /* ── RESPONSIVO ─────────────────────────────────────────────── */
-  html, body { max-width: 100%; overflow-x: hidden; }
+  html, body { max-width: 100%; overflow-x: clip; }
   @media (max-width: 1024px) {
     .lp-hero { grid-template-columns: 1fr !important; gap: 40px !important; padding-top: 54px !important; }
     .lp-grid-3 { grid-template-columns: 1fr 1fr !important; }
