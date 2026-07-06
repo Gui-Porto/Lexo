@@ -2,6 +2,9 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { DeadlineForm } from "@/components/agenda/deadline-form";
 import { createDeadline } from "@/actions/agenda";
+import { PageHeader } from "@/components/page-header";
+import { EmptyFormState } from "@/components/ui/form-section";
+import { CalendarClock } from "lucide-react";
 
 export default async function NovoPrazoPage() {
   const session = await requireSession();
@@ -13,11 +16,13 @@ export default async function NovoPrazoPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Novo prazo</h1>
+      <PageHeader icon={CalendarClock} title="Novo prazo" />
       {cases.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Cadastre um processo antes de criar um prazo.
-        </p>
+        <EmptyFormState
+          message="Cadastre um processo antes de criar um prazo."
+          actionHref="/processos/novo"
+          actionLabel="Cadastrar processo"
+        />
       ) : (
         <DeadlineForm action={createDeadline} cases={cases} />
       )}

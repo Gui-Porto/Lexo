@@ -4,6 +4,8 @@ import { requireSession } from "@/lib/session";
 import { DeadlineForm } from "@/components/agenda/deadline-form";
 import { DeleteButton } from "@/components/delete-button";
 import { updateDeadline, deleteDeadline } from "@/actions/agenda";
+import { PageHeader } from "@/components/page-header";
+import { CalendarClock } from "lucide-react";
 
 export default async function EditDeadlinePage({
   params,
@@ -31,10 +33,11 @@ export default async function EditDeadlinePage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar prazo</h1>
-        <DeleteButton action={boundDelete} label="Excluir prazo" />
-      </div>
+      <PageHeader
+        icon={CalendarClock}
+        title="Editar prazo"
+        action={<DeleteButton action={boundDelete} label="Excluir prazo" />}
+      />
 
       <DeadlineForm
         action={boundUpdate}

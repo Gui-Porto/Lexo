@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { formatDate } from "@/lib/format";
-import { SparklesIcon, FileTextIcon } from "lucide-react";
+import { Gavel, SparklesIcon, FileTextIcon } from "lucide-react";
 import { RiskBadge } from "@/components/agenda/risk-badge";
 
 export default async function ProcessoDetailPage({
@@ -56,20 +57,23 @@ export default async function ProcessoDetailPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{caseItem.number}</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/resumo`} />}>
-            <SparklesIcon />
-            Resumo IA
-          </Button>
-          <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/minutas`} />}>
-            <FileTextIcon />
-            Gerar minuta
-          </Button>
-          <DeleteButton action={boundDelete} label="Excluir processo" />
-        </div>
-      </div>
+      <PageHeader
+        icon={Gavel}
+        title={caseItem.number}
+        action={
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/resumo`} />}>
+              <SparklesIcon />
+              Resumo IA
+            </Button>
+            <Button variant="outline" size="sm" render={<Link href={`/processos/${id}/minutas`} />}>
+              <FileTextIcon />
+              Gerar minuta
+            </Button>
+            <DeleteButton action={boundDelete} label="Excluir processo" />
+          </div>
+        }
+      />
 
       <CaseForm
         action={boundUpdate}

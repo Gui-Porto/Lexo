@@ -1,6 +1,9 @@
+import { Wallet } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { InvoiceForm } from "@/components/financeiro/invoice-form";
+import { EmptyFormState } from "@/components/ui/form-section";
+import { PageHeader } from "@/components/page-header";
 import { createInvoice } from "@/actions/financeiro";
 
 export default async function NovoHonorarioPage() {
@@ -21,11 +24,13 @@ export default async function NovoHonorarioPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Novo honorário</h1>
+      <PageHeader icon={Wallet} title="Novo honorário" />
       {clients.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Cadastre um cliente antes de criar um honorário.
-        </p>
+        <EmptyFormState
+          message="Cadastre um cliente antes de criar um honorário."
+          actionHref="/clientes/novo"
+          actionLabel="Cadastrar cliente"
+        />
       ) : (
         <InvoiceForm action={createInvoice} clients={clients} cases={cases} />
       )}

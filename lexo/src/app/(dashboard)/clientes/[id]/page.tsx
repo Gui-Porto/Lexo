@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Users } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { ClientForm } from "@/components/clientes/client-form";
 import { DeleteButton } from "@/components/delete-button";
+import { PageHeader } from "@/components/page-header";
 import { updateClient, deleteClient } from "@/actions/clientes";
 import {
   Card,
@@ -35,10 +37,11 @@ export default async function ClienteDetailPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{client.name}</h1>
-        <DeleteButton action={boundDelete} label="Excluir cliente" />
-      </div>
+      <PageHeader
+        icon={Users}
+        title={client.name}
+        action={<DeleteButton action={boundDelete} label="Excluir cliente" />}
+      />
 
       <ClientForm
         action={boundUpdate}

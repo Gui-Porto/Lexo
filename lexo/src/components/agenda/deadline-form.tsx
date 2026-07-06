@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { FormSection, FormFooter } from "@/components/ui/form-section";
 import {
   Select,
   SelectContent,
@@ -38,62 +40,71 @@ export function DeadlineForm({
   const [state, formAction, pending] = useActionState(action, undefined);
 
   return (
-    <form action={formAction} className="max-w-md space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="title">Título</Label>
-        <Input id="title" name="title" defaultValue={defaultValues?.title} required />
-      </div>
+    <form action={formAction} className="space-y-6">
+      <Card className="max-w-2xl">
+        <CardContent className="space-y-6">
+          <FormSection label="Identificação">
+            <div className="space-y-2">
+              <Label htmlFor="title">Título</Label>
+              <Input id="title" name="title" defaultValue={defaultValues?.title} required />
+            </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="caseId">Processo</Label>
-        <Select name="caseId" defaultValue={defaultValues?.caseId}>
-          <SelectTrigger id="caseId" className="w-full">
-            <SelectValue placeholder="Selecione um processo" />
-          </SelectTrigger>
-          <SelectContent>
-            {cases.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.number}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="caseId">Processo</Label>
+              <Select name="caseId" defaultValue={defaultValues?.caseId}>
+                <SelectTrigger id="caseId" className="w-full">
+                  <SelectValue placeholder="Selecione um processo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cases.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.number}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </FormSection>
 
-      <div className="space-y-2">
-        <Label htmlFor="type">Tipo</Label>
-        <Select name="type" defaultValue={defaultValues?.type ?? "PRAZO"}>
-          <SelectTrigger id="type" className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TYPE_OPTIONS.map((type) => (
-              <SelectItem key={type} value={type}>
-                {type}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+          <FormSection label="Detalhes">
+            <div className="space-y-2">
+              <Label htmlFor="type">Tipo</Label>
+              <Select name="type" defaultValue={defaultValues?.type ?? "PRAZO"}>
+                <SelectTrigger id="type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TYPE_OPTIONS.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="date">Data</Label>
-        <Input id="date" name="date" type="date" defaultValue={defaultValues?.date} required />
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="date">Data</Label>
+              <Input id="date" name="date" type="date" defaultValue={defaultValues?.date} required />
+            </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Descrição</Label>
-        <Textarea
-          id="description"
-          name="description"
-          defaultValue={defaultValues?.description ?? ""}
-        />
-      </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="description">Descrição</Label>
+              <Textarea
+                id="description"
+                name="description"
+                defaultValue={defaultValues?.description ?? ""}
+              />
+            </div>
+          </FormSection>
 
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
-      <Button type="submit" disabled={pending}>
-        {pending ? "Salvando..." : submitLabel}
-      </Button>
+          <FormFooter error={state?.error} cancelHref="/agenda">
+            <Button type="submit" disabled={pending}>
+              {pending ? "Salvando..." : submitLabel}
+            </Button>
+          </FormFooter>
+        </CardContent>
+      </Card>
     </form>
   );
 }

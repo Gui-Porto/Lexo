@@ -1,6 +1,9 @@
+import { Gavel } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
+import { PageHeader } from "@/components/page-header";
 import { CaseFormWrapper } from "@/components/processos/case-form-wrapper";
+import { EmptyFormState } from "@/components/ui/form-section";
 import { createCase } from "@/actions/processos";
 
 export default async function NovoProcessoPage() {
@@ -20,11 +23,13 @@ export default async function NovoProcessoPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Novo processo</h1>
+      <PageHeader icon={Gavel} title="Novo processo" />
       {clients.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Cadastre um cliente antes de criar um processo.
-        </p>
+        <EmptyFormState
+          message="Cadastre um cliente antes de criar um processo."
+          actionHref="/clientes/novo"
+          actionLabel="Cadastrar cliente"
+        />
       ) : (
         <CaseFormWrapper action={createCase} clients={clients} users={users} submitLabel="Criar processo" />
       )}

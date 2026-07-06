@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { Wallet } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { InvoiceForm } from "@/components/financeiro/invoice-form";
 import { DeleteButton } from "@/components/delete-button";
+import { PageHeader } from "@/components/page-header";
 import { updateInvoice, deleteInvoice } from "@/actions/financeiro";
 
 export default async function EditInvoicePage({
@@ -36,10 +38,11 @@ export default async function EditInvoicePage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar honorário</h1>
-        <DeleteButton action={boundDelete} label="Excluir honorário" />
-      </div>
+      <PageHeader
+        icon={Wallet}
+        title="Editar honorário"
+        action={<DeleteButton action={boundDelete} label="Excluir honorário" />}
+      />
 
       <InvoiceForm
         action={boundUpdate}
