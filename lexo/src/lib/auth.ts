@@ -18,6 +18,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
         totpCode: {},
         pendingToken: {},
+        signupToken: {},
       },
       authorize: async (credentials) => {
         const pendingToken = credentials?.pendingToken as string | undefined;
@@ -39,6 +40,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               secret: decryptSecret(user.totpSecret),
             });
             if (!result.valid) return null;
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              organizationId: user.organizationId,
+              role: user.role,
+            };
+          } catch {
+            return null;
+          }
+        }
+
+        const signupToken = credentials?.signupToken as string | undefined;
+        if (signupToken) {
+          try {
+            const payload = JSON.parse(decryptSecret(signupToken)) as {
+              userId: string;
+              exp: number;
+            };
+            if (Date.now() > payload.exp) return null;
+            const user = await db.user.findUnique({ where: { id: payload.userId } });
+            if (!user) return null;
             return {
               id: user.id,
               name: user.name,

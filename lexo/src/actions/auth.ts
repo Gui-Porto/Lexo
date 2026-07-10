@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { decryptSecret, encryptSecret } from "@/lib/crypto";
 
 const registerSchema = z
   .object({
@@ -75,4 +76,66 @@ export async function signupWithGoogle() {
     secure: process.env.NODE_ENV === "production",
   });
   await signIn("google", { redirectTo: "/registrar/completar" });
+}
+
+export type CompleteSignupResult = { error: string } | undefined;
+
+export async function completeGoogleSignup(
+  _prevState: CompleteSignupResult,
+  formData: FormData
+): Promise<CompleteSignupResult> {
+  const organizationName = ((formData.get("organizationName") as string) ?? "").trim();
+  if (organizationName.length < 2) {
+    return { error: "Nome do escritório muito curto" };
+  }
+
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("pending_google_identity")?.value;
+  if (!raw) return { error: "Sessão expirada. Comece o cadastro novamente." };
+
+  let identity: { email: string; name: string; exp: number };
+  try {
+    identity = JSON.parse(decryptSecret(raw)) as { email: string; name: string; exp: number };
+  } catch {
+    return { error: "Sessão expirada. Comece o cadastro novamente." };
+  }
+  if (Date.now() > identity.exp) {
+    return { error: "Sessão expirada. Comece o cadastro novamente." };
+  }
+
+  const existingUser = await db.user.findUnique({ where: { email: identity.email } });
+  if (existingUser) return { error: "Já existe um usuário com este email" };
+
+  const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  let userId: string;
+  try {
+    const org = await db.organization.create({
+      data: {
+        name: organizationName,
+        trialEndsAt,
+        users: {
+          create: {
+            name: identity.name || identity.email,
+            email: identity.email,
+            passwordHash: null,
+            role: "ADMIN",
+          },
+        },
+      },
+      include: { users: true },
+    });
+    userId = org.users[0].id;
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "code" in e && e.code === "P2002") {
+      return { error: "Já existe um usuário com este email" };
+    }
+    console.error("[auth] erro ao registrar organização via Google:", e);
+    return { error: "Erro ao criar conta. Tente novamente." };
+  }
+
+  cookieStore.delete("pending_google_identity");
+
+  const signupToken = encryptSecret(JSON.stringify({ userId, exp: Date.now() + 5 * 60 * 1000 }));
+  await signIn("credentials", { signupToken, redirectTo: "/registrar/2fa" });
 }
