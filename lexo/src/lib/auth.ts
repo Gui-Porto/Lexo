@@ -6,7 +6,7 @@ import { verifySync } from "otplib";
 import { db } from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { decryptSecret } from "@/lib/crypto";
+import { decryptSecret, encryptSecret } from "@/lib/crypto";
 import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -141,6 +141,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         (user as { organizationId?: string; role?: string }).organizationId = newUser.organizationId;
         (user as { organizationId?: string; role?: string }).role = newUser.role;
         return true;
+      }
+
+      // Cadastro de organização via Google: ainda não existe Organization —
+      // só confirma a identidade e manda completar o nome do escritório.
+      const signupFlag = cookieStore.get("google_signup")?.value;
+      if (signupFlag) {
+        cookieStore.delete("google_signup");
+        const payload = JSON.stringify({
+          email,
+          name: user.name ?? "",
+          exp: Date.now() + 10 * 60 * 1000,
+        });
+        cookieStore.set("pending_google_identity", encryptSecret(payload), {
+          httpOnly: true,
+          sameSite: "lax",
+          path: "/",
+          maxAge: 600,
+          secure: process.env.NODE_ENV === "production",
+        });
+        return "/registrar/completar";
       }
 
       return false;

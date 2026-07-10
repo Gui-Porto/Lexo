@@ -4,6 +4,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 const registerSchema = z
   .object({
@@ -62,4 +63,16 @@ export async function registerOrganization(
   await signIn("credentials", { email, password, redirectTo: "/registrar/2fa" });
 
   return { success: true };
+}
+
+export async function signupWithGoogle() {
+  const cookieStore = await cookies();
+  cookieStore.set("google_signup", "1", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 600,
+    secure: process.env.NODE_ENV === "production",
+  });
+  await signIn("google", { redirectTo: "/registrar/completar" });
 }
