@@ -2,19 +2,19 @@
 
 SaaS multi-tenant para escritórios de advocacia. Gerencie processos, clientes, prazos, financeiro, equipe e recursos de IA jurídica em um só lugar.
 
-Em produção: [https://lexo-45tf.onrender.com](https://lexo-45tf.onrender.com)
+Em produção: [https://lexo-six.vercel.app](https://lexo-six.vercel.app)
 
 ## Stack
 
 - **Next.js 16** App Router + Server Actions
-- **Prisma 7** com PostgreSQL (produção) / SQLite (dev local)
+- **Prisma 7** com PostgreSQL (Neon)
 - **Auth.js v5** — autenticação JWT com Credentials provider + 2FA (TOTP)
 - **Tailwind v4** + **shadcn/ui** (Base UI)
 - **Sonner** para toasts
 - **Google Gemini** (free tier) para os recursos de IA
 - **Stripe** para planos e billing
 - **Resend** para emails transacionais
-- Deploy: **Render** (web service + PostgreSQL), auto-deploy na branch `master`
+- Deploy: **Vercel** (hosting + cron), auto-deploy na branch `master`; banco: **Neon** (PostgreSQL)
 
 ## Funcionalidades
 
@@ -61,7 +61,8 @@ Em produção: [https://lexo-45tf.onrender.com](https://lexo-45tf.onrender.com)
 Mínimo para o app subir:
 
 ```
-DATABASE_URL=...        # PostgreSQL (prod) ou file:./dev.db (dev)
+DATABASE_URL=...        # PostgreSQL — conexão pooled (Neon)
+DIRECT_URL=...          # PostgreSQL — conexão direta, usada só pelas migrations (Neon)
 AUTH_SECRET=...         # string aleatória (openssl rand -base64 32)
 NEXTAUTH_URL=...        # http://localhost:3000 em dev
 ```
@@ -88,8 +89,9 @@ STRIPE_PRICE_PRO=...         # price ID do plano Pro
 cd lexo
 npm install
 
-# Configure o .env (mínimo para dev)
-# DATABASE_URL="file:./dev.db"
+# Configure o .env (mínimo para dev) — precisa de um Postgres, ex. branch de dev do Neon
+# DATABASE_URL="postgresql://..."
+# DIRECT_URL="postgresql://..."
 # AUTH_SECRET="qualquer-string-aleatoria"
 # NEXTAUTH_URL="http://localhost:3000"
 
@@ -144,7 +146,7 @@ lexo/
 
 ## Deploy
 
-Auto-deploy no **Render** a cada push na branch `master`.
+Auto-deploy na **Vercel** a cada push na branch `master`. Banco de dados **Neon** (PostgreSQL), sem servidor próprio.
 
 ```bash
 # Aplicar migrations em produção
