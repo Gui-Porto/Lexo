@@ -6,6 +6,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env.DATABASE_URL!,
+    // Migrações usam a conexão direta do Neon (sem pooler) — o pooler
+    // em modo transaction não suporta os advisory locks que o migrate usa.
+    url: process.env.DIRECT_URL ?? process.env.DATABASE_URL!,
   },
 });
