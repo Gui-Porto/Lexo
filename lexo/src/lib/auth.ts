@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { verifySync } from "otplib";
 import { db } from "@/lib/db";
@@ -86,5 +87,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    // Login via Google só p/ usuário já existente (email cadastrado por convite).
+    // Sem criação de conta/organização por essa via.
+    async signIn({ user, account }) {
+      if (account?.provider !== "google") return true;
+      const dbUser = await db.user.findUnique({ where: { email: user.email ?? "" } });
+      if (!dbUser) return false;
+      user.id = dbUser.id;
+      (user as { organizationId?: string; role?: string }).organizationId = dbUser.organizationId;
+      (user as { organizationId?: string; role?: string }).role = dbUser.role;
+      return true;
+    },
+  },
 });

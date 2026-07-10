@@ -11,6 +11,10 @@ import { redirect } from "next/navigation";
 
 export type LoginResult = { error: string } | undefined;
 
+export async function loginWithGoogle() {
+  await signIn("google", { redirectTo: "/processos" });
+}
+
 export async function login(
   _prevState: LoginResult,
   formData: FormData
