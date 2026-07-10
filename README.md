@@ -2,7 +2,7 @@
 
 > Sistema de gestão para escritórios de advocacia — SaaS multi-tenant com IA integrada, focado em simplicidade e produtividade para advogados.
 
-🔗 **Em produção:** [https://lexo-45tf.onrender.com](https://lexo-45tf.onrender.com)
+🔗 **Em produção:** [https://lexo-six.vercel.app](https://lexo-six.vercel.app)
 
 ---
 
@@ -60,7 +60,7 @@ Integração com **Stripe** para gestão de assinaturas. Planos Essencial e Pro 
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack) |
 | Linguagem | TypeScript |
-| Banco de dados | PostgreSQL via Prisma + adapter-pg |
+| Banco de dados | PostgreSQL via Prisma + adapter-pg (Neon) |
 | Autenticação | Auth.js v5 (next-auth) — JWT + Credentials + TOTP |
 | UI | shadcn/ui sobre Base UI + Tailwind CSS v4 |
 | IA | Google Gemini (via `@google/genai`, free tier) |
@@ -68,7 +68,7 @@ Integração com **Stripe** para gestão de assinaturas. Planos Essencial e Pro 
 | Pagamentos | Stripe |
 | Validação | Zod |
 | Notificações | Sonner |
-| Deploy | Render (web service + PostgreSQL), auto-deploy na branch `master` |
+| Deploy | Vercel (hosting + cron), auto-deploy na branch `master`; banco: Neon (PostgreSQL) |
 | Runtime | Node.js 20+ |
 
 ---
@@ -78,7 +78,7 @@ Integração com **Stripe** para gestão de assinaturas. Planos Essencial e Pro 
 ### Pré-requisitos
 
 - Node.js 20+
-- PostgreSQL rodando localmente
+- PostgreSQL (recomendado: branch de dev no Neon)
 
 ### Passos
 
