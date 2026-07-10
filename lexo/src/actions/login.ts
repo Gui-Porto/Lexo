@@ -32,7 +32,9 @@ export async function login(
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return { error: "Email ou senha inválidos" };
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+  const valid = user.passwordHash
+    ? await bcrypt.compare(password, user.passwordHash)
+    : false;
   if (!valid) return { error: "Email ou senha inválidos" };
 
   // Usuário tem 2FA ativo: gera token pendente cifrado e redireciona para /login/2fa
