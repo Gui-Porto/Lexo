@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Suspense, useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { login, loginWithGoogle } from "@/actions/login";
 
@@ -52,6 +53,24 @@ const bullets = [
     ),
   },
 ];
+
+function OAuthErrorBanner({ formError }: { formError?: string }) {
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get("error");
+  const message =
+    formError ??
+    (oauthError === "AccessDenied"
+      ? "Essa conta Google não está cadastrada. Peça um convite ao administrador do seu escritório."
+      : oauthError
+      ? "Não foi possível entrar com o Google. Tente novamente."
+      : null);
+  if (!message) return null;
+  return (
+    <div style={{ background: "oklch(0.62 0.18 22 / 12%)", border: "1px solid oklch(0.62 0.18 22 / 28%)", borderRadius: 9, padding: "10px 14px", fontFamily: F, fontSize: 13, color: "oklch(0.78 0.14 22)" }}>
+      {message}
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(login, undefined);
@@ -287,11 +306,9 @@ export default function LoginPage() {
             </label>
 
             {/* Erro */}
-            {state?.error && (
-              <div style={{ background: "oklch(0.62 0.18 22 / 12%)", border: "1px solid oklch(0.62 0.18 22 / 28%)", borderRadius: 9, padding: "10px 14px", fontFamily: F, fontSize: 13, color: "oklch(0.78 0.14 22)" }}>
-                {state.error}
-              </div>
-            )}
+            <Suspense fallback={null}>
+              <OAuthErrorBanner formError={state?.error} />
+            </Suspense>
 
             {/* Botão entrar */}
             <button

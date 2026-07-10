@@ -6,7 +6,7 @@ const PUBLIC_PREFIX = ["/login", "/registrar", "/convite", "/portal"];
 export const authConfig = {
   trustHost: true,
   session: { strategy: "jwt" },
-  pages: { signIn: "/login" },
+  pages: { signIn: "/login", error: "/login" },
   providers: [],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
