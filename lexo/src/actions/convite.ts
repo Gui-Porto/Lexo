@@ -4,6 +4,8 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { cookies } from "next/headers";
+import { signIn } from "@/lib/auth";
 
 export type ConviteActionResult = { error: string } | undefined;
 
@@ -60,4 +62,16 @@ export async function acceptInvite(
   ]);
 
   redirect("/login?flash=conta-criada");
+}
+
+export async function acceptInviteWithGoogle(token: string) {
+  const cookieStore = await cookies();
+  cookieStore.set("pending_invite_token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 600,
+    secure: process.env.NODE_ENV === "production",
+  });
+  await signIn("google", { redirectTo: "/processos" });
 }

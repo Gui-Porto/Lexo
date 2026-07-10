@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { authConfig } from "@/lib/auth.config";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { decryptSecret } from "@/lib/crypto";
+import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -100,12 +101,49 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // Sem criação de conta/organização por essa via.
     async signIn({ user, account }) {
       if (account?.provider !== "google") return true;
-      const dbUser = await db.user.findUnique({ where: { email: user.email ?? "" } });
-      if (!dbUser) return false;
-      user.id = dbUser.id;
-      (user as { organizationId?: string; role?: string }).organizationId = dbUser.organizationId;
-      (user as { organizationId?: string; role?: string }).role = dbUser.role;
-      return true;
+
+      const email = user.email ?? "";
+      const dbUser = await db.user.findUnique({ where: { email } });
+      if (dbUser) {
+        user.id = dbUser.id;
+        (user as { organizationId?: string; role?: string }).organizationId = dbUser.organizationId;
+        (user as { organizationId?: string; role?: string }).role = dbUser.role;
+        return true;
+      }
+
+      const cookieStore = await cookies();
+
+      // Aceite de convite via Google: cria a conta se o convite for válido e o email bater.
+      const inviteToken = cookieStore.get("pending_invite_token")?.value;
+      if (inviteToken) {
+        cookieStore.delete("pending_invite_token");
+        const invite = await db.userInvite.findUnique({ where: { token: inviteToken } });
+        if (!invite || invite.acceptedAt || invite.expiresAt < new Date()) {
+          return `/convite/${inviteToken}?error=convite_invalido`;
+        }
+        if (invite.email.toLowerCase() !== email.toLowerCase()) {
+          return `/convite/${inviteToken}?error=google_mismatch`;
+        }
+        const newUser = await db.$transaction(async (tx) => {
+          const created = await tx.user.create({
+            data: {
+              name: invite.name,
+              email: invite.email,
+              passwordHash: null,
+              role: invite.role,
+              organizationId: invite.organizationId,
+            },
+          });
+          await tx.userInvite.update({ where: { id: invite.id }, data: { acceptedAt: new Date() } });
+          return created;
+        });
+        user.id = newUser.id;
+        (user as { organizationId?: string; role?: string }).organizationId = newUser.organizationId;
+        (user as { organizationId?: string; role?: string }).role = newUser.role;
+        return true;
+      }
+
+      return false;
     },
   },
 });
