@@ -17,9 +17,18 @@ const deadlineSchema = z.object({
   date:        z.string().min(1, "Data é obrigatória"),
   time:        z.string().optional(),
   description: z.string().optional(),
+  returnTo:    z.string().optional(),
 });
 
 export type ActionResult = { error: string } | undefined;
+
+/** Evita open-redirect — só aceita caminho relativo começando com /agenda. */
+function safeReturnTo(value: string | undefined): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/agenda")) return null;
+  if (value.startsWith("//") || value.includes("://")) return null;
+  return value;
+}
 
 async function getUserGoogleToken(userId: string): Promise<string | null> {
   const user = await db.user.findUnique({
@@ -42,6 +51,7 @@ export async function createDeadline(
     date:        formData.get("date"),
     time:        formData.get("time") || undefined,
     description: formData.get("description") || undefined,
+    returnTo:    formData.get("returnTo") || undefined,
   });
 
   if (!parsed.success) {
@@ -101,7 +111,7 @@ export async function createDeadline(
   }
 
   revalidatePath("/agenda");
-  redirect(`/agenda?toast=${encodeURIComponent("Prazo criado com sucesso")}`);
+  redirect(safeReturnTo(parsed.data.returnTo) ?? `/agenda?toast=${encodeURIComponent("Prazo criado com sucesso")}`);
 }
 
 export async function updateDeadline(
@@ -117,6 +127,7 @@ export async function updateDeadline(
     date:        formData.get("date"),
     time:        formData.get("time") || undefined,
     description: formData.get("description") || undefined,
+    returnTo:    formData.get("returnTo") || undefined,
   });
 
   if (!parsed.success) {
@@ -180,7 +191,7 @@ export async function updateDeadline(
   }
 
   revalidatePath("/agenda");
-  redirect(`/agenda?toast=${encodeURIComponent("Prazo atualizado com sucesso")}`);
+  redirect(safeReturnTo(parsed.data.returnTo) ?? `/agenda?toast=${encodeURIComponent("Prazo atualizado com sucesso")}`);
 }
 
 export async function toggleDeadlineStatus(deadlineId: string, completed: boolean) {
