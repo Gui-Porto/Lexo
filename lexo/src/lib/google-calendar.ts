@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { isAllDayUTC } from "@/lib/agenda-date";
 
 function createOAuth2(credentials?: { refresh_token: string }) {
   const client = new google.auth.OAuth2(
@@ -49,13 +50,22 @@ export async function syncDeadlineToGoogle(
     const auth = createOAuth2({ refresh_token: refreshToken });
     const calendar = google.calendar({ version: "v3", auth });
 
+    const allDay = isAllDayUTC(deadline.date);
     const dateStr = deadline.date.toISOString().split("T")[0];
-    const event = {
-      summary: `[${TYPE_LABEL[deadline.type] ?? "Prazo"}] ${deadline.title}`,
-      description: deadline.description ?? "",
-      start: { date: dateStr },
-      end: { date: dateStr },
-    };
+    // ponytail: sem campo de duração no schema; evento com hora usa 1h fixa como padrão.
+    const event = allDay
+      ? {
+          summary: `[${TYPE_LABEL[deadline.type] ?? "Prazo"}] ${deadline.title}`,
+          description: deadline.description ?? "",
+          start: { date: dateStr },
+          end:   { date: dateStr },
+        }
+      : {
+          summary: `[${TYPE_LABEL[deadline.type] ?? "Prazo"}] ${deadline.title}`,
+          description: deadline.description ?? "",
+          start: { dateTime: deadline.date.toISOString(), timeZone: "UTC" },
+          end:   { dateTime: new Date(deadline.date.getTime() + 60 * 60 * 1000).toISOString(), timeZone: "UTC" },
+        };
 
     if (deadline.googleEventId) {
       await calendar.events.update({
@@ -74,6 +84,46 @@ export async function syncDeadlineToGoogle(
   } catch (e) {
     console.error("[google-calendar] sync error:", e);
     return null;
+  }
+}
+
+export type GoogleEventSummary = {
+  googleEventId: string;
+  title: string;
+  description: string | null;
+  date: Date;
+};
+
+export async function listUpcomingEvents(refreshToken: string): Promise<GoogleEventSummary[]> {
+  try {
+    const auth = createOAuth2({ refresh_token: refreshToken });
+    const calendar = google.calendar({ version: "v3", auth });
+
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const twelveMonthsAhead = new Date();
+    twelveMonthsAhead.setMonth(twelveMonthsAhead.getMonth() + 12);
+
+    const res = await calendar.events.list({
+      calendarId: "primary",
+      timeMin: sixMonthsAgo.toISOString(),
+      timeMax: twelveMonthsAhead.toISOString(),
+      maxResults: 250,
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+
+    return (res.data.items ?? [])
+      .filter((e) => e.id && (e.start?.date || e.start?.dateTime))
+      .map((e) => ({
+        googleEventId: e.id!,
+        title: e.summary ?? "Compromisso",
+        description: e.description ?? null,
+        date: new Date(e.start!.date ?? e.start!.dateTime!),
+      }));
+  } catch (e) {
+    console.error("[google-calendar] list error:", e);
+    return [];
   }
 }
 
