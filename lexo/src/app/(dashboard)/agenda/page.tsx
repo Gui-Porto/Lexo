@@ -15,10 +15,8 @@ import {
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
 import { deleteDeadline } from "@/actions/agenda";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatRelativeDay } from "@/lib/format";
 import Link from "next/link";
-
-const PAGE_SIZE = 20;
 
 const STATUS_OPTIONS = [
   { value: "PENDENTE", label: "Pendente" },
@@ -172,16 +170,36 @@ export default async function AgendaPage({
       : {}),
   };
 
-  const [deadlines, total] = await Promise.all([
-    db.deadline.findMany({
-      where: listWhere,
-      include: { case: true },
-      orderBy: { date: "asc" },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-    }),
-    db.deadline.count({ where: listWhere }),
-  ]);
+  const DAY_PAGE_SIZE = 5; // ponytail: dias por página; ajustar se ficar apertado na prática
+
+  const matchingDates = await db.deadline.findMany({
+    where: listWhere,
+    select: { date: true },
+    orderBy: { date: "asc" },
+  });
+  const uniqueDayKeys = Array.from(new Set(matchingDates.map((d) => dayKey(d.date))));
+  const totalDays = uniqueDayKeys.length;
+  const pageDayKeys = uniqueDayKeys.slice((page - 1) * DAY_PAGE_SIZE, page * DAY_PAGE_SIZE);
+
+  const pageDeadlines = pageDayKeys.length
+    ? await db.deadline.findMany({
+        where: {
+          ...listWhere,
+          date: {
+            gte: new Date(`${pageDayKeys[0]}T00:00:00.000Z`),
+            lte: new Date(new Date(`${pageDayKeys[pageDayKeys.length - 1]}T00:00:00.000Z`).getTime() + 86400000 - 1),
+          },
+        },
+        include: { case: true },
+        orderBy: { date: "asc" },
+      })
+    : [];
+
+  const groupedByDay = pageDayKeys.map((key) => ({
+    key,
+    date: new Date(`${key}T00:00:00.000Z`),
+    items: pageDeadlines.filter((d) => dayKey(d.date) === key),
+  }));
 
   const kpis = [
     { label: "Hoje",          value: statsHoje,      sub: "vence hoje",  accent: statsHoje > 0 ? "warn" : "none"   },
@@ -279,8 +297,8 @@ export default async function AgendaPage({
             </div>
           </Suspense>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {deadlines.length === 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            {groupedByDay.length === 0 && (
               <div style={{
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                 padding: "60px 32px", gap: 12,
@@ -292,58 +310,66 @@ export default async function AgendaPage({
               </div>
             )}
 
-            {deadlines.map((d) => {
-              const tc = TYPE_COLORS[d.type] ?? TYPE_COLORS.OUTRO;
-              const isLost = d.status === "PERDIDO";
-              const isDone = d.status === "CONCLUIDO";
+            {groupedByDay.map((group) => (
+              <div key={group.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <h3 style={{ fontSize: 12, fontWeight: 700, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>
+                  {formatRelativeDay(group.date, todayUTC)}
+                </h3>
 
-              return (
-                <div
-                  key={d.id}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 16,
-                    background: "oklch(0.155 0.02 264)",
-                    border: `1px solid ${isLost ? "oklch(0.70 0.18 30 / 20%)" : isDone ? "oklch(0.72 0.15 150 / 15%)" : "oklch(1 0 0 / 7%)"}`,
-                    borderRadius: 12, padding: "14px 18px",
-                    opacity: isLost ? 0.65 : 1,
-                  }}
-                >
-                  <DeadlineToggle deadlineId={d.id} completed={isDone} />
+                {group.items.map((d) => {
+                  const tc = TYPE_COLORS[d.type] ?? TYPE_COLORS.OUTRO;
+                  const isLost = d.status === "PERDIDO";
+                  const isDone = d.status === "CONCLUIDO";
 
-                  <span style={{ fontSize: 11, fontWeight: 600, background: tc.bg, color: tc.color, borderRadius: 8, padding: "4px 9px", flexShrink: 0, display: "flex", alignItems: "center", gap: 4 }}>
-                    <span style={{ fontSize: 13 }}>{TYPE_ICON[d.type] ?? "📌"}</span>
-                    {d.type}
-                  </span>
+                  return (
+                    <div
+                      key={d.id}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 16,
+                        background: "oklch(0.155 0.02 264)",
+                        border: `1px solid ${isLost ? "oklch(0.70 0.18 30 / 20%)" : isDone ? "oklch(0.72 0.15 150 / 15%)" : "oklch(1 0 0 / 7%)"}`,
+                        borderRadius: 12, padding: "14px 18px",
+                        opacity: isLost ? 0.65 : 1,
+                      }}
+                    >
+                      <DeadlineToggle deadlineId={d.id} completed={isDone} />
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14, fontWeight: 500, color: isDone || isLost ? "oklch(0.55 0.02 264)" : "oklch(0.92 0.01 264)", textDecoration: isLost ? "line-through" : "none", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {d.title}
-                    </p>
-                    <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginTop: 3, fontFamily: "monospace" }}>
-                      {d.case ? d.case.number : "Sem processo"} · {formatDate(d.date)}
-                    </p>
-                  </div>
+                      <span style={{ fontSize: 11, fontWeight: 600, background: tc.bg, color: tc.color, borderRadius: 8, padding: "4px 9px", flexShrink: 0, display: "flex", alignItems: "center", gap: 4 }}>
+                        <span style={{ fontSize: 13 }}>{TYPE_ICON[d.type] ?? "📌"}</span>
+                        {d.type}
+                      </span>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                    {!isLost && !isDone && <RiskBadge date={d.date} type={d.type} status={d.status} />}
-                    {isLost && (
-                      <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.70 0.18 30 / 14%)", color: "oklch(0.70 0.18 30)", borderRadius: 99, padding: "3px 10px" }}>Perdido</span>
-                    )}
-                    {isDone && (
-                      <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)", borderRadius: 99, padding: "3px 10px" }}>Concluído</span>
-                    )}
-                    <Link href={`/agenda/${d.id}`} style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", textDecoration: "none", padding: "5px 10px", borderRadius: 7, border: "1px solid oklch(1 0 0 / 8%)" }}>
-                      Editar
-                    </Link>
-                    <DeleteButton action={deleteDeadline.bind(null, d.id)} label="Excluir" />
-                  </div>
-                </div>
-              );
-            })}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: isDone || isLost ? "oklch(0.55 0.02 264)" : "oklch(0.92 0.01 264)", textDecoration: isLost ? "line-through" : "none", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {d.title}
+                        </p>
+                        <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginTop: 3, fontFamily: "monospace" }}>
+                          {d.case ? d.case.number : "Sem processo"} · {formatDate(d.date)}
+                        </p>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                        {!isLost && !isDone && <RiskBadge date={d.date} type={d.type} status={d.status} />}
+                        {isLost && (
+                          <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.70 0.18 30 / 14%)", color: "oklch(0.70 0.18 30)", borderRadius: 99, padding: "3px 10px" }}>Perdido</span>
+                        )}
+                        {isDone && (
+                          <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)", borderRadius: 99, padding: "3px 10px" }}>Concluído</span>
+                        )}
+                        <Link href={`/agenda/${d.id}`} style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", textDecoration: "none", padding: "5px 10px", borderRadius: 7, border: "1px solid oklch(1 0 0 / 8%)" }}>
+                          Editar
+                        </Link>
+                        <DeleteButton action={deleteDeadline.bind(null, d.id)} label="Excluir" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
           <Suspense>
-            <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
+            <Pagination page={page} total={totalDays} pageSize={DAY_PAGE_SIZE} />
           </Suspense>
         </>
       </div>
