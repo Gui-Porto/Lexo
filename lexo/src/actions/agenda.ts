@@ -8,12 +8,14 @@ import { requireSession } from "@/lib/session";
 import { logActivity } from "@/lib/activity";
 import { decryptSecret } from "@/lib/crypto";
 import { syncDeadlineToGoogle, deleteGoogleEvent } from "@/lib/google-calendar";
+import { combineDateTimeUTC } from "@/lib/agenda-date";
 
 const deadlineSchema = z.object({
   caseId:      z.string().min(1, "Selecione um processo"),
   title:       z.string().min(1, "Título é obrigatório"),
   type:        z.enum(["PRAZO", "AUDIENCIA", "REUNIAO", "OUTRO"]),
   date:        z.string().min(1, "Data é obrigatória"),
+  time:        z.string().optional(),
   description: z.string().optional(),
 });
 
@@ -38,6 +40,7 @@ export async function createDeadline(
     title:       formData.get("title"),
     type:        formData.get("type") ?? "PRAZO",
     date:        formData.get("date"),
+    time:        formData.get("time") || undefined,
     description: formData.get("description") || undefined,
   });
 
@@ -51,6 +54,8 @@ export async function createDeadline(
   });
   if (!ownCase) return { error: "Processo não encontrado" };
 
+  const deadlineDate = combineDateTimeUTC(parsed.data.date, parsed.data.time);
+
   let created: { id: string };
   try {
     created = await db.deadline.create({
@@ -59,7 +64,7 @@ export async function createDeadline(
         title:       parsed.data.title,
         type:        parsed.data.type,
         description: parsed.data.description,
-        date:        new Date(parsed.data.date),
+        date:        deadlineDate,
         organizationId: session.user.organizationId,
       },
       select: { id: true },
@@ -84,7 +89,7 @@ export async function createDeadline(
       id:          created.id,
       title:       parsed.data.title,
       type:        parsed.data.type,
-      date:        new Date(parsed.data.date),
+      date:        deadlineDate,
       description: parsed.data.description,
     });
     if (eventId) {
@@ -110,6 +115,7 @@ export async function updateDeadline(
     title:       formData.get("title"),
     type:        formData.get("type") ?? "PRAZO",
     date:        formData.get("date"),
+    time:        formData.get("time") || undefined,
     description: formData.get("description") || undefined,
   });
 
@@ -128,6 +134,8 @@ export async function updateDeadline(
     select: { googleEventId: true },
   });
 
+  const deadlineDate = combineDateTimeUTC(parsed.data.date, parsed.data.time);
+
   try {
     await db.deadline.updateMany({
       where: { id: deadlineId, organizationId: session.user.organizationId },
@@ -136,7 +144,7 @@ export async function updateDeadline(
         title:       parsed.data.title,
         type:        parsed.data.type,
         description: parsed.data.description,
-        date:        new Date(parsed.data.date),
+        date:        deadlineDate,
       },
     });
   } catch (e) {
@@ -159,7 +167,7 @@ export async function updateDeadline(
       id:            deadlineId,
       title:         parsed.data.title,
       type:          parsed.data.type,
-      date:          new Date(parsed.data.date),
+      date:          deadlineDate,
       description:   parsed.data.description,
       googleEventId: existing?.googleEventId,
     });
@@ -190,7 +198,7 @@ export async function toggleDeadlineStatus(deadlineId: string, completed: boolea
     console.error("[agenda] erro ao atualizar prazo:", e);
     return;
   }
-  if (deadline) {
+  if (deadline?.caseId) {
     await logActivity({
       organizationId: session.user.organizationId,
       caseId: deadline.caseId,

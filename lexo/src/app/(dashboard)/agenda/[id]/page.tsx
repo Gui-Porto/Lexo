@@ -6,6 +6,7 @@ import { DeleteButton } from "@/components/delete-button";
 import { updateDeadline, deleteDeadline } from "@/actions/agenda";
 import { PageHeader } from "@/components/page-header";
 import { CalendarClock } from "lucide-react";
+import { dateInputValue, timeInputValue } from "@/lib/agenda-date";
 
 export default async function EditDeadlinePage({
   params,
@@ -43,10 +44,11 @@ export default async function EditDeadlinePage({
         action={boundUpdate}
         cases={cases}
         defaultValues={{
-          caseId: deadline.caseId,
+          caseId: deadline.caseId ?? undefined,
           title: deadline.title,
           type: deadline.type,
-          date: deadline.date.toISOString().split("T")[0],
+          date: dateInputValue(deadline.date),
+          time: timeInputValue(deadline.date),
           description: deadline.description,
         }}
         submitLabel="Salvar alterações"

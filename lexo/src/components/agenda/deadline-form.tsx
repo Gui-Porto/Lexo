@@ -19,10 +19,11 @@ import type { ActionResult } from "@/actions/agenda";
 const TYPE_OPTIONS = ["PRAZO", "AUDIENCIA", "REUNIAO", "OUTRO"];
 
 type DeadlineFormValues = {
-  caseId: string;
+  caseId?: string;
   title: string;
   type: string;
   date: string;
+  time?: string;
   description: string | null;
 };
 
@@ -83,9 +84,17 @@ export function DeadlineForm({
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="date">Data</Label>
-              <Input id="date" name="date" type="date" defaultValue={defaultValues?.date} required />
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="date">Data</Label>
+                <Input id="date" name="date" type="date" defaultValue={defaultValues?.date} required />
+              </div>
+              <div className="w-32 space-y-2">
+                <Label htmlFor="time">
+                  Hora <span className="font-normal text-muted-foreground">(opcional)</span>
+                </Label>
+                <Input id="time" name="time" type="time" defaultValue={defaultValues?.time ?? ""} />
+              </div>
             </div>
 
             <div className="space-y-2 sm:col-span-2">
