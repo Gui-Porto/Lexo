@@ -1,9 +1,8 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { signIn } from "@/lib/auth";
+import { signIn, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
-import bcrypt from "bcryptjs";
 import { encryptSecret } from "@/lib/crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies } from "next/headers";
@@ -32,9 +31,7 @@ export async function login(
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return { error: "Email ou senha inválidos" };
 
-  const valid = user.passwordHash
-    ? await bcrypt.compare(password, user.passwordHash)
-    : false;
+  const valid = await verifyPassword(user.passwordHash, password);
   if (!valid) return { error: "Email ou senha inválidos" };
 
   // Usuário tem 2FA ativo: gera token pendente cifrado e redireciona para /login/2fa

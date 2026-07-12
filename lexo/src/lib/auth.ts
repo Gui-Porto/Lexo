@@ -9,6 +9,15 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { decryptSecret, encryptSecret } from "@/lib/crypto";
 import { cookies } from "next/headers";
 
+// Hash bcrypt "morto" (nunca bate com senha real), usado quando passwordHash é
+// null (conta só-Google) — sem isso, pular o bcrypt.compare vira um timing
+// oracle que revela se um email é conta-com-senha ou conta-só-Google.
+const DUMMY_PASSWORD_HASH = "$2a$10$CwTycUXWue0Thq9StjUM0uQxTmrjOWMoQR7ExY9BR9YKvGYNrGwoO";
+
+export async function verifyPassword(passwordHash: string | null, password: string): Promise<boolean> {
+  return bcrypt.compare(password, passwordHash ?? DUMMY_PASSWORD_HASH);
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [
@@ -89,9 +98,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await db.user.findUnique({ where: { email } });
         if (!user) return null;
 
-        const valid = user.passwordHash
-          ? await bcrypt.compare(password, user.passwordHash)
-          : false;
+        const valid = await verifyPassword(user.passwordHash, password);
         if (!valid) return null;
 
         if (user.totpEnabled && user.totpSecret) {
@@ -120,12 +127,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     ...authConfig.callbacks,
-    // Login via Google só p/ usuário já existente (email cadastrado por convite).
-    // Sem criação de conta/organização por essa via.
-    async signIn({ user, account }) {
+    // Login via Google: usuário já existente entra direto; convite pendente cria
+    // a conta do convidado; sinalização de cadastro cria uma nova Organization+ADMIN.
+    async signIn({ user, account, profile }) {
       if (account?.provider !== "google") return true;
+      if (profile?.email_verified === false) return false;
 
-      const email = user.email ?? "";
+      const email = (user.email ?? "").toLowerCase();
+
+      const cookieStore = await cookies();
+      // Lê e limpa TODOS os cookies de fluxo pendente de uma vez, antes de decidir
+      // o branch — evita que um cookie órfão de um fluxo abandonado (ex: signup
+      // cancelado no meio do consentimento do Google) vaze pra um login seguinte.
+      const inviteToken = cookieStore.get("pending_invite_token")?.value;
+      const signupFlag = cookieStore.get("google_signup")?.value;
+      if (inviteToken) cookieStore.delete("pending_invite_token");
+      if (signupFlag) cookieStore.delete("google_signup");
+
       const dbUser = await db.user.findUnique({ where: { email } });
       if (dbUser) {
         user.id = dbUser.id;
@@ -134,17 +152,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return true;
       }
 
-      const cookieStore = await cookies();
-
       // Aceite de convite via Google: cria a conta se o convite for válido e o email bater.
-      const inviteToken = cookieStore.get("pending_invite_token")?.value;
       if (inviteToken) {
-        cookieStore.delete("pending_invite_token");
         const invite = await db.userInvite.findUnique({ where: { token: inviteToken } });
         if (!invite || invite.acceptedAt || invite.expiresAt < new Date()) {
           return `/convite/${inviteToken}?error=convite_invalido`;
         }
-        if (invite.email.toLowerCase() !== email.toLowerCase()) {
+        if (invite.email.toLowerCase() !== email) {
           return `/convite/${inviteToken}?error=google_mismatch`;
         }
         const newUser = await db.$transaction(async (tx) => {
@@ -157,7 +171,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               organizationId: invite.organizationId,
             },
           });
-          await tx.userInvite.update({ where: { id: invite.id }, data: { acceptedAt: new Date() } });
+          await tx.userInvite.updateMany({
+            where: { id: invite.id, organizationId: invite.organizationId },
+            data: { acceptedAt: new Date() },
+          });
           return created;
         });
         user.id = newUser.id;
@@ -168,9 +185,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       // Cadastro de organização via Google: ainda não existe Organization —
       // só confirma a identidade e manda completar o nome do escritório.
-      const signupFlag = cookieStore.get("google_signup")?.value;
       if (signupFlag) {
-        cookieStore.delete("google_signup");
         const payload = JSON.stringify({
           email,
           name: user.name ?? "",

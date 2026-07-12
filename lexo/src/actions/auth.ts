@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { cookies } from "next/headers";
@@ -11,7 +12,7 @@ const registerSchema = z
   .object({
     organizationName: z.string().min(2, "Nome do escritório muito curto"),
     name: z.string().min(2, "Nome muito curto"),
-    email: z.string().email("Email inválido"),
+    email: z.string().email("Email inválido").toLowerCase(),
     password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
     confirmPassword: z.string(),
   })
@@ -137,5 +138,12 @@ export async function completeGoogleSignup(
   cookieStore.delete("pending_google_identity");
 
   const signupToken = encryptSecret(JSON.stringify({ userId, exp: Date.now() + 5 * 60 * 1000 }));
-  await signIn("credentials", { signupToken, redirectTo: "/registrar/2fa" });
+  try {
+    await signIn("credentials", { signupToken, redirectTo: "/registrar/2fa" });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: "Conta criada, mas não foi possível entrar automaticamente. Tente fazer login." };
+    }
+    throw error;
+  }
 }

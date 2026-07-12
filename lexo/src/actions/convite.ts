@@ -55,8 +55,8 @@ export async function acceptInvite(
         organizationId: invite.organizationId,
       },
     }),
-    db.userInvite.update({
-      where: { id: invite.id },
+    db.userInvite.updateMany({
+      where: { id: invite.id, organizationId: invite.organizationId },
       data: { acceptedAt: new Date() },
     }),
   ]);
