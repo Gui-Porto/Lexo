@@ -6,13 +6,14 @@ export type CalendarDeadline = {
   date: Date;
   type: string;
   status: string;
+  description: string | null;
+  caseId: string | null;
 };
 
 type Props = {
   year: number;
   month: number; // 0-indexed
   deadlines: CalendarDeadline[];
-  currentMonthParam: string; // "YYYY-MM" for URL
 };
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
@@ -26,13 +27,9 @@ const TYPE_ICON: Record<string, string> = {
   PRAZO: "⏰", AUDIENCIA: "⚖️", REUNIAO: "🤝", OUTRO: "📌",
 };
 
-const MONTH_NAMES = [
-  "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro",
-];
 const DAY_NAMES = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
-export function CalendarView({ year, month, deadlines, currentMonthParam }: Props) {
+export function CalendarView({ year, month, deadlines }: Props) {
   const today = new Date();
   const todayY = today.getUTCFullYear();
   const todayM = today.getUTCMonth();
@@ -40,12 +37,6 @@ export function CalendarView({ year, month, deadlines, currentMonthParam }: Prop
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startDow = new Date(year, month, 1).getDay();
-
-  const prevDate = new Date(year, month - 1, 1);
-  const nextDate = new Date(year, month + 1, 1);
-  const prevMonthStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
-  const nextMonthStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, "0")}`;
-  const nowMonthStr  = `${todayY}-${String(todayM + 1).padStart(2, "0")}`;
 
   // Group deadlines by "YYYY-MM-DD" (UTC date)
   const byDay = new Map<string, CalendarDeadline[]>();
@@ -62,38 +53,8 @@ export function CalendarView({ year, month, deadlines, currentMonthParam }: Prop
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const navBtnStyle: React.CSSProperties = {
-    display: "flex", alignItems: "center", justifyContent: "center",
-    width: 32, height: 32, borderRadius: 8,
-    border: "1px solid oklch(1 0 0 / 8%)",
-    background: "oklch(0.155 0.02 264)",
-    color: "oklch(0.70 0.02 264)",
-    textDecoration: "none", fontSize: 18, lineHeight: 1,
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      {/* Month navigation */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Link href={`?view=calendar&month=${prevMonthStr}`} style={navBtnStyle}>‹</Link>
-        <Link href={`?view=calendar&month=${nextMonthStr}`} style={navBtnStyle}>›</Link>
-        <span style={{ fontSize: 18, fontWeight: 700, color: "oklch(0.94 0.01 264)", letterSpacing: "-0.3px" }}>
-          {MONTH_NAMES[month]} {year}
-        </span>
-        {currentMonthParam !== nowMonthStr && (
-          <Link
-            href="?view=calendar"
-            style={{
-              fontSize: 12, fontWeight: 600, color: "oklch(0.66 0.18 274)",
-              background: "oklch(0.66 0.18 274 / 12%)", border: "1px solid oklch(0.66 0.18 274 / 25%)",
-              borderRadius: 7, padding: "3px 10px", textDecoration: "none",
-            }}
-          >
-            Hoje
-          </Link>
-        )}
-      </div>
-
       {/* Calendar grid */}
       <div className="r-tablewrap" style={{ border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
         {/* Day headers */}

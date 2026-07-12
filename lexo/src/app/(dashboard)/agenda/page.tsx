@@ -5,6 +5,11 @@ import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
 import { RiskBadge } from "@/components/agenda/risk-badge";
 import { CalendarView } from "@/components/agenda/calendar-view";
+import { AgendaHeader, type AgendaView } from "@/components/agenda/agenda-header";
+import {
+  MONTH_NAMES, WEEKDAY_LONG, addDaysUTC, dayKey,
+  formatDateParam, parseDateParam, startOfDayUTC, startOfWeekUTC,
+} from "@/lib/agenda-date";
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
 import { deleteDeadline } from "@/actions/agenda";
@@ -43,13 +48,12 @@ const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
 export default async function AgendaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; type?: string; page?: string; view?: string; month?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; type?: string; page?: string; month?: string; view?: string; date?: string }>;
 }) {
   const session = await requireSession();
   const sp = await searchParams;
-  const { q, status, type, page: pageStr, view, month: monthStr } = sp;
+  const { q, status, type, page: pageStr, month: monthStr, view: viewStr, date: dateStr } = sp;
 
-  const isCalendar = view === "calendar";
   const page = Math.max(1, Number(pageStr ?? 1));
   const orgId = session.user.organizationId;
 
@@ -87,19 +91,73 @@ export default async function AgendaPage({
     db.deadline.count({ where: { organizationId: orgId, status: "CONCLUIDO" } }),
   ]);
 
-  // Calendar view: fetch deadlines for the month
-  let calendarDeadlines: { id: string; title: string; date: Date; type: string; status: string }[] = [];
-  if (isCalendar) {
-    const monthStart = new Date(Date.UTC(calYear, calMonth, 1));
-    const monthEnd   = new Date(Date.UTC(calYear, calMonth + 1, 0, 23, 59, 59, 999));
-    calendarDeadlines = await db.deadline.findMany({
-      where: { organizationId: orgId, date: { gte: monthStart, lte: monthEnd } },
-      select: { id: true, title: true, date: true, type: true, status: true },
-      orderBy: { date: "asc" },
-    });
+  // Calendário: prazos do mês
+  const monthStart = new Date(Date.UTC(calYear, calMonth, 1));
+  const monthEnd   = new Date(Date.UTC(calYear, calMonth + 1, 0, 23, 59, 59, 999));
+
+  // Visão ativa e período de dados
+  const view: AgendaView = viewStr === "dia" || viewStr === "semana" ? viewStr : "mes";
+  const todayUTC = startOfDayUTC(now);
+  const nowMonthStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+
+  const pivotDate = parseDateParam(dateStr, now);
+  const weekStart = startOfWeekUTC(pivotDate);
+  const dayStart  = startOfDayUTC(pivotDate);
+
+  let rangeStart: Date;
+  let rangeEnd: Date;
+  let headerLabel: string;
+  let prevHref: string;
+  let nextHref: string;
+  let todayHref: string;
+  let isCurrentPeriod: boolean;
+
+  if (view === "semana") {
+    rangeStart = weekStart;
+    rangeEnd = new Date(addDaysUTC(weekStart, 7).getTime() - 1);
+    const weekEnd = addDaysUTC(weekStart, 6);
+    headerLabel = weekStart.getUTCMonth() === weekEnd.getUTCMonth()
+      ? `${weekStart.getUTCDate()}–${weekEnd.getUTCDate()} de ${MONTH_NAMES[weekStart.getUTCMonth()]} ${weekStart.getUTCFullYear()}`
+      : `${weekStart.getUTCDate()} de ${MONTH_NAMES[weekStart.getUTCMonth()]} – ${weekEnd.getUTCDate()} de ${MONTH_NAMES[weekEnd.getUTCMonth()]} ${weekEnd.getUTCFullYear()}`;
+    prevHref = `?view=semana&date=${formatDateParam(addDaysUTC(weekStart, -7))}`;
+    nextHref = `?view=semana&date=${formatDateParam(addDaysUTC(weekStart, 7))}`;
+    todayHref = `?view=semana`;
+    isCurrentPeriod = dayKey(weekStart) === dayKey(startOfWeekUTC(now));
+  } else if (view === "dia") {
+    rangeStart = dayStart;
+    rangeEnd = new Date(addDaysUTC(dayStart, 1).getTime() - 1);
+    headerLabel = `${WEEKDAY_LONG[dayStart.getUTCDay()]}, ${dayStart.getUTCDate()} de ${MONTH_NAMES[dayStart.getUTCMonth()]}`;
+    prevHref = `?view=dia&date=${formatDateParam(addDaysUTC(dayStart, -1))}`;
+    nextHref = `?view=dia&date=${formatDateParam(addDaysUTC(dayStart, 1))}`;
+    todayHref = `?view=dia`;
+    isCurrentPeriod = dayKey(dayStart) === dayKey(todayUTC);
+  } else {
+    rangeStart = monthStart;
+    rangeEnd = monthEnd;
+    headerLabel = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    const prevMonthDate = new Date(calYear, calMonth - 1, 1);
+    const nextMonthDate = new Date(calYear, calMonth + 1, 1);
+    const prevMonthParam = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, "0")}`;
+    const nextMonthParam = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, "0")}`;
+    prevHref = `?view=mes&month=${prevMonthParam}`;
+    nextHref = `?view=mes&month=${nextMonthParam}`;
+    todayHref = `?view=mes`;
+    isCurrentPeriod = calMonthParam === nowMonthStr;
   }
 
-  // List view: filtered + paginated
+  const viewDeadlines = await db.deadline.findMany({
+    where: { organizationId: orgId, date: { gte: rangeStart, lte: rangeEnd } },
+    select: { id: true, title: true, date: true, type: true, status: true, description: true, caseId: true },
+    orderBy: { date: "asc" },
+  });
+
+  const cases = await db.case.findMany({
+    where: { organizationId: orgId },
+    select: { id: true, number: true },
+    orderBy: { number: "asc" },
+  });
+
+  // Lista: filtrada + paginada
   const listWhere = {
     organizationId: orgId,
     ...(status ? { status: status as "PENDENTE" | "CONCLUIDO" | "PERDIDO" } : {}),
@@ -112,20 +170,16 @@ export default async function AgendaPage({
       : {}),
   };
 
-  let deadlines: { id: string; title: string; date: Date; type: string; status: string; description: string | null; case: { number: string } }[] = [];
-  let total = 0;
-  if (!isCalendar) {
-    [deadlines, total] = await Promise.all([
-      db.deadline.findMany({
-        where: listWhere,
-        include: { case: true },
-        orderBy: { date: "asc" },
-        skip: (page - 1) * PAGE_SIZE,
-        take: PAGE_SIZE,
-      }),
-      db.deadline.count({ where: listWhere }),
-    ]);
-  }
+  const [deadlines, total] = await Promise.all([
+    db.deadline.findMany({
+      where: listWhere,
+      include: { case: true },
+      orderBy: { date: "asc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.deadline.count({ where: listWhere }),
+  ]);
 
   const kpis = [
     { label: "Hoje",          value: statsHoje,      sub: "vence hoje",  accent: statsHoje > 0 ? "warn" : "none"   },
@@ -141,12 +195,6 @@ export default async function AgendaPage({
     return { bg: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", numColor: "oklch(0.97 0.008 264)", subColor: "oklch(0.45 0.02 264)" };
   };
 
-  const toggleBase: React.CSSProperties = {
-    display: "inline-flex", alignItems: "center", gap: 6,
-    padding: "7px 14px", borderRadius: 9, fontSize: 13, fontWeight: 600,
-    textDecoration: "none", border: "1px solid transparent",
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Header */}
@@ -160,41 +208,6 @@ export default async function AgendaPage({
           </p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* View toggle */}
-          <div style={{ display: "flex", background: "oklch(0.11 0.016 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 10, padding: 3 }}>
-            <Link
-              href="/agenda"
-              style={{
-                ...toggleBase,
-                background: !isCalendar ? "oklch(0.155 0.02 264)" : "transparent",
-                color: !isCalendar ? "oklch(0.92 0.01 264)" : "oklch(0.50 0.02 264)",
-                border: !isCalendar ? "1px solid oklch(1 0 0 / 8%)" : "1px solid transparent",
-                boxShadow: !isCalendar ? "0 1px 4px oklch(0 0 0 / 20%)" : "none",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-              </svg>
-              Lista
-            </Link>
-            <Link
-              href={`/agenda?view=calendar&month=${calMonthParam}`}
-              style={{
-                ...toggleBase,
-                background: isCalendar ? "oklch(0.155 0.02 264)" : "transparent",
-                color: isCalendar ? "oklch(0.92 0.01 264)" : "oklch(0.50 0.02 264)",
-                border: isCalendar ? "1px solid oklch(1 0 0 / 8%)" : "1px solid transparent",
-                boxShadow: isCalendar ? "0 1px 4px oklch(0 0 0 / 20%)" : "none",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              Calendário
-            </Link>
-          </div>
-
           <Link
             href="/agenda/novo"
             style={{
@@ -228,18 +241,33 @@ export default async function AgendaPage({
         })}
       </div>
 
-      {/* ── Calendar view ── */}
-      {isCalendar && (
-        <CalendarView
-          year={calYear}
-          month={calMonth}
-          deadlines={calendarDeadlines}
-          currentMonthParam={calMonthParam}
-        />
+      {/* ── Calendário (visão principal) ── */}
+      <AgendaHeader
+        view={view}
+        label={headerLabel}
+        prevHref={prevHref}
+        nextHref={nextHref}
+        todayHref={todayHref}
+        isCurrentPeriod={isCurrentPeriod}
+        viewHref={(v) => `?view=${v}`}
+      />
+
+      {view === "mes" && (
+        <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
       )}
 
-      {/* ── List view ── */}
-      {!isCalendar && (
+      {view !== "mes" && (
+        <p style={{ fontSize: 13, color: "oklch(0.50 0.02 264)" }}>
+          Visão {view} — implementada na Task 6.
+        </p>
+      )}
+
+      {/* ── Lista (visão secundária) ── */}
+      <div style={{ borderTop: "1px solid oklch(1 0 0 / 7%)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+        <h2 style={{ fontSize: 13, fontWeight: 700, color: "oklch(0.50 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>
+          Todos os prazos
+        </h2>
+
         <>
           <Suspense>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -289,7 +317,7 @@ export default async function AgendaPage({
                       {d.title}
                     </p>
                     <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginTop: 3, fontFamily: "monospace" }}>
-                      {d.case.number} · {formatDate(d.date)}
+                      {d.case ? d.case.number : "Sem processo"} · {formatDate(d.date)}
                     </p>
                   </div>
 
@@ -315,7 +343,7 @@ export default async function AgendaPage({
             <Pagination page={page} total={total} pageSize={PAGE_SIZE} />
           </Suspense>
         </>
-      )}
+      </div>
     </div>
   );
 }
