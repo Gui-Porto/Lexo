@@ -55,6 +55,9 @@ enum TaskPriority {
 model Organization {
   id                   String    @id @default(cuid())
   name                 String
+  oab                  String?
+  phone                String?
+  teamSize             String?
   plan                 String    @default("trial")
   trialEndsAt          DateTime?
   stripeCustomerId     String?   @unique

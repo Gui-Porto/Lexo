@@ -8,9 +8,15 @@ import { signIn } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { decryptSecret, encryptSecret } from "@/lib/crypto";
 
-const registerSchema = z
-  .object({
-    organizationName: z.string().min(2, "Nome do escritório muito curto"),
+const orgDetailsSchema = z.object({
+  organizationName: z.string().min(2, "Nome do escritório muito curto"),
+  oab: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  teamSize: z.string().trim().optional(),
+});
+
+const registerSchema = orgDetailsSchema
+  .extend({
     name: z.string().min(2, "Nome muito curto"),
     email: z.string().email("Email inválido").toLowerCase(),
     password: z.string().min(8, "Senha deve ter ao menos 8 caracteres"),
@@ -31,6 +37,9 @@ export async function registerOrganization(
     organizationName: formData.get("organizationName"),
     name: formData.get("name"),
     email: formData.get("email"),
+    oab: formData.get("oab"),
+    phone: formData.get("phone"),
+    teamSize: formData.get("teamSize"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
   });
@@ -39,7 +48,7 @@ export async function registerOrganization(
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  const { organizationName, name, email, password } = parsed.data;
+  const { organizationName, name, email, oab, phone, teamSize, password } = parsed.data;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -48,6 +57,9 @@ export async function registerOrganization(
     await db.organization.create({
       data: {
         name: organizationName,
+        oab: oab || null,
+        phone: phone || null,
+        teamSize: teamSize || null,
         trialEndsAt,
         users: {
           create: { name, email, passwordHash, role: "ADMIN" },
@@ -85,10 +97,16 @@ export async function completeGoogleSignup(
   _prevState: CompleteSignupResult,
   formData: FormData
 ): Promise<CompleteSignupResult> {
-  const organizationName = ((formData.get("organizationName") as string) ?? "").trim();
-  if (organizationName.length < 2) {
-    return { error: "Nome do escritório muito curto" };
+  const parsedOrg = orgDetailsSchema.safeParse({
+    organizationName: formData.get("organizationName"),
+    oab: formData.get("oab"),
+    phone: formData.get("phone"),
+    teamSize: formData.get("teamSize"),
+  });
+  if (!parsedOrg.success) {
+    return { error: parsedOrg.error.issues[0]?.message ?? "Dados inválidos" };
   }
+  const { organizationName, oab, phone, teamSize } = parsedOrg.data;
 
   const cookieStore = await cookies();
   const raw = cookieStore.get("pending_google_identity")?.value;
@@ -114,6 +132,9 @@ export async function completeGoogleSignup(
     const org = await db.organization.create({
       data: {
         name: organizationName,
+        oab: oab || null,
+        phone: phone || null,
+        teamSize: teamSize || null,
         trialEndsAt,
         users: {
           create: {
