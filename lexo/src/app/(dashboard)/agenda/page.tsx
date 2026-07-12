@@ -5,6 +5,8 @@ import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
 import { RiskBadge } from "@/components/agenda/risk-badge";
 import { CalendarView } from "@/components/agenda/calendar-view";
+import { WeekView } from "@/components/agenda/week-view";
+import { DayView } from "@/components/agenda/day-view";
 import { AgendaHeader, type AgendaView } from "@/components/agenda/agenda-header";
 import {
   MONTH_NAMES, WEEKDAY_LONG, addDaysUTC, dayKey,
@@ -256,10 +258,11 @@ export default async function AgendaPage({
         <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
       )}
 
-      {view !== "mes" && (
-        <p style={{ fontSize: 13, color: "oklch(0.50 0.02 264)" }}>
-          Visão {view} — implementada na Task 6.
-        </p>
+      {view === "semana" && (
+        <WeekView weekStart={formatDateParam(weekStart)} deadlines={viewDeadlines} cases={cases} />
+      )}
+      {view === "dia" && (
+        <DayView day={formatDateParam(dayStart)} deadlines={viewDeadlines} cases={cases} />
       )}
 
       {/* ── Lista (visão secundária) ── */}
