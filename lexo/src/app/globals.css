@@ -125,6 +125,20 @@
   50%       { border-color: oklch(0.66 0.18 274 / 0.60); }
 }
 
+@keyframes today-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.66 0.18 274 / 0.45); }
+  50%      { box-shadow: 0 0 0 5px oklch(0.66 0.18 274 / 0); }
+}
+
+@keyframes via-blur {
+  30% { filter: blur(3px); }
+}
+
+@keyframes vt-slide {
+  from { translate: var(--slide-offset); }
+  to   { translate: 0; }
+}
+
 /* ─── Base ───────────────────────────────────────────────────────── */
 
 @layer base {
@@ -162,6 +176,10 @@
   .animate-fade-in {
     animation: fade-in 0.4s ease both;
     animation-delay: var(--delay, 0ms);
+  }
+
+  .animate-today-pulse {
+    animation: today-pulse 2.4s ease-in-out infinite;
   }
 
   /* Glassmorphism escuro */
@@ -255,4 +273,39 @@
 /* Painéis laterais secundários (ex.: chat IA) → ocultos no mobile/tablet */
 @media (max-width: 1023px) {
   .r-hide-lg { display: none !important; }
+}
+
+/* ─── View Transitions (nativo, Next experimental.viewTransition) ── */
+
+::view-transition-group(.morph) {
+  animation-duration: 450ms;
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation: 150ms ease-in both fade-in reverse, 400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation: 210ms ease-out 150ms both fade-in, 400ms ease-in-out both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation: 150ms ease-in both fade-in reverse, 400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation: 210ms ease-out 150ms both fade-in, 400ms ease-in-out both vt-slide;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

@@ -65,3 +65,14 @@ export function timeInputValue(date: Date): string {
   if (isAllDayUTC(date)) return "";
   return `${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
+
+/** Agrupa itens com campo `date` por chave de dia UTC ("YYYY-MM-DD"). */
+export function groupDeadlinesByDay<T extends { date: Date }>(items: T[]): Map<string, T[]> {
+  const byDay = new Map<string, T[]>();
+  for (const item of items) {
+    const key = dayKey(new Date(item.date));
+    if (!byDay.has(key)) byDay.set(key, []);
+    byDay.get(key)!.push(item);
+  }
+  return byDay;
+}

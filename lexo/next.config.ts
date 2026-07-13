@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // type checker carrega o projeto inteiro na memória. Erros continuam visíveis no IDE.
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+  experimental: {
+    viewTransition: true,
+  },
   async headers() {
     return [
       {
