@@ -3,9 +3,10 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export async function POST() {
+  const base = process.env.NEXTAUTH_URL!;
   const session = await auth();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.redirect(new URL("/login", base));
   }
 
   await db.user.update({
@@ -16,5 +17,7 @@ export async function POST() {
     },
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(
+    new URL(`/configuracoes?tab=integracoes&toast=${encodeURIComponent("Google Agenda desconectado")}`, base)
+  );
 }

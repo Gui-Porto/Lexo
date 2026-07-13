@@ -155,8 +155,8 @@ model Deadline {
   id             String         @id @default(cuid())
   organizationId String
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  caseId         String
-  case           Case           @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  caseId         String?
+  case           Case?          @relation(fields: [caseId], references: [id], onDelete: Cascade)
   type           DeadlineType   @default(PRAZO)
   status         DeadlineStatus @default(PENDENTE)
   title          String

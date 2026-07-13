@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
       const daysLeft = Math.ceil((d.date.getTime() - now.getTime()) / 86_400_000);
       return {
         title: d.title,
-        caseNumber: d.case.number,
+        caseNumber: d.case?.number ?? "Sem processo",
         date: d.date.toLocaleDateString("pt-BR", { timeZone: "UTC" }),
         daysLeft,
       };

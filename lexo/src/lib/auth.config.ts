@@ -23,13 +23,6 @@ export const authConfig = {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
 
-      if (
-        role !== "ADMIN" &&
-        nextUrl.pathname.startsWith("/configuracoes")
-      ) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
-      }
-
       return true;
     },
     jwt: async ({ token, user }) => {
