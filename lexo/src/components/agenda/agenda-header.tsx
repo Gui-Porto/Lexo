@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { CalendarDays } from "lucide-react";
 
-export type AgendaView = "dia" | "semana" | "mes";
+export type AgendaView = "ano" | "dia" | "semana" | "mes";
 
 const VIEWS: { value: AgendaView; label: string }[] = [
+  { value: "ano", label: "Ano" },
   { value: "dia", label: "Dia" },
   { value: "semana", label: "Semana" },
   { value: "mes", label: "Mês" },
@@ -38,8 +40,8 @@ export function AgendaHeader({
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Link href={prevHref} style={navBtnStyle} aria-label="Anterior">‹</Link>
-        <Link href={nextHref} style={navBtnStyle} aria-label="Próximo">›</Link>
+        <Link href={prevHref} style={navBtnStyle} aria-label="Anterior" transitionTypes={["nav-back"]}>‹</Link>
+        <Link href={nextHref} style={navBtnStyle} aria-label="Próximo" transitionTypes={["nav-forward"]}>›</Link>
         <span style={{ fontSize: 18, fontWeight: 700, color: "oklch(0.94 0.01 264)", letterSpacing: "-0.3px" }}>
           {label}
         </span>
@@ -70,20 +72,27 @@ export function AgendaHeader({
       </div>
 
       <div style={{ display: "flex", background: "oklch(0.11 0.015 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 10, padding: 3, gap: 2 }}>
-        {VIEWS.map((v) => (
-          <Link
-            key={v.value}
-            href={viewHref(v.value)}
-            style={{
-              padding: "6px 14px", borderRadius: 7, fontSize: 13, fontWeight: 600,
-              textDecoration: "none",
-              background: view === v.value ? "oklch(0.66 0.18 274)" : "transparent",
-              color: view === v.value ? "#fff" : "oklch(0.60 0.02 264)",
-            }}
-          >
-            {v.label}
-          </Link>
-        ))}
+        {VIEWS.map((v) => {
+          const isActive = view === v.value;
+          const linkStyle: React.CSSProperties = {
+            padding: "6px 14px", borderRadius: 7, fontSize: 13, fontWeight: 600,
+            textDecoration: "none", display: "block",
+            background: isActive ? "oklch(0.66 0.18 274)" : "transparent",
+            color: isActive ? "#fff" : "oklch(0.60 0.02 264)",
+          };
+          if (isActive) {
+            return (
+              <ViewTransition key={v.value} name="view-pill">
+                <Link href={viewHref(v.value)} style={linkStyle}>{v.label}</Link>
+              </ViewTransition>
+            );
+          }
+          return (
+            <Link key={v.value} href={viewHref(v.value)} style={linkStyle}>
+              {v.label}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

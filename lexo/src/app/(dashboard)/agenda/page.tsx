@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, ViewTransition } from "react";
 import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { DeleteButton } from "@/components/delete-button";
@@ -272,16 +272,22 @@ export default async function AgendaPage({
         viewHref={(v) => `?view=${v}`}
       />
 
-      {view === "mes" && (
-        <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
-      )}
+      <ViewTransition
+        enter={{ "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" }}
+        exit={{ "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" }}
+        default="none"
+      >
+        {view === "mes" && (
+          <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
+        )}
 
-      {view === "semana" && (
-        <WeekView weekStart={formatDateParam(weekStart)} deadlines={viewDeadlines} cases={cases} />
-      )}
-      {view === "dia" && (
-        <DayView day={formatDateParam(dayStart)} deadlines={viewDeadlines} cases={cases} />
-      )}
+        {view === "semana" && (
+          <WeekView weekStart={formatDateParam(weekStart)} deadlines={viewDeadlines} cases={cases} />
+        )}
+        {view === "dia" && (
+          <DayView day={formatDateParam(dayStart)} deadlines={viewDeadlines} cases={cases} />
+        )}
+      </ViewTransition>
 
       {/* ── Lista (visão secundária) ── */}
       <div style={{ borderTop: "1px solid oklch(1 0 0 / 7%)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
