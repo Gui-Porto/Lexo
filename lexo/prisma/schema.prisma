@@ -91,6 +91,7 @@ model User {
   totpPendingSecret     String?
   googleRefreshToken    String?
   googleCalendarEnabled Boolean      @default(false)
+  googleLastSyncAt      DateTime?
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 

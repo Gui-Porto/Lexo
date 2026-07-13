@@ -16,6 +16,7 @@ import {
 import { SearchFilters } from "@/components/search-filters";
 import { Pagination } from "@/components/pagination";
 import { deleteDeadline } from "@/actions/agenda";
+import { pullGoogleChanges } from "@/lib/google-calendar-pull";
 import { formatDate, formatRelativeDay } from "@/lib/format";
 import Link from "next/link";
 
@@ -73,6 +74,9 @@ export default async function AgendaPage({
     calMonth      = m - 1;
     calMonthParam = monthStr;
   }
+
+  // Puxa alterações feitas direto no Google Agenda (máx. 1x/min por usuário)
+  await pullGoogleChanges(session.user.id, orgId);
 
   // Auto-expire overdue deadlines
   await db.deadline.updateMany({

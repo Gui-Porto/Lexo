@@ -127,6 +127,49 @@ export async function listUpcomingEvents(refreshToken: string): Promise<GoogleEv
   }
 }
 
+export type GoogleEventChange = {
+  googleEventId: string;
+  cancelled: boolean;
+  title: string;
+  description: string | null;
+  date: Date | null;
+};
+
+/** Eventos alterados/criados/excluídos no Google desde `updatedMin`. */
+export async function listChangedEvents(
+  refreshToken: string,
+  updatedMin: Date
+): Promise<GoogleEventChange[]> {
+  try {
+    const auth = createOAuth2({ refresh_token: refreshToken });
+    const calendar = google.calendar({ version: "v3", auth });
+
+    // ponytail: sem paginação — 250 mudanças por minuto é teto folgado pra um escritório
+    const res = await calendar.events.list({
+      calendarId: "primary",
+      updatedMin: updatedMin.toISOString(),
+      showDeleted: true,
+      singleEvents: true,
+      maxResults: 250,
+    });
+
+    return (res.data.items ?? [])
+      .filter((e) => e.id)
+      .map((e) => ({
+        googleEventId: e.id!,
+        cancelled: e.status === "cancelled",
+        title: e.summary ?? "Compromisso",
+        description: e.description ?? null,
+        date: e.start?.date || e.start?.dateTime
+          ? new Date(e.start!.date ?? e.start!.dateTime!)
+          : null,
+      }));
+  } catch (e) {
+    console.error("[google-calendar] changes error:", e);
+    return [];
+  }
+}
+
 export async function deleteGoogleEvent(
   refreshToken: string,
   eventId: string
