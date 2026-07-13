@@ -292,7 +292,7 @@ export default async function AgendaPage({
         )}
 
         {view === "mes" && (
-          <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
+          <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} cases={cases} />
         )}
 
         {view === "semana" && (

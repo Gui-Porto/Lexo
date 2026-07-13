@@ -1,5 +1,6 @@
 "use client";
 
+import { ViewTransition } from "react";
 import { TimeGrid } from "@/components/agenda/time-grid";
 import type { CalendarDeadline } from "@/components/agenda/calendar-view";
 import { dayKey, WEEKDAY_LONG } from "@/lib/agenda-date";
@@ -18,10 +19,12 @@ export function DayView({
   const key = dayKey(d);
 
   return (
-    <TimeGrid
-      days={[{ key, label: WEEKDAY_LONG[d.getUTCDay()], isToday: key === todayKey }]}
-      deadlines={deadlines}
-      cases={cases}
-    />
+    <ViewTransition name={`day-${key}`}>
+      <TimeGrid
+        days={[{ key, label: WEEKDAY_LONG[d.getUTCDay()], isToday: key === todayKey }]}
+        deadlines={deadlines}
+        cases={cases}
+      />
+    </ViewTransition>
   );
 }

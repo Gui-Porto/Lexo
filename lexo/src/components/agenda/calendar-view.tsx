@@ -1,5 +1,10 @@
+"use client";
+
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ViewTransition } from "react";
+import { EventPopover, type PopoverSlot } from "@/components/agenda/event-popover";
+import { groupDeadlinesByDay } from "@/lib/agenda-date";
 
 export type CalendarDeadline = {
   id: string;
@@ -15,6 +20,7 @@ type Props = {
   year: number;
   month: number; // 0-indexed
   deadlines: CalendarDeadline[];
+  cases: { id: string; number: string }[];
 };
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
@@ -29,8 +35,12 @@ const TYPE_ICON: Record<string, string> = {
 };
 
 const DAY_NAMES = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const DEFAULT_CREATE_HOUR = 9; // ponytail: mês não tem grade de hora; hora default editável no popover
 
-export function CalendarView({ year, month, deadlines }: Props) {
+export function CalendarView({ year, month, deadlines, cases }: Props) {
+  const [popover, setPopover] = useState<PopoverSlot | null>(null);
+  const anchorRef = useRef<HTMLElement | null>(null);
+
   const today = new Date();
   const todayY = today.getUTCFullYear();
   const todayM = today.getUTCMonth();
@@ -39,21 +49,23 @@ export function CalendarView({ year, month, deadlines }: Props) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startDow = new Date(year, month, 1).getDay();
   const monthParam = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const byDay = groupDeadlinesByDay(deadlines);
 
-  // Group deadlines by "YYYY-MM-DD" (UTC date)
-  const byDay = new Map<string, CalendarDeadline[]>();
-  for (const d of deadlines) {
-    const dt = new Date(d.date);
-    const key = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}-${String(dt.getUTCDate()).padStart(2, "0")}`;
-    if (!byDay.has(key)) byDay.set(key, []);
-    byDay.get(key)!.push(d);
-  }
-
-  // Build cell array: null for padding, number for day
   const cells: (number | null)[] = [];
   for (let i = 0; i < startDow; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
+
+  function openCreate(e: React.MouseEvent<HTMLElement>, dateKey: string) {
+    anchorRef.current = e.currentTarget;
+    setPopover({ mode: "create", dateKey, hour: DEFAULT_CREATE_HOUR });
+  }
+
+  function openEdit(e: React.MouseEvent<HTMLElement>, deadline: CalendarDeadline) {
+    e.stopPropagation();
+    anchorRef.current = e.currentTarget;
+    setPopover({ mode: "edit", deadline });
+  }
 
   return (
     <ViewTransition name={`month-${monthParam}`} share="morph">
@@ -93,51 +105,61 @@ export function CalendarView({ year, month, deadlines }: Props) {
             return (
               <div
                 key={dateKey}
+                onClick={(e) => openCreate(e, dateKey)}
                 style={{
-                  minHeight: 110, padding: "8px 6px", borderRight, borderBottom,
+                  minHeight: 110, padding: "8px 6px", borderRight, borderBottom, cursor: "pointer",
                   background: isToday ? "oklch(0.66 0.18 274 / 6%)" : "transparent",
                 }}
               >
-                {/* Day number */}
+                {/* Day number — drill-in pra visão Dia */}
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 5 }}>
-                  <span
-                    style={{
-                      width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center",
-                      borderRadius: "50%",
-                      background: isToday ? "oklch(0.66 0.18 274)" : "transparent",
-                      color: isToday ? "#fff" : (i % 7 === 0 ? "oklch(0.60 0.12 30)" : "oklch(0.55 0.02 264)"),
-                      fontSize: 12, fontWeight: isToday ? 700 : 400,
-                    }}
-                  >
-                    {day}
-                  </span>
+                  <ViewTransition name={`day-${dateKey}`}>
+                    <Link
+                      href={`?view=dia&date=${dateKey}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className={isToday ? "animate-today-pulse" : undefined}
+                      style={{
+                        width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center",
+                        borderRadius: "50%", textDecoration: "none",
+                        background: isToday ? "oklch(0.66 0.18 274)" : "transparent",
+                        color: isToday ? "#fff" : (i % 7 === 0 ? "oklch(0.60 0.12 30)" : "oklch(0.55 0.02 264)"),
+                        fontSize: 12, fontWeight: isToday ? 700 : 400,
+                      }}
+                    >
+                      {day}
+                    </Link>
+                  </ViewTransition>
                 </div>
 
-                {/* Event chips */}
+                {/* Event chips — clique abre popover de editar */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  {visible.map((ev) => {
+                  {visible.map((ev, idx) => {
                     const tc = TYPE_COLORS[ev.type] ?? TYPE_COLORS.OUTRO;
                     const isDone = ev.status === "CONCLUIDO";
                     const isLost = ev.status === "PERDIDO";
                     return (
-                      <Link
+                      <button
                         key={ev.id}
-                        href={`/agenda/${ev.id}`}
+                        type="button"
                         title={ev.title}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 3,
-                          background: isDone || isLost ? "oklch(0.18 0.015 264)" : tc.bg,
-                          color: isDone || isLost ? "oklch(0.42 0.02 264)" : tc.color,
-                          borderRadius: 5, padding: "2px 5px",
-                          fontSize: 11, fontWeight: 500,
-                          textDecoration: "none",
-                          overflow: "hidden", whiteSpace: "nowrap",
-                          opacity: isDone || isLost ? 0.65 : 1,
-                        }}
+                        onClick={(e) => openEdit(e, ev)}
+                        className="animate-fade-up"
+                        style={
+                          {
+                            "--delay": `${idx * 40}ms`,
+                            display: "flex", alignItems: "center", gap: 3, border: "none", cursor: "pointer",
+                            background: isDone || isLost ? "oklch(0.18 0.015 264)" : tc.bg,
+                            color: isDone || isLost ? "oklch(0.42 0.02 264)" : tc.color,
+                            borderRadius: 5, padding: "2px 5px",
+                            fontSize: 11, fontWeight: 500, textAlign: "left",
+                            overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
+                            opacity: isDone || isLost ? 0.65 : 1,
+                          } as React.CSSProperties
+                        }
                       >
                         <span style={{ flexShrink: 0, fontSize: 10 }}>{TYPE_ICON[ev.type] ?? "📌"}</span>
                         <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{ev.title}</span>
-                      </Link>
+                      </button>
                     );
                   })}
                   {overflow > 0 && (
@@ -171,6 +193,15 @@ export function CalendarView({ year, month, deadlines }: Props) {
           );
         })}
       </div>
+
+      {popover && (
+        <EventPopover
+          slot={popover}
+          cases={cases}
+          anchorRef={anchorRef}
+          onClose={() => setPopover(null)}
+        />
+      )}
     </div>
     </ViewTransition>
   );
