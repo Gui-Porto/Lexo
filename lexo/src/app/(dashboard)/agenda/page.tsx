@@ -5,6 +5,7 @@ import { DeleteButton } from "@/components/delete-button";
 import { DeadlineToggle } from "@/components/agenda/deadline-toggle";
 import { RiskBadge } from "@/components/agenda/risk-badge";
 import { CalendarView } from "@/components/agenda/calendar-view";
+import { YearView } from "@/components/agenda/year-view";
 import { WeekView } from "@/components/agenda/week-view";
 import { DayView } from "@/components/agenda/day-view";
 import { AgendaHeader, type AgendaView } from "@/components/agenda/agenda-header";
@@ -96,7 +97,8 @@ export default async function AgendaPage({
   const monthEnd   = new Date(Date.UTC(calYear, calMonth + 1, 0, 23, 59, 59, 999));
 
   // Visão ativa e período de dados
-  const view: AgendaView = viewStr === "dia" || viewStr === "semana" ? viewStr : "mes";
+  const view: AgendaView =
+    viewStr === "dia" || viewStr === "semana" || viewStr === "ano" ? viewStr : "mes";
   const todayUTC = startOfDayUTC(now);
   const nowMonthStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
@@ -131,6 +133,14 @@ export default async function AgendaPage({
     nextHref = `?view=dia&date=${formatDateParam(addDaysUTC(dayStart, 1))}`;
     todayHref = `?view=dia`;
     isCurrentPeriod = dayKey(dayStart) === dayKey(todayUTC);
+  } else if (view === "ano") {
+    rangeStart = new Date(Date.UTC(calYear, 0, 1));
+    rangeEnd   = new Date(Date.UTC(calYear, 11, 31, 23, 59, 59, 999));
+    headerLabel = `${calYear}`;
+    prevHref = `?view=ano&month=${calYear - 1}-01`;
+    nextHref = `?view=ano&month=${calYear + 1}-01`;
+    todayHref = `?view=ano`;
+    isCurrentPeriod = calYear === now.getUTCFullYear();
   } else {
     rangeStart = monthStart;
     rangeEnd = monthEnd;
@@ -277,6 +287,10 @@ export default async function AgendaPage({
         exit={{ "nav-forward": "nav-forward", "nav-back": "nav-back", default: "none" }}
         default="none"
       >
+        {view === "ano" && (
+          <YearView year={calYear} deadlines={viewDeadlines} />
+        )}
+
         {view === "mes" && (
           <CalendarView year={calYear} month={calMonth} deadlines={viewDeadlines} />
         )}

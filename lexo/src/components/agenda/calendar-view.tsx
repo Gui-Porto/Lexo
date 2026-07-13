@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 
 export type CalendarDeadline = {
   id: string;
@@ -37,6 +38,7 @@ export function CalendarView({ year, month, deadlines }: Props) {
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startDow = new Date(year, month, 1).getDay();
+  const monthParam = `${year}-${String(month + 1).padStart(2, "0")}`;
 
   // Group deadlines by "YYYY-MM-DD" (UTC date)
   const byDay = new Map<string, CalendarDeadline[]>();
@@ -54,6 +56,7 @@ export function CalendarView({ year, month, deadlines }: Props) {
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
+    <ViewTransition name={`month-${monthParam}`} share="morph">
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {/* Calendar grid */}
       <div className="r-tablewrap" style={{ border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
@@ -169,5 +172,6 @@ export function CalendarView({ year, month, deadlines }: Props) {
         })}
       </div>
     </div>
+    </ViewTransition>
   );
 }
