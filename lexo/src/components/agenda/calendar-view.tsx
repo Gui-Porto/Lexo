@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { EventPopover, type PopoverSlot } from "@/components/agenda/event-popover";
+import { DayOverviewPopover } from "@/components/agenda/day-overview-popover";
 import { groupDeadlinesByDay } from "@/lib/agenda-date";
 
 export type CalendarDeadline = {
@@ -39,6 +40,7 @@ const DEFAULT_CREATE_HOUR = 9; // ponytail: mês não tem grade de hora; hora de
 
 export function CalendarView({ year, month, deadlines, cases }: Props) {
   const [popover, setPopover] = useState<PopoverSlot | null>(null);
+  const [dayOverview, setDayOverview] = useState<string | null>(null);
   const anchorRef = useRef<HTMLElement | null>(null);
 
   const today = new Date();
@@ -65,6 +67,12 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
     e.stopPropagation();
     anchorRef.current = e.currentTarget;
     setPopover({ mode: "edit", deadline });
+  }
+
+  function openDayOverview(e: React.MouseEvent<HTMLElement>, dateKey: string) {
+    e.stopPropagation();
+    anchorRef.current = e.currentTarget;
+    setDayOverview(dateKey);
   }
 
   return (
@@ -163,9 +171,19 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
                     );
                   })}
                   {overflow > 0 && (
-                    <span style={{ fontSize: 10, color: "oklch(0.46 0.02 264)", paddingLeft: 4 }}>
+                    <button
+                      type="button"
+                      onClick={(e) => openDayOverview(e, dateKey)}
+                      className="animate-fade-up"
+                      style={{
+                        "--delay": `${MAX * 40}ms`,
+                        fontSize: 10, fontWeight: 600, color: "oklch(0.70 0.14 274)",
+                        background: "oklch(0.66 0.18 274 / 12%)", border: "none", cursor: "pointer",
+                        borderRadius: 5, padding: "2px 6px", marginLeft: 4, textAlign: "left",
+                      } as React.CSSProperties}
+                    >
                       +{overflow} mais
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>
@@ -193,6 +211,19 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
           );
         })}
       </div>
+
+      {dayOverview && (
+        <DayOverviewPopover
+          dateKey={dayOverview}
+          items={byDay.get(dayOverview) ?? []}
+          anchorRef={anchorRef}
+          onClose={() => setDayOverview(null)}
+          onSelectItem={(e, deadline) => {
+            setDayOverview(null);
+            openEdit(e, deadline);
+          }}
+        />
+      )}
 
       {popover && (
         <EventPopover
