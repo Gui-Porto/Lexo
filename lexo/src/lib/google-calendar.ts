@@ -33,6 +33,39 @@ const TYPE_LABEL: Record<string, string> = {
   OUTRO: "Compromisso",
 };
 
+// ponytail: escritório é BR; sem timezone por usuário/org no schema ainda.
+const TIMEZONE = "America/Sao_Paulo";
+
+/**
+ * O app guarda hora local (BR) nos getters UTC do Date (ver agenda-date.ts).
+ * Serializa pro Google sem "Z" + timeZone explícito, senão o Google acha
+ * que é hora UTC de verdade e mostra 3h a menos na tela.
+ */
+function toWallClockDateTime(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:00`;
+}
+
+/** Inverso: instante real (vindo do Google) → Date com hora local BR nos campos UTC. */
+function fromGoogleDateTime(iso: string): Date {
+  const real = new Date(iso);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIMEZONE,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false,
+  }).formatToParts(real);
+  const get = (type: string) => parts.find((p) => p.type === type)!.value;
+  const hour = Number(get("hour")) % 24; // Intl pode devolver "24" pra meia-noite
+  return new Date(Date.UTC(Number(get("year")), Number(get("month")) - 1, Number(get("day")), hour, Number(get("minute")), Number(get("second"))));
+}
+
+function parseGoogleStart(start: { date?: string | null; dateTime?: string | null }): Date | null {
+  if (start.date) return new Date(`${start.date}T00:00:00.000Z`);
+  if (start.dateTime) return fromGoogleDateTime(start.dateTime);
+  return null;
+}
+
 type DeadlineForSync = {
   id: string;
   title: string;
@@ -63,8 +96,8 @@ export async function syncDeadlineToGoogle(
       : {
           summary: `[${TYPE_LABEL[deadline.type] ?? "Prazo"}] ${deadline.title}`,
           description: deadline.description ?? "",
-          start: { dateTime: deadline.date.toISOString(), timeZone: "UTC" },
-          end:   { dateTime: new Date(deadline.date.getTime() + 60 * 60 * 1000).toISOString(), timeZone: "UTC" },
+          start: { dateTime: toWallClockDateTime(deadline.date), timeZone: TIMEZONE },
+          end:   { dateTime: toWallClockDateTime(new Date(deadline.date.getTime() + 60 * 60 * 1000)), timeZone: TIMEZONE },
         };
 
     if (deadline.googleEventId) {
@@ -119,7 +152,7 @@ export async function listUpcomingEvents(refreshToken: string): Promise<GoogleEv
         googleEventId: e.id!,
         title: e.summary ?? "Compromisso",
         description: e.description ?? null,
-        date: new Date(e.start!.date ?? e.start!.dateTime!),
+        date: parseGoogleStart(e.start!)!,
       }));
   } catch (e) {
     console.error("[google-calendar] list error:", e);
@@ -160,9 +193,7 @@ export async function listChangedEvents(
         cancelled: e.status === "cancelled",
         title: e.summary ?? "Compromisso",
         description: e.description ?? null,
-        date: e.start?.date || e.start?.dateTime
-          ? new Date(e.start!.date ?? e.start!.dateTime!)
-          : null,
+        date: e.start ? parseGoogleStart(e.start) : null,
       }));
   } catch (e) {
     console.error("[google-calendar] changes error:", e);

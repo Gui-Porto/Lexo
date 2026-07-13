@@ -11,7 +11,8 @@ import {
 import {
   Popover, PopoverPortal, PopoverPositioner, PopoverPopup, PopoverTitle,
 } from "@/components/ui/popover";
-import { createDeadline, updateDeadline, type ActionResult } from "@/actions/agenda";
+import { DeleteButton } from "@/components/delete-button";
+import { createDeadline, updateDeadline, deleteDeadline, type ActionResult } from "@/actions/agenda";
 import type { CalendarDeadline } from "@/components/agenda/calendar-view";
 import { dateInputValue, timeInputValue } from "@/lib/agenda-date";
 
@@ -102,11 +103,22 @@ export function EventPopover({
 
               {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
 
-              <div className="flex justify-end gap-2 pt-1">
-                <Button type="button" variant="outline" size="sm" onClick={onClose}>Cancelar</Button>
-                <Button type="submit" size="sm" disabled={pending}>
-                  {pending ? "Salvando..." : isEdit ? "Salvar" : "Criar"}
-                </Button>
+              <div className="flex items-center justify-between gap-2 pt-1">
+                {isEdit ? (
+                  <DeleteButton
+                    action={async () => {
+                      await deleteDeadline(slot.deadline.id);
+                      onClose();
+                    }}
+                    label="Excluir"
+                  />
+                ) : <span />}
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={onClose}>Cancelar</Button>
+                  <Button type="submit" size="sm" disabled={pending}>
+                    {pending ? "Salvando..." : isEdit ? "Salvar" : "Criar"}
+                  </Button>
+                </div>
               </div>
             </form>
           </PopoverPopup>
