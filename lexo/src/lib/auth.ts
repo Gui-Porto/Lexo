@@ -131,10 +131,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // a conta do convidado; sinalização de cadastro cria uma nova Organization+ADMIN.
     async signIn({ user, account, profile }) {
       if (account?.provider !== "google") return true;
-      // ponytail: debug temporário pra rastrear bug de "conta não cadastrada" em prod
-      // sem acesso a logs — remover depois de diagnosticado.
-      try {
-      if (profile?.email_verified === false) return "/login?error=AccessDenied&debug=email_unverified";
+      if (profile?.email_verified === false) return false;
 
       const email = (user.email ?? "").toLowerCase();
 
@@ -204,12 +201,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return "/registrar/completar";
       }
 
-      const cookieNames = cookieStore.getAll().map((c) => c.name).join(",") || "none";
-      return `/login?error=AccessDenied&debug=nobranch|cookies:${encodeURIComponent(cookieNames)}`;
-      } catch (e) {
-        const msg = e instanceof Error ? `${e.name}:${e.message}` : String(e);
-        return `/login?error=AccessDenied&debug=${encodeURIComponent("EXCEPTION|" + msg)}`;
-      }
+      return false;
     },
   },
 });
