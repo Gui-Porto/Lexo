@@ -229,7 +229,7 @@ function ScrollFrameHero() {
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "120px 40px 88px" }}>
         <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }} />
         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
-        <h1 style={{ position: "relative", zIndex: 2, fontFamily: F, fontSize: "clamp(40px, 10vw, 158px)", fontWeight: 400, lineHeight: 1, letterSpacing: "-0.03em", color: PAPER, margin: 0, maxWidth: 1100 }}>
+        <h1 style={{ position: "relative", zIndex: 2, fontFamily: F, fontSize: "clamp(32px, 5.2vw, 84px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.02em", color: PAPER, margin: 0, maxWidth: 900 }}>
           O sistema que cuida do escritório enquanto você cuida da causa.
         </h1>
         <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12 }}>
