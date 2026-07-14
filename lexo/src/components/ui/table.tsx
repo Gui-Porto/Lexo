@@ -10,8 +10,8 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
       data-slot="table-container"
       className="relative w-full overflow-x-auto rounded-xl"
       style={{
-        background: "oklch(0.155 0.02 264)",
-        border: "1px solid oklch(1 0 0 / 7%)",
+        background: "#222f30",
+        border: "1px solid #4d5757",
       }}
     >
       <table
