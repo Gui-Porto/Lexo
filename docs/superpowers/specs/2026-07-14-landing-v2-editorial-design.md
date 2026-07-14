@@ -54,9 +54,10 @@ do Inter cobre o caso, evita importar fonte nova para um único uso.
 
 ### Fundo
 `body` tem `bg-background` escuro global (`globals.css`, oklch dark). O
-wrapper raiz da página define `min-height: 100dvh` e
+wrapper raiz da página define `min-height: 100vh` e
 `background: var(--color-paper)` (`#fff`) para cobrir isso — mesma técnica
-que a landing atual usa para o próprio fundo dark.
+que a landing atual usa para o próprio fundo dark (`page.tsx:719`, inline
+`minHeight: "100vh"`).
 
 ---
 
