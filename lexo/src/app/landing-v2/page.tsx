@@ -9,6 +9,7 @@ const ABYSSAL  = "#222f30";
 const BONE     = "#f7f7f5";
 const PAPER    = "#ffffff";
 const GRAPHITE = "#4d5757";
+const MIST     = "#93a09f"; // ponytail: GRAPHITE puro em texto de corpo sobre ABYSSAL/VOID cai abaixo de 4.5:1 — MIST é só pro texto, borda/hairline continua GRAPHITE
 const LICHEN   = "#c9cbbe";
 const VOID     = "#000000";
 const F  = "var(--font-sans), sans-serif";  // Aspekta substituto — Inter, peso 400 único
@@ -86,15 +87,45 @@ const CSS = `
   }
   .lp2-btn-ghost:hover { opacity: 0.7; }
   .lp2-arrow-cta {
+    position: relative; overflow: hidden;
     display: inline-flex; align-items: center; justify-content: center;
     width: 40px; height: 40px; border-radius: 8px; background: ${LIME}; flex-shrink: 0;
     transition: transform 250ms ease;
   }
   .lp2-arrow-cta:hover { transform: translateX(3px); }
+  .lp2-arrow-cta::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+    animation: lp2-shimmer 3s 1s infinite;
+  }
+  @keyframes lp2-shimmer {
+    from { transform: translateX(-150%); }
+    to   { transform: translateX(250%); }
+  }
   .lp2-textlink { color: inherit; text-decoration: none; transition: color 250ms ease; }
   .lp2-textlink:hover { color: ${LIME}; }
+
+  @keyframes lp2-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .lp2-marquee-track { display: flex; width: max-content; animation: lp2-marquee 26s linear infinite; }
+
+  @keyframes lp2-ping {
+    0%   { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+  .lp2-live-dot { position: relative; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${LIME}; flex-shrink: 0; }
+  .lp2-live-dot::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; background: ${LIME};
+    animation: lp2-ping 1.8s ease-out infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .lp2-marquee-track { animation: none !important; }
+    .lp2-live-dot::before { animation: none !important; }
+    .lp2-arrow-cta::after { animation: none !important; }
   }
 
   /* ── RESPONSIVO ─────────────────────────────────────────── */
@@ -141,7 +172,7 @@ function Counter({ n, color }: { n: string; color: string }) {
 function Tag({ label }: { label: string }) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: FM, fontSize: 13, textTransform: "uppercase", letterSpacing: "-0.02em" }}>
-      <span style={{ width: 6, height: 6, borderRadius: "50%", background: LIME, flexShrink: 0 }} />
+      <span className="lp2-live-dot" />
       {label}
     </span>
   );
@@ -217,9 +248,11 @@ export default function LandingV2Page() {
       <ScrollFrameHero />
 
       {/* ── TRUST BAR ── */}
-      <div className="lp2-section" style={{ maxWidth: 1200, margin: "0 auto", padding: "48px 40px" }}>
-        <div style={{ textAlign: "center", fontFamily: FM, fontSize: 13, color: GRAPHITE, letterSpacing: "-0.02em" }}>
-          {trustNames.join("   ·   ")}
+      <div style={{ padding: "48px 0", overflow: "hidden" }}>
+        <div className="lp2-marquee-track" style={{ fontFamily: FM, fontSize: 13, color: MIST, letterSpacing: "-0.02em" }}>
+          {[...trustNames, ...trustNames].map((name, i) => (
+            <span key={i} style={{ padding: "0 24px", whiteSpace: "nowrap" }}>{name}</span>
+          ))}
         </div>
       </div>
 
@@ -229,13 +262,13 @@ export default function LandingV2Page() {
           {features.map((f) => (
             <div key={f.n}>
               <div style={{ display: "grid", gridTemplateColumns: "60px 1fr", gap: 28, padding: "28px 0", alignItems: "baseline" }}>
-                <Counter n={f.n} color={GRAPHITE} />
+                <Counter n={f.n} color={MIST} />
                 <div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
                     <span style={{ fontSize: 22, fontWeight: 400 }}>{f.title}</span>
                     {f.novo && <span style={{ fontFamily: FM, fontSize: 11, color: LIME }}>· novo</span>}
                   </div>
-                  <p style={{ fontSize: 18, lineHeight: 1.5, color: GRAPHITE, margin: "8px 0 0" }}>{f.desc}</p>
+                  <p style={{ fontSize: 18, lineHeight: 1.5, color: MIST, margin: "8px 0 0" }}>{f.desc}</p>
                 </div>
               </div>
               <Divider on="dark" />
@@ -258,16 +291,16 @@ export default function LandingV2Page() {
                   <>
                     <div style={{ maxWidth: 460, textAlign: "right", marginLeft: "auto" }}>
                       <h3 style={{ fontSize: 24, fontWeight: 400, margin: "0 0 8px" }}>{title}</h3>
-                      <p style={{ fontSize: 18, lineHeight: 1.5, color: GRAPHITE, margin: 0 }}>{desc}</p>
+                      <p style={{ fontSize: 18, lineHeight: 1.5, color: MIST, margin: 0 }}>{desc}</p>
                     </div>
-                    <Counter n={n} color={GRAPHITE} />
+                    <Counter n={n} color={MIST} />
                   </>
                 ) : (
                   <>
-                    <Counter n={n} color={GRAPHITE} />
+                    <Counter n={n} color={MIST} />
                     <div style={{ maxWidth: 460 }}>
                       <h3 style={{ fontSize: 24, fontWeight: 400, margin: "0 0 8px" }}>{title}</h3>
-                      <p style={{ fontSize: 18, lineHeight: 1.5, color: GRAPHITE, margin: 0 }}>{desc}</p>
+                      <p style={{ fontSize: 18, lineHeight: 1.5, color: MIST, margin: 0 }}>{desc}</p>
                     </div>
                   </>
                 )}
@@ -283,7 +316,7 @@ export default function LandingV2Page() {
         <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 5vw, 58px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.7px", margin: 0 }}>
           Uma inteligência treinada para o jurídico brasileiro
         </h2>
-        <p data-reveal="" style={{ fontSize: 18, lineHeight: 1.5, color: GRAPHITE, maxWidth: 620, margin: "28px auto 0" }}>
+        <p data-reveal="" style={{ fontSize: 18, lineHeight: 1.5, color: MIST, maxWidth: 620, margin: "28px auto 0" }}>
           Resuma processos de centenas de páginas em segundos, gere minutas, calcule prazos a partir das publicações e descubra padrões de decisão por vara, comarca e relator.
         </p>
         <div data-reveal="" style={{ marginTop: 48, textAlign: "left" }}>
@@ -291,7 +324,7 @@ export default function LandingV2Page() {
             <div key={bold}>
               <div style={{ padding: "18px 0" }}>
                 <Tag label={bold} />
-                <div style={{ fontSize: 15, color: GRAPHITE, marginTop: 6, marginLeft: 14 }}>{text}</div>
+                <div style={{ fontSize: 15, color: MIST, marginTop: 6, marginLeft: 14 }}>{text}</div>
               </div>
               <Divider on="dark" />
             </div>
@@ -304,7 +337,7 @@ export default function LandingV2Page() {
         {statsData.map((s) => (
           <div key={s.display} data-reveal="">
             <div style={{ fontFamily: F, fontSize: 58, fontWeight: 400, letterSpacing: "-0.7px", lineHeight: 1 }}>{s.display}</div>
-            <div style={{ fontFamily: FM, fontSize: 13, color: GRAPHITE, marginTop: 12 }}>{s.label}</div>
+            <div style={{ fontFamily: FM, fontSize: 13, color: MIST, marginTop: 12 }}>{s.label}</div>
           </div>
         ))}
       </section>
@@ -383,10 +416,10 @@ export default function LandingV2Page() {
                   <span style={{ fontSize: 22, fontWeight: 400 }}>{plan.name}</span>
                   {plan.popular && <Tag label="Mais popular" />}
                 </div>
-                <div style={{ fontSize: 15, color: GRAPHITE, marginTop: 4 }}>{plan.tagline}</div>
+                <div style={{ fontSize: 15, color: MIST, marginTop: 4 }}>{plan.tagline}</div>
               </div>
               <div style={{ fontFamily: F, fontSize: 24, whiteSpace: "nowrap" }}>
-                {plan.price} <span style={{ fontFamily: FM, fontSize: 12, color: GRAPHITE }}>{plan.period}</span>
+                {plan.price} <span style={{ fontFamily: FM, fontSize: 12, color: MIST }}>{plan.period}</span>
               </div>
               <FilledBtn href="/registrar" on="dark">{plan.cta}</FilledBtn>
             </div>
@@ -400,7 +433,7 @@ export default function LandingV2Page() {
         <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 5vw, 58px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.7px", margin: 0 }}>
           Pronto para tirar o escritório do caos?
         </h2>
-        <p data-reveal="" style={{ fontSize: 18, color: GRAPHITE, maxWidth: 480, margin: "20px auto 0" }}>
+        <p data-reveal="" style={{ fontSize: 18, color: MIST, maxWidth: 480, margin: "20px auto 0" }}>
           Comece grátis hoje. Migramos seus processos e treinamos sua equipe sem custo.
         </p>
         <div data-reveal="" style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 40, flexWrap: "wrap" }}>
@@ -410,7 +443,7 @@ export default function LandingV2Page() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: VOID, color: GRAPHITE }}>
+      <footer style={{ background: VOID, color: MIST }}>
         <div className="lp2-section lp2-footer" style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 40px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 40, fontFamily: FM, fontSize: 13 }}>
           <div>
             <div style={{ fontFamily: F, fontSize: 20, color: PAPER, marginBottom: 8 }}>Lexo</div>
