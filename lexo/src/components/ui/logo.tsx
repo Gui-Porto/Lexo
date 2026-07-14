@@ -15,7 +15,7 @@ export function LogoMark({ size = 36 }: LogoMarkProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "oklch(0.18 0.02 264)",
+        background: "#222f30",
       }}
     >
       <svg
@@ -29,7 +29,7 @@ export function LogoMark({ size = 36 }: LogoMarkProps) {
         strokeLinejoin="round"
       >
         <path d="M8 4.5V15H15" />
-        <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+        <path d="M5 19.5h14" stroke="#cef79e" strokeWidth={2} />
       </svg>
     </span>
   );
@@ -44,9 +44,9 @@ export function LogoWordmark({ size = 36 }: { size?: number }) {
           fontSize: size * 0.63,
           fontWeight: 700,
           letterSpacing: "-0.033em",
-          color: "oklch(0.98 0.008 264)",
+          color: "#ffffff",
           lineHeight: 1,
-          fontFamily: '"Geist", var(--font-geist), sans-serif',
+          fontFamily: "var(--font-sans)",
         }}
       >
         Lexo
