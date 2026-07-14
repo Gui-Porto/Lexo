@@ -125,10 +125,10 @@ const CSS = `
   }
 
   @keyframes lp2-hero-drift {
-    0%, 100% { transform: scale(1.05) translate(0, 0); }
-    50%      { transform: scale(1.11) translate(-1.2%, -1%); }
+    0%, 100% { transform: scale(1.05); }
+    50%      { transform: scale(1.09); }
   }
-  .lp2-hero-drift { animation: lp2-hero-drift 16s ease-in-out infinite; }
+  .lp2-hero-drift { animation: lp2-hero-drift 30s ease-in-out infinite; }
 
   .lp2-shimmer-badge { position: relative; overflow: hidden; }
   .lp2-shimmer-badge::after {
