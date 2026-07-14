@@ -54,8 +54,6 @@
 
   --animate-fade-up: fade-up 0.5s ease both;
   --animate-fade-in: fade-in 0.4s ease both;
-  --animate-shimmer: shimmer 2.5s linear infinite;
-  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
 }
 
 :root {
@@ -110,24 +108,9 @@
   to   { opacity: 1; }
 }
 
-@keyframes shimmer {
-  from { background-position: -200% center; }
-  to   { background-position: 200% center; }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px 0px oklch(0.66 0.18 274 / 0.15); }
-  50%       { box-shadow: 0 0 40px 4px oklch(0.66 0.18 274 / 0.35); }
-}
-
-@keyframes border-glow {
-  0%, 100% { border-color: oklch(0.66 0.18 274 / 0.25); }
-  50%       { border-color: oklch(0.66 0.18 274 / 0.60); }
-}
-
 @keyframes today-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.66 0.18 274 / 0.45); }
-  50%      { box-shadow: 0 0 0 5px oklch(0.66 0.18 274 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 #cef79e73; }
+  50%      { box-shadow: 0 0 0 5px transparent; }
 }
 
 @keyframes via-blur {
@@ -184,59 +167,15 @@
 
   /* Glassmorphism escuro */
   .glass {
-    background: oklch(0.155 0.02 264 / 0.80);
+    background: #222f30cc;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid oklch(1 0 0 / 0.06);
+    border: 1px solid #4d575710;
   }
 
   /* Painel premium com sombra suave */
   .shadow-panel {
     box-shadow: var(--shadow-panel);
-  }
-
-  /* Glow índigo no hover */
-  .hover-glow {
-    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
-  }
-  .hover-glow:hover {
-    box-shadow: 0 0 0 1px oklch(0.66 0.18 274 / 0.25),
-                0 10px 30px -10px oklch(0.66 0.18 274 / 0.20),
-                0 2px 8px oklch(0 0 0 / 0.40);
-    transform: translateY(-1px);
-  }
-
-  /* Gradient text claro → índigo */
-  .gradient-text {
-    background: linear-gradient(
-      135deg,
-      oklch(0.93 0.008 264) 0%,
-      oklch(0.66 0.18 274) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Borda animada */
-  .glow-border {
-    border: 1px solid oklch(0.66 0.18 274 / 0.25);
-    animation: border-glow 3s ease-in-out infinite;
-  }
-
-  /* Shimmer loading */
-  .shimmer-text {
-    background: linear-gradient(
-      90deg,
-      oklch(0.66 0.18 274 / 0.85) 0%,
-      oklch(0.75 0.15 274 / 0.95) 40%,
-      oklch(0.66 0.18 274 / 0.85) 80%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s linear infinite;
   }
 }
 
