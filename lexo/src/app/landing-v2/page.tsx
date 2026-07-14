@@ -14,9 +14,6 @@ const VOID     = "#000000";
 const F  = "var(--font-sans), sans-serif";  // Aspekta substituto — Inter, peso 400 único
 const FM = "var(--font-mono), monospace";   // Roboto Mono substituto — JetBrains Mono já carregado
 
-const FRAME_COUNT = 210;
-const frameSrc = (i: number) => `/hero-frames/ezgif-frame-${String(i).padStart(3, "0")}.jpg`;
-
 // ── Conteúdo (idêntico a lexo/src/app/page.tsx) ─────────────────────────────────
 const NAV_ITEMS = [
   ["#recursos", "Recursos"],
@@ -154,80 +151,43 @@ function Divider({ on = "dark" }: { on?: "dark" | "light" }) {
   return <div style={{ borderTop: `1px solid ${on === "dark" ? GRAPHITE : LICHEN}` }} />;
 }
 
-// ── Hero com scroll-scrub em canvas (210 frames em public/hero-frames) ──────────
+// ── Hero com scroll-scrub em vídeo (public/hero-video.mp4) ──────────
 function ScrollFrameHero() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const frameRef = useRef(-1);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const images = Array.from({ length: FRAME_COUNT }, (_, i) => {
-      const img = new Image();
-      img.src = frameSrc(i + 1);
-      return img;
-    });
-    imagesRef.current = images;
-
-    const canvas = canvasRef.current;
+    const video = videoRef.current;
     const wrap = wrapRef.current;
-    if (!canvas || !wrap) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!video || !wrap) return;
+    video.load(); // ponytail: alguns navegadores não iniciam o load automaticamente só com o src no JSX
 
-    const drawCover = (img: HTMLImageElement) => {
-      const cw = canvas.width, ch = canvas.height;
-      if (!img.complete || !img.naturalWidth) return;
-      const ir = img.naturalWidth / img.naturalHeight;
-      const cr = cw / ch;
-      let sx, sy, sw, sh;
-      if (ir > cr) { sh = img.naturalHeight; sw = sh * cr; sx = (img.naturalWidth - sw) / 2; sy = 0; }
-      else { sw = img.naturalWidth; sh = sw / cr; sx = 0; sy = (img.naturalHeight - sh) / 2; }
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
-    };
-
-    const draw = (index: number) => {
-      const img = images[index];
-      if (img) drawCover(img);
-    };
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      draw(Math.max(frameRef.current, 0));
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    if (reduced) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // ponytail: reduced-motion mostra um frame fixo, sem scrubbing por scroll
-      images[Math.floor(FRAME_COUNT / 2)].onload = () => draw(Math.floor(FRAME_COUNT / 2));
-      return () => window.removeEventListener("resize", resize);
+      video.addEventListener("loadedmetadata", () => { video.currentTime = video.duration / 2; }, { once: true });
+      return;
     }
 
     let raf = 0;
     const onScroll = () => {
-      if (raf) return;
+      if (raf || !video.duration) return;
       raf = requestAnimationFrame(() => {
         const rect = wrap.getBoundingClientRect();
         const scrollable = rect.height - window.innerHeight;
         const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
-        const idx = Math.min(FRAME_COUNT - 1, Math.floor(progress * FRAME_COUNT));
-        if (idx !== frameRef.current) { frameRef.current = idx; draw(idx); }
+        video.currentTime = progress * video.duration;
         raf = 0;
       });
     };
-    images[0].onload = () => draw(0);
+    video.addEventListener("loadedmetadata", onScroll, { once: true });
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => { window.removeEventListener("resize", resize); window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   return (
     <div ref={wrapRef} style={{ position: "relative", height: "250vh" }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "120px 40px 88px" }}>
-        <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }} />
+        <video ref={videoRef} src="/hero-video.mp4" muted playsInline preload="auto" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }} />
         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
         <h1 style={{ position: "relative", zIndex: 2, fontFamily: F, fontSize: "clamp(32px, 5.2vw, 84px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.02em", color: PAPER, margin: 0, maxWidth: 900 }}>
           O sistema que cuida do escritório enquanto você cuida da causa.
