@@ -124,12 +124,6 @@ const CSS = `
     animation: lp2-ping 1.8s ease-out infinite;
   }
 
-  @keyframes lp2-hero-drift {
-    0%, 100% { transform: scale(1.05); }
-    50%      { transform: scale(1.09); }
-  }
-  .lp2-hero-drift { animation: lp2-hero-drift 30s ease-in-out infinite; }
-
   .lp2-shimmer-badge { position: relative; overflow: hidden; }
   .lp2-shimmer-badge::after {
     content: ''; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
@@ -169,7 +163,6 @@ const CSS = `
     .lp2-shimmer-badge::after { animation: none !important; }
     .lp2-cursor-blink { animation: none !important; opacity: 1 !important; }
     .lp2-wf-row, .lp2-wf-pop, .lp2-wf-bar, .lp2-wf-arrow { animation: none !important; opacity: 1 !important; transform: none !important; }
-    .lp2-hero-drift { animation: none !important; transform: none !important; }
   }
 
   /* ── RESPONSIVO ─────────────────────────────────────────── */
@@ -227,9 +220,8 @@ function Divider({ on = "dark" }: { on?: "dark" | "light" }) {
   return <div style={{ borderTop: `1px solid ${on === "dark" ? GRAPHITE : LICHEN}` }} />;
 }
 
-// ── Hero com vídeo (public/hero-video.mp4): toca uma vez, depois congela no último frame com drift sutil em CSS ──────────
+// ── Hero com vídeo (public/hero-video.mp4): toca uma vez até o fim, sem loop ──────────
 function ScrollFrameHero() {
-  const [ended, setEnded] = useState(false);
   const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   return (
@@ -240,8 +232,6 @@ function ScrollFrameHero() {
         playsInline
         preload="auto"
         autoPlay={!reduced}
-        onEnded={() => setEnded(true)}
-        className={ended ? "lp2-hero-drift" : undefined}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
       />
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
