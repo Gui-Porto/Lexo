@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 // ── Tokens — Integrated Biosciences (assets/DESIGN.md, 2026-07-14) ───────────────
 const LIME     = "#cef79e";
@@ -151,52 +151,21 @@ function Divider({ on = "dark" }: { on?: "dark" | "light" }) {
   return <div style={{ borderTop: `1px solid ${on === "dark" ? GRAPHITE : LICHEN}` }} />;
 }
 
-// ── Hero com scroll-scrub em vídeo (public/hero-video.mp4) ──────────
+// ── Hero com vídeo em loop (public/hero-video.mp4) ──────────
 function ScrollFrameHero() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const wrap = wrapRef.current;
-    if (!video || !wrap) return;
-    video.load(); // ponytail: alguns navegadores não iniciam o load automaticamente só com o src no JSX
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // ponytail: reduced-motion mostra um frame fixo, sem scrubbing por scroll
-      video.addEventListener("loadedmetadata", () => { video.currentTime = video.duration / 2; }, { once: true });
-      return;
-    }
-
-    let raf = 0;
-    const onScroll = () => {
-      if (raf || !video.duration) return;
-      raf = requestAnimationFrame(() => {
-        const rect = wrap.getBoundingClientRect();
-        const scrollable = rect.height - window.innerHeight;
-        const progress = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
-        video.currentTime = progress * video.duration;
-        raf = 0;
-      });
-    };
-    video.addEventListener("loadedmetadata", onScroll, { once: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
-  }, []);
+  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   return (
-    <div ref={wrapRef} style={{ position: "relative", height: "250vh" }}>
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "120px 40px 88px" }}>
-        <video ref={videoRef} src="/hero-video.mp4" muted playsInline preload="auto" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }} />
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
-        <h1 style={{ position: "relative", zIndex: 2, fontFamily: F, fontSize: "clamp(32px, 5.2vw, 84px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.02em", color: PAPER, margin: 0, maxWidth: 900 }}>
-          O sistema que cuida do escritório enquanto você cuida da causa.
-        </h1>
-        <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12 }}>
-          <FilledBtn href="/registrar" on="dark">Criar conta grátis</FilledBtn>
-          <GhostBtn href="/login" color={PAPER}>Entrar na área do cliente</GhostBtn>
-          <ArrowCta href="/registrar" />
-        </div>
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "120px 40px 88px" }}>
+      <video src="/hero-video.mp4" muted playsInline loop autoPlay={!reduced} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }} />
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
+      <h1 style={{ position: "relative", zIndex: 2, fontFamily: F, fontSize: "clamp(32px, 5.2vw, 84px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.02em", color: PAPER, margin: 0, maxWidth: 900 }}>
+        O sistema que cuida do escritório enquanto você cuida da causa.
+      </h1>
+      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12 }}>
+        <FilledBtn href="/registrar" on="dark">Criar conta grátis</FilledBtn>
+        <GhostBtn href="/login" color={PAPER}>Entrar na área do cliente</GhostBtn>
+        <ArrowCta href="/registrar" />
       </div>
     </div>
   );
