@@ -48,14 +48,15 @@ function iconForAction(action: string): IconConfig {
   if (a.includes("criado"))
     return { symbol: "＋", color: "oklch(0.62 0.18 150)", bg: "oklch(0.62 0.18 150 / 12%)", border: "oklch(0.62 0.18 150 / 22%)" };
   if (a.includes("status"))
-    return { symbol: "↺", color: "oklch(0.68 0.18 215)", bg: "oklch(0.68 0.18 215 / 12%)", border: "oklch(0.68 0.18 215 / 22%)" };
+    /* FIXME(theme): hue 215 não coberto pelas regras (nem 264/274/300/30/50/200); tratado como categórico, igual ao hue 200 */
+    return { symbol: "↺", color: "#8fae94", bg: "#8fae941f", border: "#8fae9438" };
   if (a.includes("prazo") || a.includes("audiência") || a.includes("audiencia"))
-    return { symbol: "⏱", color: "oklch(0.75 0.16 55)", bg: "oklch(0.75 0.16 55 / 10%)", border: "oklch(0.75 0.16 55 / 20%)" };
+    return { symbol: "⏱", color: "oklch(0.75 0.16 80)", bg: "oklch(0.75 0.16 80 / 10%)", border: "oklch(0.75 0.16 80 / 20%)" };
   if (a.includes("encerrado") || a.includes("arquivado"))
-    return { symbol: "✓", color: "oklch(0.68 0.18 274)", bg: "oklch(0.68 0.18 274 / 12%)", border: "oklch(0.68 0.18 274 / 22%)" };
+    return { symbol: "✓", color: "#cef79e", bg: "#cef79e1f", border: "#cef79e38" };
   if (a.includes("excluído") || a.includes("removido"))
     return { symbol: "−", color: "oklch(0.62 0.20 20)", bg: "oklch(0.62 0.20 20 / 10%)", border: "oklch(0.62 0.20 20 / 20%)" };
-  return { symbol: "•", color: "oklch(0.55 0.02 264)", bg: "oklch(0.22 0.018 264)", border: "oklch(1 0 0 / 8%)" };
+  return { symbol: "•", color: "#93a09f", bg: "#283738", border: "#4d5757" };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -102,7 +103,7 @@ export default async function AndamentosPage({
     groups.get(key)!.push(log);
   }
 
-  const AC = "oklch(0.66 0.18 274)";
+  const AC = "#cef79e";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -114,21 +115,21 @@ export default async function AndamentosPage({
               width: 40,
               height: 40,
               borderRadius: 12,
-              background: "oklch(0.66 0.18 274 / 14%)",
-              border: "1px solid oklch(0.66 0.18 274 / 25%)",
+              background: "#cef79e24",
+              border: "1px solid #cef79e40",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
             }}
           >
-            <Activity size={18} color="oklch(0.75 0.14 274)" />
+            <Activity size={18} color="#cef79e" />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.4px", margin: 0 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.4px", margin: 0 }}>
               Andamentos
             </h1>
-            <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 2 }}>
+            <p style={{ fontSize: 13, color: "#93a09f", marginTop: 2 }}>
               Histórico de movimentações do escritório
             </p>
           </div>
@@ -141,9 +142,9 @@ export default async function AndamentosPage({
           <span
             style={{
               fontSize: 12,
-              color: "oklch(0.45 0.02 264)",
-              background: "oklch(0.155 0.018 264)",
-              border: "1px solid oklch(1 0 0 / 7%)",
+              color: "#93a09f",
+              background: "#222f30",
+              border: "1px solid #4d5757",
               borderRadius: 8,
               padding: "6px 12px",
               whiteSpace: "nowrap",
@@ -164,8 +165,8 @@ export default async function AndamentosPage({
             justifyContent: "center",
             padding: "80px 32px",
             gap: 16,
-            background: "oklch(0.09 0.015 264)",
-            border: "1px dashed oklch(0.25 0.018 264)",
+            background: "#1a2425",
+            border: "1px dashed #283738", /* FIXME(theme): L=0.25 fora das faixas definidas, aproximado pelo tom mais claro do fundo */
             borderRadius: 16,
           }}
         >
@@ -174,20 +175,20 @@ export default async function AndamentosPage({
               width: 52,
               height: 52,
               borderRadius: 14,
-              background: "oklch(0.66 0.18 274 / 10%)",
-              border: "1px solid oklch(0.66 0.18 274 / 20%)",
+              background: "#cef79e1a",
+              border: "1px solid #cef79e33",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Activity size={22} color="oklch(0.66 0.18 274)" />
+            <Activity size={22} color="#cef79e" />
           </div>
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.85 0.01 264)", margin: 0 }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "#93a09f", margin: 0 }}>
               {q ? "Nenhum resultado encontrado" : "Nenhum andamento registrado"}
             </p>
-            <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
               {q
                 ? "Tente outro termo de busca."
                 : "As movimentações aparecerão aqui conforme os processos forem atualizados."}
@@ -204,7 +205,7 @@ export default async function AndamentosPage({
                   style={{
                     fontSize: 11,
                     fontWeight: 700,
-                    color: "oklch(0.50 0.02 264)",
+                    color: "#93a09f",
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
                     whiteSpace: "nowrap",
@@ -213,8 +214,8 @@ export default async function AndamentosPage({
                 >
                   {formatDayLabel(day)}
                 </span>
-                <div style={{ flex: 1, height: 1, background: "oklch(0.20 0.016 264)" }} />
-                <span style={{ fontSize: 11, color: "oklch(0.35 0.02 264)", whiteSpace: "nowrap" }}>
+                <div style={{ flex: 1, height: 1, background: "#283738" }} />
+                <span style={{ fontSize: 11, color: "#93a09f", whiteSpace: "nowrap" }}>
                   {entries.length} movimentaç{entries.length === 1 ? "ão" : "ões"}
                 </span>
               </div>
@@ -222,8 +223,8 @@ export default async function AndamentosPage({
               {/* Cartão do grupo */}
               <div
                 style={{
-                  background: "oklch(0.115 0.018 264)",
-                  border: "1px solid oklch(0.20 0.016 264)",
+                  background: "#222f30",
+                  border: "1px solid #283738",
                   borderRadius: 14,
                   overflow: "hidden",
                 }}
@@ -241,7 +242,7 @@ export default async function AndamentosPage({
                         gap: 14,
                         padding: "14px 20px",
                         alignItems: "flex-start",
-                        borderBottom: isLast ? "none" : "1px solid oklch(0.17 0.014 264)",
+                        borderBottom: isLast ? "none" : "1px solid #222f30",
                       }}
                     >
                       {/* Ícone */}
@@ -267,7 +268,7 @@ export default async function AndamentosPage({
 
                       {/* Conteúdo */}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: "oklch(0.90 0.01 264)", margin: 0, lineHeight: 1.4 }}>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: "#ffffff", margin: 0, lineHeight: 1.4 }}>
                           {log.action}
                         </p>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5, flexWrap: "wrap" }}>
@@ -287,18 +288,18 @@ export default async function AndamentosPage({
                             <span
                               style={{
                                 fontSize: 11,
-                                background: "oklch(0.20 0.018 264)",
-                                color: "oklch(0.50 0.02 264)",
+                                background: "#283738",
+                                color: "#93a09f",
                                 borderRadius: 5,
                                 padding: "2px 7px",
-                                border: "1px solid oklch(1 0 0 / 6%)",
+                                border: "1px solid #4d5757",
                               }}
                             >
                               {log.case.area}
                             </span>
                           )}
-                          <span style={{ fontSize: 12, color: "oklch(0.40 0.02 264)" }}>·</span>
-                          <span style={{ fontSize: 12, color: "oklch(0.50 0.02 264)" }}>
+                          <span style={{ fontSize: 12, color: "#93a09f" }}>·</span>
+                          <span style={{ fontSize: 12, color: "#93a09f" }}>
                             {log.userName}
                           </span>
                         </div>
@@ -308,7 +309,7 @@ export default async function AndamentosPage({
                       <span
                         style={{
                           fontSize: 11,
-                          color: "oklch(0.38 0.02 264)",
+                          color: "#93a09f",
                           whiteSpace: "nowrap",
                           flexShrink: 0,
                           marginTop: 2,

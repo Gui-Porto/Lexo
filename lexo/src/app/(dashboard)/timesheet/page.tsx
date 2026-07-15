@@ -3,8 +3,8 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { LiveTimer, TimesheetForms, DeleteEntryButton } from "./timer-client";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 
 function fmtDuration(mins: number | null): string {
   if (!mins) return "—";
@@ -82,14 +82,14 @@ export default async function TimesheetPage() {
             style={{
               fontSize: 28,
               fontWeight: 700,
-              color: "oklch(0.97 0.008 264)",
+              color: "#ffffff",
               letterSpacing: "-0.5px",
               margin: 0,
             }}
           >
             Controle de Horas
           </h1>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
+        <p style={{ fontSize: 14, color: "#93a09f", marginTop: 4 }}>
           Timer, horas faturáveis e rentabilidade por advogado
         </p>
       </div>
@@ -104,15 +104,15 @@ export default async function TimesheetPage() {
             key={label}
             style={{
               flex: "1 1 180px",
-              background: "oklch(0.115 0.018 264)",
-              border: "1px solid oklch(0.22 0.018 264)",
+              background: "#222f30",
+              border: "1px solid #283738",
               borderRadius: 14,
               padding: "16px 20px",
             }}
           >
-            <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginBottom: 4 }}>{label}</p>
+            <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 4 }}>{label}</p>
             <p style={{ fontSize: 26, fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>{value}</p>
-            <p style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", marginTop: 2 }}>{sub}</p>
+            <p style={{ fontSize: 12, color: "#93a09f", marginTop: 2 }}>{sub}</p>
           </div>
         ))}
       </div>
@@ -143,8 +143,8 @@ export default async function TimesheetPage() {
               justifyContent: "center",
               padding: "80px 32px",
               gap: 16,
-              background: "oklch(0.09 0.015 264)",
-              border: "1px dashed oklch(0.25 0.018 264)",
+              background: "#1a2425",
+              border: "1px dashed #283738", /* FIXME(theme): L=0.25 fora das faixas definidas, usado tom mais claro do fundo por aproximação */
               borderRadius: 16,
             }}
           >
@@ -165,7 +165,7 @@ export default async function TimesheetPage() {
             </div>
             <div style={{ textAlign: "center" }}>
               <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>Nenhum lançamento ainda</p>
-              <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
+              <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
                 Inicie um timer ou adicione horas manualmente.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default async function TimesheetPage() {
                     style={{
                       fontSize: 12,
                       fontWeight: 600,
-                      color: "oklch(0.55 0.02 264)",
+                      color: "#93a09f",
                       textTransform: "uppercase",
                       letterSpacing: "0.06em",
                       whiteSpace: "nowrap",
@@ -189,7 +189,7 @@ export default async function TimesheetPage() {
                   >
                     {dayLabel(day)}
                   </span>
-                  <div style={{ flex: 1, height: 1, background: "oklch(0.22 0.018 264)" }} />
+                  <div style={{ flex: 1, height: 1, background: "#283738" }} />
                   <span
                     style={{
                       fontSize: 13,
@@ -206,8 +206,8 @@ export default async function TimesheetPage() {
                 {/* Entries */}
                 <div
                   style={{
-                    background: "oklch(0.115 0.018 264)",
-                    border: "1px solid oklch(0.22 0.018 264)",
+                    background: "#222f30",
+                    border: "1px solid #283738",
                     borderRadius: 16,
                     overflow: "hidden",
                   }}
@@ -221,7 +221,7 @@ export default async function TimesheetPage() {
                         gap: 16,
                         padding: "14px 20px",
                         borderBottom:
-                          i < dayEntries.length - 1 ? "1px solid oklch(0.18 0.015 264)" : "none",
+                          i < dayEntries.length - 1 ? "1px solid #222f30" : "none",
                       }}
                     >
                       {/* Duration badge */}
@@ -260,7 +260,7 @@ export default async function TimesheetPage() {
                       <span
                         style={{
                           fontSize: 12,
-                          color: "oklch(0.45 0.02 264)",
+                          color: "#93a09f",
                           whiteSpace: "nowrap",
                           flexShrink: 0,
                           fontVariantNumeric: "tabular-nums",

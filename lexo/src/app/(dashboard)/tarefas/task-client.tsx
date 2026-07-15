@@ -3,11 +3,11 @@
 import { useActionState, useTransition, useState } from "react";
 import { createTask, updateTaskStatus, deleteTask } from "@/actions/tarefas";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 
 const inputStyle = {
-  background: "oklch(0.10 0.015 264)",
-  border: "1px solid oklch(0.22 0.018 264)",
+  background: "#1a2425",
+  border: "1px solid #283738",
   borderRadius: 8,
   padding: "9px 12px",
   color: "white",
@@ -61,7 +61,7 @@ export function CreateTaskForm({
       ) : (
         <div
           style={{
-            background: "oklch(0.115 0.018 264)",
+            background: "#222f30",
             border: `1px solid ${AC}30`,
             borderRadius: 16,
             padding: "20px 24px",
@@ -73,7 +73,7 @@ export function CreateTaskForm({
           <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>Nova tarefa</p>
           <form action={action} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Título *
               </label>
               <input name="title" type="text" required placeholder="Ex: Protocolar recurso" style={inputStyle} />
@@ -81,7 +81,7 @@ export function CreateTaskForm({
 
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <div style={{ flex: "2 1 200px" }}>
-                <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                   Processo
                 </label>
                 <select name="caseId" style={inputStyle}>
@@ -94,7 +94,7 @@ export function CreateTaskForm({
                 </select>
               </div>
               <div style={{ flex: "2 1 180px" }}>
-                <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                   Responsável
                 </label>
                 <select name="assignedToId" style={inputStyle}>
@@ -105,7 +105,7 @@ export function CreateTaskForm({
                 </select>
               </div>
               <div style={{ flex: "1 1 110px" }}>
-                <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                   Prioridade
                 </label>
                 <select name="priority" style={inputStyle}>
@@ -115,7 +115,7 @@ export function CreateTaskForm({
                 </select>
               </div>
               <div style={{ flex: "1 1 140px" }}>
-                <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+                <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                   Prazo
                 </label>
                 <input name="dueDate" type="date" min={today} style={inputStyle} />
@@ -123,7 +123,7 @@ export function CreateTaskForm({
             </div>
 
             <div>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Descrição
               </label>
               <textarea
@@ -159,10 +159,10 @@ export function CreateTaskForm({
                 onClick={() => setOpen(false)}
                 style={{
                   background: "none",
-                  border: "1px solid oklch(0.28 0.018 264)",
+                  border: "1px solid #4d5757", /* FIXME(theme): L=0.28 fora das faixas definidas, aproximado pelo tom neutro de borda */
                   borderRadius: 10,
                   padding: "9px 16px",
-                  color: "oklch(0.55 0.02 264)",
+                  color: "#93a09f",
                   fontSize: 14,
                   cursor: "pointer",
                 }}
@@ -262,7 +262,7 @@ export function TaskCard({
           height: 22,
           borderRadius: "50%",
           background: task.status === "CONCLUIDA" ? "rgb(5 150 105 / 0.25)" : "transparent",
-          border: `2px solid ${task.status === "CONCLUIDA" ? "#34d399" : "oklch(0.30 0.018 264)"}`,
+          border: `2px solid ${task.status === "CONCLUIDA" ? "#34d399" : "#4d5757"}`, /* FIXME(theme): L=0.30 fora das faixas definidas, aproximado pelo tom neutro de borda */
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -283,7 +283,7 @@ export function TaskCard({
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: task.status === "CONCLUIDA" ? "oklch(0.45 0.02 264)" : "white",
+              color: task.status === "CONCLUIDA" ? "#93a09f" : "white",
               textDecoration: task.status === "CONCLUIDA" ? "line-through" : "none",
               flex: 1,
             }}
@@ -322,7 +322,7 @@ export function TaskCard({
         </div>
 
         {task.description && (
-          <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginTop: 4 }}>
+          <p style={{ fontSize: 12, color: "#93a09f", marginTop: 4 }}>
             {task.description}
           </p>
         )}
@@ -334,7 +334,7 @@ export function TaskCard({
             </span>
           )}
           {task.assignedToName && (
-            <span style={{ fontSize: 12, color: "oklch(0.50 0.02 264)" }}>
+            <span style={{ fontSize: 12, color: "#93a09f" }}>
               → {task.assignedToName}
             </span>
           )}
@@ -342,7 +342,7 @@ export function TaskCard({
             <span
               style={{
                 fontSize: 12,
-                color: isOverdue ? "#ef4444" : "oklch(0.50 0.02 264)",
+                color: isOverdue ? "#ef4444" : "#93a09f",
                 fontWeight: isOverdue ? 600 : 400,
               }}
             >
@@ -363,7 +363,7 @@ export function TaskCard({
           background: "none",
           border: "none",
           cursor: "pointer",
-          color: "oklch(0.35 0.02 264)",
+          color: "#93a09f",
           fontSize: 14,
           padding: "4px 6px",
           borderRadius: 6,

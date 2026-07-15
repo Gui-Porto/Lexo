@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { stopTimer } from "@/actions/timesheet";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 
 function elapsedLabel(startedAt: Date): string {
   const secs = Math.floor((Date.now() - startedAt.getTime()) / 1000);
@@ -68,7 +68,7 @@ export function LiveTimer({
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", marginBottom: 2 }}>
+        <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 2 }}>
           TIMER ATIVO
         </p>
         <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>
@@ -138,7 +138,7 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
     borderRadius: 8,
     border: "none",
     background: active ? `${AC}15` : "transparent",
-    color: active ? AC : "oklch(0.50 0.02 264)",
+    color: active ? AC : "#93a09f",
     fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
@@ -146,8 +146,8 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
   });
 
   const inputStyle = {
-    background: "oklch(0.10 0.015 264)",
-    border: "1px solid oklch(0.22 0.018 264)",
+    background: "#1a2425",
+    border: "1px solid #283738",
     borderRadius: 8,
     padding: "9px 12px",
     color: "white",
@@ -160,8 +160,8 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
   return (
     <div
       style={{
-        background: "oklch(0.115 0.018 264)",
-        border: "1px solid oklch(0.22 0.018 264)",
+        background: "#222f30",
+        border: "1px solid #283738",
         borderRadius: 16,
         padding: "20px 24px",
         display: "flex",
@@ -183,7 +183,7 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
         <form action={startAction} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <div style={{ flex: "2 1 200px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Processo (opcional)
               </label>
               <select name="caseId" style={inputStyle}>
@@ -196,7 +196,7 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
               </select>
             </div>
             <div style={{ flex: "3 1 280px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Descrição (opcional)
               </label>
               <input name="description" type="text" placeholder="Ex: Elaborar petição inicial" style={inputStyle} />
@@ -229,19 +229,19 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
         <form action={manualAction} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <div style={{ flex: "2 1 160px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Data
               </label>
               <input name="date" type="date" defaultValue={today} style={inputStyle} />
             </div>
             <div style={{ flex: "1 1 80px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Horas
               </label>
               <input name="hours" type="number" min="0" max="23" defaultValue="0" style={inputStyle} />
             </div>
             <div style={{ flex: "1 1 80px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Minutos
               </label>
               <input name="minutes" type="number" min="0" max="59" defaultValue="30" style={inputStyle} />
@@ -249,7 +249,7 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <div style={{ flex: "2 1 200px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Processo (opcional)
               </label>
               <select name="caseId" style={inputStyle}>
@@ -262,7 +262,7 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
               </select>
             </div>
             <div style={{ flex: "3 1 280px" }}>
-              <label style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", display: "block", marginBottom: 4 }}>
+              <label style={{ fontSize: 12, color: "#93a09f", display: "block", marginBottom: 4 }}>
                 Descrição (opcional)
               </label>
               <input name="description" type="text" placeholder="Ex: Reunião com cliente" style={inputStyle} />
@@ -275,8 +275,9 @@ export function TimesheetForms({ cases }: { cases: CaseOption[] }) {
             <button
               type="submit"
               style={{
-                background: "oklch(0.30 0.018 264)",
-                border: "1px solid oklch(0.38 0.018 264)",
+                /* FIXME(theme): L=0.30/0.38 fora das faixas de fundo definidas; aproximado com o tom neutro de borda */
+                background: "#4d5757",
+                border: "1px solid #4d5757",
                 borderRadius: 10,
                 padding: "10px 24px",
                 color: "white",
@@ -314,7 +315,7 @@ export function DeleteEntryButton({ entryId }: { entryId: string }) {
         background: "none",
         border: "none",
         cursor: isPending ? "not-allowed" : "pointer",
-        color: "oklch(0.40 0.02 264)",
+        color: "#93a09f",
         fontSize: 14,
         padding: "4px 8px",
         borderRadius: 6,

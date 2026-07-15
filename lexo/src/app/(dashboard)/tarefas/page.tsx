@@ -3,8 +3,8 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { CreateTaskForm, TaskCard } from "./task-client";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 
 const STATUS_TABS = [
   { value: "", label: "Todas" },
@@ -67,14 +67,14 @@ export default async function TarefasPage({
             style={{
               fontSize: 28,
               fontWeight: 700,
-              color: "oklch(0.97 0.008 264)",
+              color: "#ffffff",
               letterSpacing: "-0.5px",
               margin: 0,
             }}
           >
             Tarefas
           </h1>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
+        <p style={{ fontSize: 14, color: "#93a09f", marginTop: 4 }}>
           Gerencie as tarefas do escritório e acompanhe o progresso da equipe.
         </p>
       </div>
@@ -91,13 +91,13 @@ export default async function TarefasPage({
             key={label}
             style={{
               flex: "1 1 120px",
-              background: "oklch(0.115 0.018 264)",
-              border: "1px solid oklch(0.22 0.018 264)",
+              background: "#222f30",
+              border: "1px solid #283738",
               borderRadius: 14,
               padding: "14px 18px",
             }}
           >
-            <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginBottom: 4 }}>{label}</p>
+            <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 4 }}>{label}</p>
             <p style={{ fontSize: 28, fontWeight: 700, color, letterSpacing: "-0.02em" }}>{value}</p>
           </div>
         ))}
@@ -106,7 +106,7 @@ export default async function TarefasPage({
       {/* Toolbar */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         {/* Status tabs */}
-        <div style={{ display: "flex", gap: 4, background: "oklch(0.115 0.018 264)", borderRadius: 10, padding: 4, border: "1px solid oklch(0.22 0.018 264)" }}>
+        <div style={{ display: "flex", gap: 4, background: "#222f30", borderRadius: 10, padding: 4, border: "1px solid #283738" }}>
           {STATUS_TABS.map((tab) => {
             const active = (tab.value === "" && !statusFilter) || tab.value === statusFilter;
             const count = tab.value === "" ? counts.total : counts[tab.value as keyof typeof counts];
@@ -121,7 +121,7 @@ export default async function TarefasPage({
                   fontSize: 13,
                   fontWeight: 500,
                   background: active ? `${AC}15` : "transparent",
-                  color: active ? AC : "oklch(0.50 0.02 264)",
+                  color: active ? AC : "#93a09f",
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
@@ -152,8 +152,8 @@ export default async function TarefasPage({
             justifyContent: "center",
             padding: "80px 32px",
             gap: 16,
-            background: "oklch(0.09 0.015 264)",
-            border: "1px dashed oklch(0.25 0.018 264)",
+            background: "#1a2425",
+            border: "1px dashed #283738", /* FIXME(theme): L=0.25 fora das faixas definidas, aproximado pelo tom mais claro do fundo */
             borderRadius: 16,
           }}
         >
@@ -176,7 +176,7 @@ export default async function TarefasPage({
             <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>
               {statusFilter ? "Nenhuma tarefa neste status" : "Nenhuma tarefa cadastrada"}
             </p>
-            <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
               Crie uma tarefa usando o botão acima.
             </p>
           </div>
@@ -184,8 +184,8 @@ export default async function TarefasPage({
       ) : (
         <div
           style={{
-            background: "oklch(0.115 0.018 264)",
-            border: "1px solid oklch(0.22 0.018 264)",
+            background: "#222f30",
+            border: "1px solid #283738",
             borderRadius: 16,
             overflow: "hidden",
           }}
@@ -194,7 +194,7 @@ export default async function TarefasPage({
             <div
               key={task.id}
               style={{
-                borderBottom: i < tasks.length - 1 ? "1px solid oklch(0.18 0.015 264)" : "none",
+                borderBottom: i < tasks.length - 1 ? "1px solid #222f30" : "none",
               }}
             >
               <TaskCard task={task} />
