@@ -9,3 +9,6 @@ graphify-out/
 
 # Arquivos de inventário/índice (nunca rastrear)
 *.inv
+
+# Assets locais (design tokens/refs) - nao vai pro github
+assets/
