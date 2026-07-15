@@ -339,7 +339,14 @@ export default function LandingV2Page() {
         borderBottom: scrolled ? `1px solid ${GRAPHITE}` : "1px solid transparent",
         transition: "background 400ms ease, border-color 400ms ease", color: PAPER,
       }}>
-        <Link href="/" className="lp2-textlink" style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em" }}>Lexo</Link>
+        <Link
+          href="/"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          className="lp2-textlink"
+          style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em" }}
+        >
+          Lexo
+        </Link>
         <div className="lp2-navlinks" style={{ display: "flex", alignItems: "center", gap: 28 }}>
           {NAV_ITEMS.map(([href, label]) => (
             <a key={href} href={href} className="lp2-textlink" style={{ fontFamily: FM, fontSize: 13 }}>{label}</a>
