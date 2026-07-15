@@ -4,8 +4,8 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { loginWithTotp } from "@/actions/login-2fa";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 const F = "'Geist', var(--font-geist), sans-serif";
 const FM = "'Geist Mono', var(--font-geist-mono), monospace";
 
@@ -58,14 +58,14 @@ function OtpInputs({ onChange }: { onChange: (code: string) => void }) {
     borderRadius: 12,
     border: digits[i]
       ? `1.5px solid color-mix(in oklab,${AC} 60%,transparent)`
-      : "1.5px solid oklch(1 0 0 / 12%)",
+      : "1.5px solid #4d57571f",
     background: digits[i]
-      ? `color-mix(in oklab,${AC} 10%,oklch(0.17 0.02 264))`
-      : "oklch(0.165 0.02 264)",
+      ? `color-mix(in oklab,${AC} 10%,#222f30)`
+      : "#222f30",
     fontFamily: FM,
     fontSize: 22,
     fontWeight: 600,
-    color: "oklch(0.95 0.01 264)",
+    color: "#ffffff",
     textAlign: "center",
     outline: "none",
     transition: "border-color 0.15s ease, background 0.15s ease",
@@ -95,7 +95,7 @@ function OtpInputs({ onChange }: { onChange: (code: string) => void }) {
           autoComplete={i === 0 ? "one-time-code" : "off"}
         />
       ))}
-      <span style={{ color: "oklch(0.45 0.02 264)", fontSize: 20, fontWeight: 300, userSelect: "none" }}>–</span>
+      <span style={{ color: "#93a09f", fontSize: 20, fontWeight: 300, userSelect: "none" }}>–</span>
       {[3, 4, 5].map((i) => (
         <input
           key={i}
@@ -135,11 +135,11 @@ function TotpTimer() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}>
       <svg width={20} height={20} viewBox="0 0 20 20">
-        <circle cx={10} cy={10} r={r} fill="none" stroke="oklch(1 0 0 / 8%)" strokeWidth={2} />
+        <circle cx={10} cy={10} r={r} fill="none" stroke="#4d5757" strokeWidth={2} />
         <circle
           cx={10} cy={10} r={r}
           fill="none"
-          stroke={urgent ? "oklch(0.72 0.18 22)" : AC}
+          stroke={urgent ? "var(--destructive)" : AC}
           strokeWidth={2}
           strokeLinecap="round"
           strokeDasharray={`${dash} ${circ}`}
@@ -150,10 +150,10 @@ function TotpTimer() {
       <span style={{
         fontFamily: F,
         fontSize: 13,
-        color: urgent ? "oklch(0.72 0.18 22)" : "oklch(0.58 0.02 264)",
+        color: urgent ? "var(--destructive)" : "#93a09f",
       }}>
         Código válido por{" "}
-        <span style={{ fontFamily: FM, fontWeight: 600, color: urgent ? "oklch(0.72 0.18 22)" : "oklch(0.72 0.01 264)" }}>
+        <span style={{ fontFamily: FM, fontWeight: 600, color: urgent ? "var(--destructive)" : "#93a09f" }}>
           {secs}s
         </span>
       </span>
@@ -170,7 +170,7 @@ export default function TwoFactorPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "oklch(0.09 0.022 264)",
+      background: "#1a2425",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -201,7 +201,7 @@ export default function TwoFactorPage() {
 
       {/* Voltar ao login */}
       <div style={{ position: "absolute", top: 24, left: 28 }}>
-        <Link href="/login" style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: "oklch(0.58 0.02 264)", textDecoration: "none" }}>
+        <Link href="/login" style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: "#93a09f", textDecoration: "none" }}>
           <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
@@ -212,13 +212,13 @@ export default function TwoFactorPage() {
       {/* Logo */}
       <div style={{ position: "absolute", top: 24, right: 28 }}>
         <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <span style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+          <span style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#222f30" }}>
             <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 4.5V15H15" />
-              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+              <path d="M5 19.5h14" stroke="#cef79e" strokeWidth={2} />
             </svg>
           </span>
-          <span style={{ fontFamily: F, fontSize: 20, fontWeight: 700, color: "oklch(0.98 0.008 264)", letterSpacing: "-0.5px" }}>
+          <span style={{ fontFamily: F, fontSize: 20, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.5px" }}>
             Lexo
           </span>
         </Link>
@@ -228,10 +228,9 @@ export default function TwoFactorPage() {
       <div className="twofa-card" style={{
         width: "100%",
         maxWidth: 440,
-        background: "oklch(0.13 0.018 264)",
+        background: "#222f30",
         borderRadius: 20,
-        border: "1px solid oklch(1 0 0 / 7%)",
-        boxShadow: "0 32px 80px oklch(0 0 0 / 60%), 0 0 0 1px oklch(1 0 0 / 4%)",
+        border: "1px solid #4d5757",
         padding: "40px 36px 36px",
         position: "relative",
         zIndex: 1,
@@ -243,12 +242,11 @@ export default function TwoFactorPage() {
             width: 64,
             height: 64,
             borderRadius: 18,
-            background: `linear-gradient(135deg, color-mix(in oklab,${AC} 20%,oklch(0.16 0.02 264)), color-mix(in oklab,${AC2} 14%,oklch(0.14 0.02 264)))`,
+            background: `linear-gradient(135deg, color-mix(in oklab,${AC} 20%,#222f30), color-mix(in oklab,${AC2} 14%,#222f30))`,
             border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: `0 8px 32px color-mix(in oklab,${AC} 20%,transparent)`,
           }}>
             <svg width={30} height={30} viewBox="0 0 24 24" fill="none" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
               <defs>
@@ -269,7 +267,7 @@ export default function TwoFactorPage() {
           fontSize: 22,
           fontWeight: 700,
           letterSpacing: "-0.6px",
-          color: "oklch(0.96 0.008 264)",
+          color: "#ffffff",
           textAlign: "center",
           margin: "0 0 8px",
         }}>
@@ -278,7 +276,7 @@ export default function TwoFactorPage() {
         <p style={{
           fontFamily: F,
           fontSize: 14,
-          color: "oklch(0.58 0.02 264)",
+          color: "#93a09f",
           textAlign: "center",
           lineHeight: 1.6,
           margin: "0 0 24px",
@@ -291,8 +289,8 @@ export default function TwoFactorPage() {
           display: "flex",
           alignItems: "center",
           gap: 10,
-          background: "oklch(0.165 0.02 264)",
-          border: "1px solid oklch(1 0 0 / 9%)",
+          background: "#222f30",
+          border: "1px solid #4d5757",
           borderRadius: 12,
           padding: "10px 14px",
           marginBottom: 28,
@@ -305,15 +303,15 @@ export default function TwoFactorPage() {
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
           </svg>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: "oklch(0.88 0.01 264)" }}>
+            <div style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: "#ffffff" }}>
               Google Authenticator
             </div>
-            <div style={{ fontFamily: FM, fontSize: 11, color: "oklch(0.52 0.02 264)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontFamily: FM, fontSize: 11, color: "#93a09f", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               conta@escritorio.com
             </div>
           </div>
           <div style={{
-            background: `color-mix(in oklab,${AC} 14%,oklch(0.20 0.02 264))`,
+            background: `color-mix(in oklab,${AC} 14%,#283738)`,
             border: `1px solid color-mix(in oklab,${AC} 25%,transparent)`,
             borderRadius: 99,
             padding: "3px 10px",
@@ -350,7 +348,7 @@ export default function TwoFactorPage() {
               name="trust"
               style={{ accentColor: AC, width: 15, height: 15, cursor: "pointer" }}
             />
-            <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.65 0.02 264)" }}>
+            <span style={{ fontFamily: F, fontSize: 13, color: "#93a09f" }}>
               Confiar neste dispositivo por 30 dias
             </span>
           </label>
@@ -380,17 +378,16 @@ export default function TwoFactorPage() {
               padding: "13px",
               borderRadius: 11,
               background: (!ready || pending)
-                ? "oklch(0.20 0.02 264)"
+                ? "#283738"
                 : `linear-gradient(135deg,${AC},${AC2})`,
               border: (!ready || pending)
-                ? "1px solid oklch(1 0 0 / 8%)"
+                ? "1px solid #4d5757"
                 : "none",
               cursor: (!ready || pending) ? "not-allowed" : "pointer",
               fontFamily: F,
               fontSize: 15,
               fontWeight: 600,
-              color: (!ready || pending) ? "oklch(0.42 0.02 264)" : "#fff",
-              boxShadow: (!ready || pending) ? "none" : `0 8px 24px color-mix(in oklab,${AC} 38%,transparent)`,
+              color: (!ready || pending) ? "#93a09f" : "#222f30",
               transition: "all 0.2s ease",
               display: "flex",
               alignItems: "center",
@@ -414,7 +411,7 @@ export default function TwoFactorPage() {
         <div style={{ textAlign: "center", marginTop: 20 }}>
           <button
             type="button"
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: "oklch(0.52 0.02 264)", textDecoration: "underline", textDecorationColor: "oklch(0.35 0.02 264)", textUnderlineOffset: 3, padding: 0 }}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: F, fontSize: 13, color: "#93a09f", textDecoration: "underline", textDecorationColor: "#93a09f", textUnderlineOffset: 3, padding: 0 }}
             onClick={() => {}}
           >
             Sem acesso ao app? Usar um código de backup
@@ -424,10 +421,10 @@ export default function TwoFactorPage() {
 
       {/* Rodapé segurança */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 24, position: "relative", zIndex: 1 }}>
-        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="oklch(0.38 0.02 264)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#93a09f" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
-        <span style={{ fontFamily: F, fontSize: 11, color: "oklch(0.38 0.02 264)" }}>
+        <span style={{ fontFamily: F, fontSize: 11, color: "#93a09f" }}>
           Conexão segura · dados protegidos por LGPD
         </span>
       </div>

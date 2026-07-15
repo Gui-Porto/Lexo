@@ -14,9 +14,9 @@ const VIEWS: { value: AgendaView; label: string }[] = [
 const navBtnStyle: React.CSSProperties = {
   display: "flex", alignItems: "center", justifyContent: "center",
   width: 32, height: 32, borderRadius: 8,
-  border: "1px solid oklch(1 0 0 / 8%)",
-  background: "oklch(0.155 0.02 264)",
-  color: "oklch(0.70 0.02 264)",
+  border: "1px solid #4d5757",
+  background: "#222f30",
+  color: "#93a09f",
   textDecoration: "none", fontSize: 18, lineHeight: 1,
 };
 
@@ -42,15 +42,15 @@ export function AgendaHeader({
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <Link href={prevHref} style={navBtnStyle} aria-label="Anterior" transitionTypes={["nav-back"]}>‹</Link>
         <Link href={nextHref} style={navBtnStyle} aria-label="Próximo" transitionTypes={["nav-forward"]}>›</Link>
-        <span style={{ fontSize: 18, fontWeight: 700, color: "oklch(0.94 0.01 264)", letterSpacing: "-0.3px" }}>
+        <span style={{ fontSize: 18, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.3px" }}>
           {label}
         </span>
         {isCurrentPeriod ? (
           <span
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              fontSize: 12, fontWeight: 600, color: "oklch(0.45 0.02 264)",
-              background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 8%)",
+              fontSize: 12, fontWeight: 600, color: "#93a09f",
+              background: "#222f30", border: "1px solid #4d5757",
               borderRadius: 8, padding: "6px 12px", opacity: 0.6,
             }}
           >
@@ -61,8 +61,8 @@ export function AgendaHeader({
             href={todayHref}
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              fontSize: 12, fontWeight: 600, color: "oklch(0.66 0.18 274)",
-              background: "oklch(0.66 0.18 274 / 12%)", border: "1px solid oklch(0.66 0.18 274 / 25%)",
+              fontSize: 12, fontWeight: 600, color: "#cef79e",
+              background: "#cef79e1f", border: "1px solid #cef79e40",
               borderRadius: 8, padding: "6px 12px", textDecoration: "none",
             }}
           >
@@ -71,14 +71,14 @@ export function AgendaHeader({
         )}
       </div>
 
-      <div style={{ display: "flex", background: "oklch(0.11 0.015 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 10, padding: 3, gap: 2 }}>
+      <div style={{ display: "flex", background: "#222f30", border: "1px solid #4d5757", borderRadius: 10, padding: 3, gap: 2 }}>
         {VIEWS.map((v) => {
           const isActive = view === v.value;
           const linkStyle: React.CSSProperties = {
             padding: "6px 14px", borderRadius: 7, fontSize: 13, fontWeight: 600,
             textDecoration: "none", display: "block",
-            background: isActive ? "oklch(0.66 0.18 274)" : "transparent",
-            color: isActive ? "#fff" : "oklch(0.60 0.02 264)",
+            background: isActive ? "#cef79e" : "transparent",
+            color: isActive ? "#222f30" : "#93a09f",
           };
           if (isActive) {
             return (
