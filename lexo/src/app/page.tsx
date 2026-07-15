@@ -232,7 +232,16 @@ function ScrollFrameHero() {
         playsInline
         preload="auto"
         autoPlay={!reduced}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          // ponytail: contraste/saturação levemente mais altos só pra dar nitidez percebida sem re-encode (filtro de cor, sem custo de decode)
+          filter: "contrast(1.1) saturate(1.15)",
+        }}
       />
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
       <div style={{ position: "relative", zIndex: 2 }}>

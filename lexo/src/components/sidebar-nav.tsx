@@ -76,20 +76,20 @@ export function SidebarNav({ role }: { role?: string }) {
   let itemIndex = 0;
 
   return (
-    <nav className="flex flex-col gap-4">
+    <nav className="flex flex-col gap-1">
       {NAV.map((group, gi) => {
         const visible = group.items.filter((l) => !role || l.roles.includes(role));
         if (visible.length === 0) return null;
 
         return (
-          <div key={gi}>
+          <div key={gi} className={cn(gi > 0 && "border-border/60 mt-4 border-t pt-4")}>
             {group.label && (
-              <p className="mb-1.5 px-3 text-[10px] font-semibold tracking-[0.12em] uppercase text-muted-foreground/55 select-none">
+              <p className="mb-2 px-3 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase text-muted-foreground/50 select-none">
                 {group.label}
               </p>
             )}
 
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-1">
               {visible.map(({ href, label, icon: Icon, novo }) => {
                 const active =
                   pathname === href ||
@@ -101,35 +101,33 @@ export function SidebarNav({ role }: { role?: string }) {
                   <Link
                     key={href}
                     href={href}
-                    style={
-                      {
-                        "--delay": delay,
-                        ...(active ? { boxShadow: "inset 2px 0 0 var(--brand)" } : {}),
-                      } as React.CSSProperties
-                    }
+                    style={{ "--delay": delay } as React.CSSProperties}
                     className={cn(
-                      "animate-fade-in group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                      "animate-fade-in flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-150",
                       active
-                        ? "bg-brand/10 text-brand"
+                        ? "bg-brand text-brand-foreground"
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     )}
                   >
                     <Icon
                       className={cn(
-                        "h-4 w-4 shrink-0 transition-all duration-200",
-                        active
-                          ? "text-brand"
-                          : "text-muted-foreground group-hover:text-foreground"
+                        "h-[18px] w-[18px] shrink-0",
+                        active ? "text-brand-foreground" : "text-muted-foreground"
                       )}
                     />
                     <span className="flex-1 truncate">{label}</span>
-                    {novo ? (
-                      <span className="text-brand border-brand/20 bg-brand/8 shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-bold tracking-wide">
+                    {novo && (
+                      <span
+                        className={cn(
+                          "shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-bold tracking-wide",
+                          active
+                            ? "border-brand-foreground/25 bg-brand-foreground/10 text-brand-foreground"
+                            : "text-brand border-brand/20 bg-brand/8"
+                        )}
+                      >
                         NOVO
                       </span>
-                    ) : active ? (
-                      <span className="bg-brand ml-auto h-1.5 w-1.5 shrink-0 rounded-full" />
-                    ) : null}
+                    )}
                   </Link>
                 );
               })}
