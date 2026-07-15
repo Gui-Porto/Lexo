@@ -10,9 +10,9 @@ const ROLE_OPTIONS = [
 ];
 
 const ROLE_COLORS: Record<string, { color: string; dot: string }> = {
-  ADMIN:      { color: "oklch(0.75 0.14 274)", dot: "oklch(0.66 0.18 274)" },
+  ADMIN:      { color: "#cef79e", dot: "#cef79e" },
   ADVOGADO:   { color: "oklch(0.72 0.15 150)", dot: "oklch(0.72 0.15 150)" },
-  SECRETARIA: { color: "oklch(0.80 0.14 50)",  dot: "oklch(0.70 0.16 50)"  },
+  SECRETARIA: { color: "oklch(0.75 0.16 80)",  dot: "oklch(0.75 0.16 80)"  },
 };
 
 export function UserRoleForm({
@@ -59,9 +59,9 @@ export function UserRoleForm({
         style={{
           display: "flex", alignItems: "center", gap: 6,
           height: 30, padding: "0 10px 0 8px",
-          border: "1px solid oklch(1 0 0 / 12%)",
+          border: "1px solid #4d5757",
           borderRadius: 8,
-          background: "oklch(0.18 0.02 264)",
+          background: "#222f30",
           color: rc.color,
           fontSize: 12, fontWeight: 600,
           cursor: pending ? "not-allowed" : "pointer",
@@ -83,8 +83,8 @@ export function UserRoleForm({
           style={{
             position: "absolute", top: "calc(100% + 5px)", right: 0, zIndex: 50,
             minWidth: 130,
-            background: "oklch(0.18 0.022 264)",
-            border: "1px solid oklch(1 0 0 / 12%)",
+            background: "#222f30",
+            border: "1px solid #4d5757",
             borderRadius: 10,
             boxShadow: "0 8px 24px oklch(0 0 0 / 0.4)",
             padding: "4px",
@@ -103,7 +103,7 @@ export function UserRoleForm({
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "7px 10px", borderRadius: 7,
                   border: "none",
-                  background: isActive ? "oklch(0.22 0.024 264)" : "transparent",
+                  background: isActive ? "#283738" : "transparent",
                   color: c.color,
                   fontSize: 13, fontWeight: isActive ? 600 : 500,
                   cursor: "pointer", textAlign: "left", width: "100%",

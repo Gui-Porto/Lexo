@@ -22,7 +22,7 @@ export function ExportReport() {
   return (
     <div
       className="rounded-xl p-4 space-y-4"
-      style={{ background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)" }}
+      style={{ background: "#222f30", border: "1px solid #4d5757" }}
     >
       <p className="text-sm font-medium">Exportar relatório financeiro</p>
       <div className="flex flex-wrap gap-4 items-end">

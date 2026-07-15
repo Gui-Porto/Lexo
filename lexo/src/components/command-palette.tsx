@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 const F = "'Geist', sans-serif";
 const FM = "'Geist Mono', monospace";
 
@@ -143,24 +143,24 @@ export function CommandPalette() {
           flex: 1,
           maxWidth: 420,
           height: 38,
-          border: "1px solid oklch(1 0 0 / 9%)",
+          border: "1px solid #4d5757",
           borderRadius: 10,
           display: "flex",
           alignItems: "center",
           padding: "0 13px",
           gap: 9,
-          background: "oklch(0.14 0.018 264)",
+          background: "#222f30",
           cursor: "pointer",
           textAlign: "left",
         }}
       >
-        <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="oklch(0.5 0.02 264)" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
+        <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#93a09f" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.5 0.02 264)", flex: 1 }}>
+        <span style={{ fontFamily: F, fontSize: 13, color: "#93a09f", flex: 1 }}>
           Buscar processo, cliente, prazo…
         </span>
-        <span style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: "oklch(0.45 0.02 264)", border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 5, padding: "1px 6px" }}>
+        <span style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: "#93a09f", border: "1px solid #4d5757", borderRadius: 5, padding: "1px 6px" }}>
           ⌘K
         </span>
       </button>
@@ -186,14 +186,14 @@ export function CommandPalette() {
               width: "100%",
               maxWidth: 580,
               borderRadius: 16,
-              background: "oklch(0.13 0.018 264)",
-              border: "1px solid oklch(1 0 0 / 10%)",
-              boxShadow: "0 32px 80px oklch(0 0 0 / 0.55), 0 0 0 1px oklch(1 0 0 / 4%)",
+              background: "#222f30",
+              border: "1px solid #4d5757",
+              boxShadow: "0 32px 80px oklch(0 0 0 / 0.55)", // FIXME(theme): segundo segmento (borda via shadow) removido por redundância com a borda sólida acima — revisar
               overflow: "hidden",
             }}
           >
             {/* Input row */}
-            <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "14px 16px", borderBottom: "1px solid oklch(1 0 0 / 8%)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "14px 16px", borderBottom: "1px solid #4d5757" }}>
               <svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke={AC} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
@@ -210,13 +210,13 @@ export function CommandPalette() {
                   outline: "none",
                   fontFamily: F,
                   fontSize: 15,
-                  color: "oklch(0.92 0.01 264)",
+                  color: "#ffffff",
                   caretColor: AC,
                 }}
               />
               <button
                 onClick={() => setOpen(false)}
-                style={{ background: "oklch(0.18 0.02 264)", border: "1px solid oklch(1 0 0 / 10%)", borderRadius: 6, padding: "2px 8px", fontFamily: FM, fontSize: 11, color: "oklch(0.5 0.02 264)", cursor: "pointer" }}
+                style={{ background: "#222f30", border: "1px solid #4d5757", borderRadius: 6, padding: "2px 8px", fontFamily: FM, fontSize: 11, color: "#93a09f", cursor: "pointer" }}
               >
                 Esc
               </button>
@@ -225,13 +225,13 @@ export function CommandPalette() {
             {/* Results */}
             <div ref={listRef} style={{ maxHeight: 380, overflowY: "auto", padding: "8px 0" }}>
               {filtered.length === 0 ? (
-                <div style={{ padding: "32px 0", textAlign: "center", fontFamily: F, fontSize: 14, color: "oklch(0.48 0.02 264)" }}>
+                <div style={{ padding: "32px 0", textAlign: "center", fontFamily: F, fontSize: 14, color: "#93a09f" }}>
                   Nenhum resultado para &ldquo;{query}&rdquo;
                 </div>
               ) : (
                 grouped.map(({ category, items }) => (
                   <div key={category}>
-                    <div style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, color: "oklch(0.45 0.02 264)", letterSpacing: "1px", padding: "10px 16px 5px" }}>
+                    <div style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, color: "#93a09f", letterSpacing: "1px", padding: "10px 16px 5px" }}>
                       {category}
                     </div>
                     {items.map((action) => {
@@ -249,7 +249,7 @@ export function CommandPalette() {
                             gap: 12,
                             width: "100%",
                             padding: "9px 16px",
-                            background: isSelected ? `color-mix(in oklab, ${AC} 12%, oklch(0.16 0.02 264))` : "transparent",
+                            background: isSelected ? `color-mix(in oklab, ${AC} 12%, #222f30)` : "transparent",
                             border: "none",
                             cursor: "pointer",
                             textAlign: "left",
@@ -259,19 +259,19 @@ export function CommandPalette() {
                           <span style={{
                             width: 30, height: 30, borderRadius: 8, flexShrink: 0,
                             display: "flex", alignItems: "center", justifyContent: "center",
-                            background: isSelected ? `color-mix(in oklab, ${AC} 20%, oklch(0.2 0.02 264))` : "oklch(0.18 0.02 264)",
-                            border: isSelected ? `1px solid color-mix(in oklab, ${AC} 30%, transparent)` : "1px solid oklch(1 0 0 / 8%)",
-                            color: isSelected ? AC : "oklch(0.6 0.02 264)",
+                            background: isSelected ? `color-mix(in oklab, ${AC} 20%, #283738)` : "#222f30",
+                            border: isSelected ? `1px solid color-mix(in oklab, ${AC} 30%, transparent)` : "1px solid #4d5757",
+                            color: isSelected ? AC : "#93a09f",
                             transition: "all 0.1s",
                           }}>
                             {action.icon}
                           </span>
                           <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: isSelected ? "oklch(0.96 0.01 264)" : "oklch(0.82 0.01 264)" }}>
+                            <div style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: isSelected ? "#ffffff" : "#93a09f" }}> {/* FIXME(theme): L=0.82 caía entre os dois buckets de texto — mapeado pra Mist, revisar contraste */}
                               {action.label}
                             </div>
                             {action.sublabel && (
-                              <div style={{ fontFamily: F, fontSize: 11, color: "oklch(0.50 0.02 264)", marginTop: 1 }}>
+                              <div style={{ fontFamily: F, fontSize: 11, color: "#93a09f", marginTop: 1 }}>
                                 {action.sublabel}
                               </div>
                             )}
@@ -290,10 +290,10 @@ export function CommandPalette() {
             </div>
 
             {/* Footer */}
-            <div style={{ borderTop: "1px solid oklch(1 0 0 / 7%)", padding: "9px 16px", display: "flex", gap: 18, alignItems: "center" }}>
+            <div style={{ borderTop: "1px solid #4d5757", padding: "9px 16px", display: "flex", gap: 18, alignItems: "center" }}>
               {[["↑↓", "navegar"], ["↵", "abrir"], ["Esc", "fechar"]].map(([key, label]) => (
-                <span key={key} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: FM, fontSize: 11, color: "oklch(0.45 0.02 264)" }}>
-                  <span style={{ background: "oklch(0.18 0.02 264)", border: "1px solid oklch(1 0 0 / 10%)", borderRadius: 4, padding: "1px 5px" }}>{key}</span>
+                <span key={key} style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: FM, fontSize: 11, color: "#93a09f" }}>
+                  <span style={{ background: "#222f30", border: "1px solid #4d5757", borderRadius: 4, padding: "1px 5px" }}>{key}</span>
                   {label}
                 </span>
               ))}

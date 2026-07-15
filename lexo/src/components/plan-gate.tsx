@@ -9,7 +9,7 @@ interface PlanGateProps {
 
 export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGateProps) {
   const planLabel = requiredPlan === "pro" ? "Pro" : "Essencial";
-  const AC = "oklch(0.66 0.18 274)";
+  const AC = "#cef79e";
 
   return (
     <div
@@ -32,12 +32,11 @@ export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGat
             width: 72,
             height: 72,
             borderRadius: 20,
-            background: "linear-gradient(135deg, oklch(0.66 0.18 274 / 18%), oklch(0.55 0.20 290 / 12%))",
-            border: "1px solid oklch(0.66 0.18 274 / 30%)",
+            background: "#2c3b3c",
+            border: "1px solid #cef79e4d",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 0 40px oklch(0.66 0.18 274 / 15%)",
           }}
         >
           <Sparkles size={30} color={AC} />
@@ -50,14 +49,14 @@ export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGat
             width: 26,
             height: 26,
             borderRadius: 8,
-            background: "oklch(0.13 0.018 264)",
-            border: "1px solid oklch(1 0 0 / 10%)",
+            background: "#222f30",
+            border: "1px solid #4d5757",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Lock size={13} color="oklch(0.55 0.02 264)" />
+          <Lock size={13} color="#93a09f" />
         </div>
       </div>
 
@@ -68,13 +67,13 @@ export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGat
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: "oklch(0.66 0.18 274 / 10%)",
-            border: "1px solid oklch(0.66 0.18 274 / 22%)",
+            background: "#cef79e1a",
+            border: "1px solid #cef79e38",
             borderRadius: 99,
             padding: "4px 12px",
             fontSize: 11,
             fontWeight: 700,
-            color: "oklch(0.72 0.12 274)",
+            color: "#cef79e",
             letterSpacing: "0.07em",
             marginBottom: 4,
           }}
@@ -85,14 +84,14 @@ export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGat
           style={{
             fontSize: 22,
             fontWeight: 700,
-            color: "oklch(0.95 0.008 264)",
+            color: "#ffffff",
             letterSpacing: "-0.4px",
             margin: 0,
           }}
         >
           {feature}
         </h2>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", lineHeight: 1.6, margin: 0 }}>
+        <p style={{ fontSize: 14, color: "#93a09f", lineHeight: 1.6, margin: 0 }}>
           {description}
         </p>
       </div>
@@ -106,19 +105,18 @@ export function PlanGate({ feature, description, requiredPlan = "pro" }: PlanGat
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
-            background: "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.55 0.2 290))",
-            color: "#fff",
+            background: "#cef79e",
+            color: "#222f30",
             borderRadius: 12,
             padding: "12px 24px",
             fontSize: 14,
             fontWeight: 700,
             textDecoration: "none",
-            boxShadow: "0 6px 20px oklch(0.66 0.18 274 / 35%)",
           }}
         >
           ⚡ Ver planos e fazer upgrade
         </Link>
-        <p style={{ fontSize: 12, color: "oklch(0.40 0.02 264)", margin: 0 }}>
+        <p style={{ fontSize: 12, color: "#93a09f", margin: 0 }}>
           Sem fidelidade · cancele quando quiser
         </p>
       </div>

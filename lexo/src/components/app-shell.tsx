@@ -8,7 +8,7 @@ import { LogoWordmark } from "@/components/ui/logo";
 import { CommandPalette } from "@/components/command-palette";
 import { logout } from "@/actions/logout";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 
 function SidebarInner({
   role,
@@ -34,8 +34,8 @@ function SidebarInner({
             fontFamily: "'Geist Mono', monospace",
             fontSize: 10,
             fontWeight: 500,
-            color: "oklch(0.55 0.02 264)",
-            border: "1px solid oklch(1 0 0 / 10%)",
+            color: "#93a09f",
+            border: "1px solid #4d5757",
             borderRadius: 6,
             padding: "2px 6px",
           }}
@@ -57,7 +57,7 @@ function SidebarInner({
           alignItems: "center",
           gap: 11,
           padding: "12px 10px",
-          borderTop: "1px solid oklch(1 0 0 / 6%)",
+          borderTop: "1px solid #4d5757",
         }}
       >
         <div
@@ -65,12 +65,12 @@ function SidebarInner({
             width: 34,
             height: 34,
             borderRadius: "50%",
-            background: `linear-gradient(135deg, oklch(0.4 0.05 274), oklch(0.3 0.04 300))`,
+            background: "#2c3b3c",
             flexShrink: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "oklch(0.9 0.01 264)",
+            color: "#ffffff",
             fontFamily: "'Geist', sans-serif",
             fontSize: 13,
             fontWeight: 600,
@@ -84,7 +84,7 @@ function SidebarInner({
               fontFamily: "'Geist', sans-serif",
               fontSize: 13,
               fontWeight: 600,
-              color: "oklch(0.92 0.008 264)",
+              color: "#ffffff",
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -96,7 +96,7 @@ function SidebarInner({
             style={{
               fontFamily: "'Geist', sans-serif",
               fontSize: 11,
-              color: "oklch(0.55 0.02 264)",
+              color: "#93a09f",
             }}
           >
             {roleLabel}
@@ -110,7 +110,7 @@ function SidebarInner({
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: "oklch(0.45 0.02 264)",
+              color: "#93a09f",
               display: "flex",
               padding: 4,
               borderRadius: 6,
@@ -148,7 +148,7 @@ export function AppShell({
         aria-hidden
         style={{
           background:
-            "radial-gradient(1200px 600px at 80% -10%, color-mix(in oklab, oklch(0.66 0.18 274) 10%, transparent), transparent 70%)",
+            "radial-gradient(1200px 600px at 80% -10%, color-mix(in oklab, #cef79e 10%, transparent), transparent 70%)",
         }}
       />
 
@@ -157,8 +157,8 @@ export function AppShell({
         className="relative z-10 hidden md:flex shrink-0 flex-col min-h-screen"
         style={{
           width: 248,
-          background: "oklch(0.09 0.016 264)",
-          borderRight: "1px solid oklch(1 0 0 / 6%)",
+          background: "#1a2425",
+          borderRight: "1px solid #4d5757",
           padding: "18px 14px",
           position: "sticky",
           top: 0,
@@ -186,8 +186,8 @@ export function AppShell({
         style={{
           width: 264,
           maxWidth: "82vw",
-          background: "oklch(0.09 0.016 264)",
-          borderRight: "1px solid oklch(1 0 0 / 6%)",
+          background: "#1a2425",
+          borderRight: "1px solid #4d5757",
           padding: "18px 14px",
           transform: open ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
@@ -202,7 +202,7 @@ export function AppShell({
             right: 12,
             background: "transparent",
             border: "none",
-            color: "oklch(0.55 0.02 264)",
+            color: "#93a09f",
             cursor: "pointer",
             display: "flex",
             padding: 4,
@@ -233,8 +233,8 @@ export function AppShell({
             gap: 12,
             paddingTop: 14,
             paddingBottom: 14,
-            borderBottom: "1px solid oklch(1 0 0 / 6%)",
-            background: "oklch(0.12 0.018 264 / 0.7)",
+            borderBottom: "1px solid #4d5757",
+            background: "#222f30b3",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             position: "sticky",
@@ -253,12 +253,12 @@ export function AppShell({
               height: 38,
               flexShrink: 0,
               borderRadius: 10,
-              border: "1px solid oklch(1 0 0 / 9%)",
+              border: "1px solid #4d5757",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "oklch(0.7 0.02 264)",
-              background: "oklch(0.14 0.018 264)",
+              color: "#93a09f",
+              background: "#222f30",
               cursor: "pointer",
             }}
           >
@@ -278,7 +278,7 @@ export function AppShell({
                 gap: 7,
                 border: `1px solid color-mix(in oklab, ${AC} 32%, transparent)`,
                 background: `color-mix(in oklab, ${AC} 14%, transparent)`,
-                color: "oklch(0.97 0.01 264)",
+                color: "#ffffff",
                 fontFamily: "'Geist', sans-serif",
                 fontSize: 13,
                 fontWeight: 600,
@@ -298,12 +298,12 @@ export function AppShell({
                   width: 38,
                   height: 38,
                   borderRadius: 10,
-                  border: "1px solid oklch(1 0 0 / 9%)",
+                  border: "1px solid #4d5757",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "oklch(0.6 0.02 264)",
-                  background: "oklch(0.14 0.018 264)",
+                  color: "#93a09f",
+                  background: "#222f30",
                   cursor: "pointer",
                 }}
               >
@@ -317,8 +317,7 @@ export function AppShell({
                   width: 7,
                   height: 7,
                   borderRadius: "50%",
-                  background: "oklch(0.7 0.18 30)",
-                  boxShadow: "0 0 6px oklch(0.7 0.18 30)",
+                  background: "var(--destructive)",
                 }}
               />
             </div>
