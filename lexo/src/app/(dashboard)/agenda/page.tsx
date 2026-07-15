@@ -41,10 +41,10 @@ const TYPE_ICON: Record<string, string> = {
 };
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  PRAZO:    { bg: "oklch(0.66 0.18 274 / 14%)", color: "oklch(0.66 0.18 274)" },
-  AUDIENCIA:{ bg: "oklch(0.65 0.15 200 / 14%)", color: "oklch(0.65 0.15 200)" },
+  PRAZO:    { bg: "#cef79e24", color: "#cef79e" },
+  AUDIENCIA:{ bg: "#8fae9424", color: "#8fae94" },
   REUNIAO:  { bg: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)" },
-  OUTRO:    { bg: "oklch(0.55 0.02 264 / 20%)", color: "oklch(0.65 0.02 264)" },
+  OUTRO:    { bg: "#93a09f33", color: "#93a09f" },
 };
 
 export default async function AgendaPage({
@@ -223,10 +223,10 @@ export default async function AgendaPage({
   ];
 
   const accentStyle = (accent: string) => {
-    if (accent === "warn")   return { bg: "linear-gradient(160deg, oklch(0.75 0.16 50 / 14%), oklch(0.155 0.02 264))", border: "1px solid oklch(0.75 0.16 50 / 30%)", numColor: "oklch(0.97 0.01 264)", subColor: "oklch(0.75 0.16 50)" };
-    if (accent === "danger") return { bg: "linear-gradient(160deg, oklch(0.70 0.18 30 / 14%), oklch(0.155 0.02 264))", border: "1px solid oklch(0.70 0.18 30 / 30%)", numColor: "oklch(0.97 0.01 264)", subColor: "oklch(0.70 0.18 30)" };
-    if (accent === "info")   return { bg: "linear-gradient(160deg, oklch(0.66 0.18 274 / 14%), oklch(0.155 0.02 264))", border: "1px solid oklch(0.66 0.18 274 / 30%)", numColor: "oklch(0.97 0.01 264)", subColor: "oklch(0.75 0.16 50)" };
-    return { bg: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", numColor: "oklch(0.97 0.008 264)", subColor: "oklch(0.45 0.02 264)" };
+    if (accent === "warn")   return { bg: "linear-gradient(160deg, oklch(0.75 0.16 80 / 14%), #222f30)", border: "1px solid oklch(0.75 0.16 80 / 30%)", numColor: "#ffffff", subColor: "oklch(0.75 0.16 80)" };
+    if (accent === "danger") return { bg: "linear-gradient(160deg, oklch(0.62 0.18 22 / 14%), #222f30)", border: "1px solid oklch(0.62 0.18 22 / 30%)", numColor: "#ffffff", subColor: "oklch(0.62 0.18 22)" };
+    if (accent === "info")   return { bg: "linear-gradient(160deg, #cef79e24, #222f30)", border: "1px solid #cef79e4d", numColor: "#ffffff", subColor: "#cef79e" };
+    return { bg: "#222f30", border: "1px solid #4d5757", numColor: "#ffffff", subColor: "#93a09f" };
   };
 
   return (
@@ -234,10 +234,10 @@ export default async function AgendaPage({
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.5px", margin: 0 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.5px", margin: 0 }}>
             Agenda
           </h1>
-          <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
+          <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
             Prazos, audiências e compromissos do escritório
           </p>
         </div>
@@ -246,11 +246,10 @@ export default async function AgendaPage({
             href="/agenda/novo"
             style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              background: "oklch(0.66 0.18 274)", color: "#fff",
+              background: "#cef79e", color: "#222f30",
               border: "none", borderRadius: 10, padding: "9px 16px",
               fontSize: 13, fontWeight: 600, cursor: "pointer",
               textDecoration: "none",
-              boxShadow: "0 4px 14px oklch(0.66 0.18 274 / 35%)",
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -267,7 +266,7 @@ export default async function AgendaPage({
           const s = accentStyle(k.accent);
           return (
             <div key={k.label} style={{ background: s.bg, border: s.border, borderRadius: 14, padding: "16px 20px" }}>
-              <p style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", marginBottom: 6 }}>{k.label}</p>
+              <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 6 }}>{k.label}</p>
               <p style={{ fontSize: 30, fontWeight: 700, color: s.numColor, letterSpacing: "-1px", margin: 0 }}>{k.value}</p>
               <p style={{ fontSize: 12, color: s.subColor, marginTop: 4 }}>{k.sub}</p>
             </div>
@@ -308,8 +307,8 @@ export default async function AgendaPage({
       </ViewTransition>
 
       {/* ── Lista (visão secundária) ── */}
-      <div style={{ borderTop: "1px solid oklch(1 0 0 / 7%)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-        <h2 style={{ fontSize: 13, fontWeight: 700, color: "oklch(0.50 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>
+      <div style={{ borderTop: "1px solid #4d5757", paddingTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+        <h2 style={{ fontSize: 13, fontWeight: 700, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>
           Todos os prazos
         </h2>
 
@@ -326,17 +325,17 @@ export default async function AgendaPage({
               <div style={{
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                 padding: "60px 32px", gap: 12,
-                background: "oklch(0.09 0.015 264)",
-                border: "1px dashed oklch(0.25 0.018 264)", borderRadius: 16,
+                background: "#1a2425",
+                border: "1px dashed #4d5757", borderRadius: 16,
               }}>
                 <span style={{ fontSize: 32 }}>📅</span>
-                <p style={{ fontSize: 14, color: "oklch(0.50 0.02 264)", margin: 0 }}>Nenhum prazo encontrado.</p>
+                <p style={{ fontSize: 14, color: "#93a09f", margin: 0 }}>Nenhum prazo encontrado.</p>
               </div>
             )}
 
             {groupedByDay.map((group) => (
               <div key={group.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <h3 style={{ fontSize: 12, fontWeight: 700, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>
+                <h3 style={{ fontSize: 12, fontWeight: 700, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.04em", margin: 0 }}>
                   {formatRelativeDay(group.date, todayUTC)}
                 </h3>
 
@@ -350,8 +349,8 @@ export default async function AgendaPage({
                       key={d.id}
                       style={{
                         display: "flex", alignItems: "center", gap: 16,
-                        background: "oklch(0.155 0.02 264)",
-                        border: `1px solid ${isLost ? "oklch(0.70 0.18 30 / 20%)" : isDone ? "oklch(0.72 0.15 150 / 15%)" : "oklch(1 0 0 / 7%)"}`,
+                        background: "#222f30",
+                        border: `1px solid ${isLost ? "color-mix(in oklab, var(--destructive) 20%, transparent)" : isDone ? "oklch(0.72 0.15 150 / 15%)" : "#4d5757"}`,
                         borderRadius: 12, padding: "14px 18px",
                         opacity: isLost ? 0.65 : 1,
                       }}
@@ -364,10 +363,10 @@ export default async function AgendaPage({
                       </span>
 
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: isDone || isLost ? "oklch(0.55 0.02 264)" : "oklch(0.92 0.01 264)", textDecoration: isLost ? "line-through" : "none", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: isDone || isLost ? "#93a09f" : "#ffffff", textDecoration: isLost ? "line-through" : "none", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {d.title}
                         </p>
-                        <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginTop: 3, fontFamily: "monospace" }}>
+                        <p style={{ fontSize: 12, color: "#93a09f", marginTop: 3, fontFamily: "monospace" }}>
                           {d.case ? d.case.number : "Sem processo"} · {formatDate(d.date)}
                         </p>
                       </div>
@@ -375,12 +374,12 @@ export default async function AgendaPage({
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                         {!isLost && !isDone && <RiskBadge date={d.date} type={d.type} status={d.status} />}
                         {isLost && (
-                          <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.70 0.18 30 / 14%)", color: "oklch(0.70 0.18 30)", borderRadius: 99, padding: "3px 10px" }}>Perdido</span>
+                          <span style={{ fontSize: 11, fontWeight: 600, background: "color-mix(in oklab, var(--destructive) 14%, transparent)", color: "var(--destructive)", borderRadius: 99, padding: "3px 10px" }}>Perdido</span>
                         )}
                         {isDone && (
                           <span style={{ fontSize: 11, fontWeight: 600, background: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)", borderRadius: 99, padding: "3px 10px" }}>Concluído</span>
                         )}
-                        <Link href={`/agenda/${d.id}`} style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", textDecoration: "none", padding: "5px 10px", borderRadius: 7, border: "1px solid oklch(1 0 0 / 8%)" }}>
+                        <Link href={`/agenda/${d.id}`} style={{ fontSize: 12, color: "#93a09f", textDecoration: "none", padding: "5px 10px", borderRadius: 7, border: "1px solid #4d5757" }}>
                           Editar
                         </Link>
                         <DeleteButton action={deleteDeadline.bind(null, d.id)} label="Excluir" />
