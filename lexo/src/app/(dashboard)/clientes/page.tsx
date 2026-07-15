@@ -9,12 +9,12 @@ import { formatCurrency } from "@/lib/format";
 const PAGE_SIZE = 18; // divisível por 3 colunas
 
 const AVATAR_COLORS = [
-  ["oklch(0.45 0.08 274)", "oklch(0.35 0.06 300)"],
-  ["oklch(0.42 0.10 200)", "oklch(0.32 0.08 240)"],
-  ["oklch(0.38 0.10 150)", "oklch(0.28 0.08 170)"],
-  ["oklch(0.45 0.08 80)",  "oklch(0.35 0.06 60)" ],
-  ["oklch(0.45 0.08 300)", "oklch(0.35 0.06 320)"],
-  ["oklch(0.42 0.08 30)",  "oklch(0.32 0.06 20)" ],
+  ["#2c3b3c", "#2c3b3c"],
+  ["#283738", "#283738"],
+  ["#6d7f78", "#6d7f78"],
+  ["#4d5757", "#4d5757"],
+  ["#8fae94", "#8fae94"],
+  ["#1a2425", "#1a2425"],
 ];
 
 function initials(name: string) {
@@ -72,10 +72,10 @@ export default async function ClientesPage({
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.4px", margin: 0 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.4px", margin: 0 }}>
             Clientes
           </h1>
-          <p style={{ fontSize: 13, color: "oklch(0.60 0.02 264)", marginTop: 3 }}>
+          <p style={{ fontSize: 13, color: "#93a09f", marginTop: 3 }}>
             {total} cliente{total !== 1 ? "s" : ""} cadastrado{total !== 1 ? "s" : ""}
           </p>
         </div>
@@ -87,10 +87,9 @@ export default async function ClientesPage({
             href="/clientes/novo"
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              background: "oklch(0.66 0.18 274)", color: "#fff",
+              background: "#cef79e", color: "#222f30",
               borderRadius: 9, padding: "9px 16px",
               fontSize: 13, fontWeight: 600, textDecoration: "none",
-              boxShadow: "0 6px 18px oklch(0.66 0.18 274 / 40%)",
               whiteSpace: "nowrap",
             }}
           >
@@ -104,11 +103,11 @@ export default async function ClientesPage({
         <div style={{
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", padding: "80px 32px", gap: 12,
-          background: "oklch(0.09 0.015 264)", border: "1px dashed oklch(0.25 0.018 264)",
+          background: "#1a2425", border: "1px dashed #4d5757",
           borderRadius: 16,
         }}>
           <span style={{ fontSize: 32 }}>👥</span>
-          <p style={{ fontSize: 14, color: "oklch(0.50 0.02 264)", margin: 0 }}>Nenhum cliente encontrado.</p>
+          <p style={{ fontSize: 14, color: "#93a09f", margin: 0 }}>Nenhum cliente encontrado.</p>
         </div>
       ) : (
         <div className="r-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
@@ -122,8 +121,8 @@ export default async function ClientesPage({
               <div
                 key={client.id}
                 style={{
-                  background: "oklch(0.155 0.02 264)",
-                  border: "1px solid oklch(1 0 0 / 7%)",
+                  background: "#222f30",
+                  border: "1px solid #4d5757",
                   borderRadius: 14, padding: 17,
                   display: "flex", flexDirection: "column",
                   transition: "border-color 0.15s",
@@ -148,10 +147,10 @@ export default async function ClientesPage({
                     )}
                   </span>
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.94 0.01 264)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "#ffffff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {client.name}
                     </div>
-                    <div style={{ fontSize: 11, color: "oklch(0.55 0.02 264)", marginTop: 2, fontFamily: "monospace" }}>
+                    <div style={{ fontSize: 11, color: "#93a09f", marginTop: 2, fontFamily: "monospace" }}>
                       {pj ? "PJ" : "PF"}{client.document ? ` · ${client.document}` : ""}
                     </div>
                   </div>
@@ -159,13 +158,13 @@ export default async function ClientesPage({
 
                 {/* Mini stats */}
                 <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
-                  <div style={{ flex: 1, background: "oklch(0.13 0.018 264)", borderRadius: 9, padding: "9px 11px" }}>
-                    <div style={{ fontSize: 10, color: "oklch(0.50 0.02 264)", fontFamily: "monospace", letterSpacing: "0.05em" }}>PROCESSOS</div>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: "oklch(0.92 0.01 264)", marginTop: 2 }}>{totalCases}</div>
+                  <div style={{ flex: 1, background: "#222f30", borderRadius: 9, padding: "9px 11px" }}>
+                    <div style={{ fontSize: 10, color: "#93a09f", fontFamily: "monospace", letterSpacing: "0.05em" }}>PROCESSOS</div>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: "#ffffff", marginTop: 2 }}>{totalCases}</div>
                   </div>
-                  <div style={{ flex: 1, background: "oklch(0.13 0.018 264)", borderRadius: 9, padding: "9px 11px" }}>
-                    <div style={{ fontSize: 10, color: "oklch(0.50 0.02 264)", fontFamily: "monospace", letterSpacing: "0.05em" }}>EM ABERTO</div>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: totalAberto > 0 ? "oklch(0.75 0.16 50)" : "oklch(0.72 0.15 150)", marginTop: 2 }}>
+                  <div style={{ flex: 1, background: "#222f30", borderRadius: 9, padding: "9px 11px" }}>
+                    <div style={{ fontSize: 10, color: "#93a09f", fontFamily: "monospace", letterSpacing: "0.05em" }}>EM ABERTO</div>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: totalAberto > 0 ? "oklch(0.75 0.16 80)" : "oklch(0.72 0.15 150)", marginTop: 2 }}>
                       {totalAberto > 0 ? formatCurrency(totalAberto) : "—"}
                     </div>
                   </div>
@@ -174,14 +173,14 @@ export default async function ClientesPage({
                 {/* Footer */}
                 <div style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
-                  borderTop: "1px solid oklch(1 0 0 / 6%)", paddingTop: 12,
+                  borderTop: "1px solid #4d5757", paddingTop: 12,
                 }}>
-                  <span style={{ fontSize: 12, color: "oklch(0.60 0.02 264)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 160 }}>
+                  <span style={{ fontSize: 12, color: "#93a09f", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 160 }}>
                     {client.email ?? client.phone ?? "Sem contato"}
                   </span>
                   <Link
                     href={`/clientes/${client.id}`}
-                    style={{ fontSize: 12, fontWeight: 600, color: "oklch(0.66 0.18 274)", textDecoration: "none", whiteSpace: "nowrap" }}
+                    style={{ fontSize: 12, fontWeight: 600, color: "#cef79e", textDecoration: "none", whiteSpace: "nowrap" }}
                   >
                     Ver →
                   </Link>
