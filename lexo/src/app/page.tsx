@@ -1,521 +1,273 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-// ── Design tokens ──────────────────────────────────────────────────────────────
-const BG    = "oklch(0.07 0.022 264)";
-const AC    = "oklch(0.68 0.24 274)";
-const AC2   = "oklch(0.72 0.20 300)";
-const AC3   = "oklch(0.70 0.20 230)";
-const AC_CY = "oklch(0.74 0.16 200)";
-const AC_MG = "oklch(0.70 0.22 330)";
-const SURF1 = "oklch(0.11 0.020 264)";
-const SURF2 = "oklch(0.15 0.020 264)";
-const F     = "'Geist', var(--font-geist), sans-serif";
-const FM    = "'Geist Mono', var(--font-geist-mono), monospace";
+// ── Tokens — Integrated Biosciences (assets/DESIGN.md, 2026-07-14) ───────────────
+const LIME     = "#cef79e";
+const ABYSSAL  = "#222f30";
+const BONE     = "#f7f7f5";
+const PAPER    = "#ffffff";
+const GRAPHITE = "#4d5757";
+const MIST     = "#93a09f"; // ponytail: GRAPHITE puro em texto de corpo sobre ABYSSAL/VOID cai abaixo de 4.5:1 — MIST é só pro texto, borda/hairline continua GRAPHITE
+const LICHEN   = "#c9cbbe";
+const VOID     = "#000000";
+const F  = "var(--font-sans), sans-serif";  // Aspekta substituto — Inter, peso 400 único
+const FM = "var(--font-mono), monospace";   // Roboto Mono substituto — JetBrains Mono já carregado
 
-// ── Data ───────────────────────────────────────────────────────────────────────
-const features = [
-  {
-    title: "Gestão de processos",
-    novo: false,
-    hue: AC,
-    desc: "Todos os processos, partes, prazos e documentos organizados e pesquisáveis em um clique.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Prazos & agenda",
-    novo: false,
-    hue: AC3,
-    desc: "Captura automática de publicações do diário oficial e cálculo de prazos sem digitação manual.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Lexo IA",
-    novo: true,
-    hue: AC2,
-    desc: "Resume autos, gera minutas e responde perguntas sobre qualquer processo do escritório.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9.5 3 11 8l5 1.5L11 11l-1.5 5L8 11l-5-1.5L8 8z"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Jurimetria",
-    novo: true,
-    hue: AC_CY,
-    desc: "Probabilidade de êxito e tempo médio por vara, comarca e relator com base em dados reais.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Financeiro & honorários",
-    novo: false,
-    hue: AC_MG,
-    desc: "Faturamento, timesheet, cobrança recorrente e relatórios de rentabilidade por cliente.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Portal do cliente",
-    novo: true,
-    hue: AC3,
-    desc: "Seus clientes acompanham processos, documentos e pagamentos por uma área dedicada.",
-    icon: (
-      <svg width={21} height={21} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a6 6 0 0 1 11 0"/>
-      </svg>
-    ),
-  },
-];
-
-type StatItem = {
-  display: string;
-  target: number;
-  label: string;
-  prefix?: string;
-  suffix?: string;
-  decimal?: number;
-  thousands?: boolean;
-};
-
-const statsData: StatItem[] = [
-  { display: "620+",    target: 620,   suffix: "+",                  label: "escritórios usando o Lexo" },
-  { display: "+1.200",  target: 1200, prefix: "+", thousands: true,  label: "processos monitorados" },
-  { display: "9h",     target: 9,     suffix: "h",                   label: "economizadas por advogado/semana" },
-  { display: "99,9%",  target: 99.9,  suffix: "%",   decimal: 1,    label: "de disponibilidade (SLA)" },
-];
-
-const plans = [
-  {
-    name: "Solo",
-    tagline: "Para advogados autônomos começando a organizar a rotina.",
-    price: "R$ 79",
-    period: "/usuário · mês",
-    popular: false,
-    accent: false,
-    cta: "Começar grátis",
-    items: ["Processos e prazos ilimitados", "Agenda e captura de publicações", "Financeiro básico", "Suporte por e-mail"],
-  },
-  {
-    name: "Escritório",
-    tagline: "Para equipes que querem IA e colaboração de verdade.",
-    price: "R$ 149",
-    period: "/usuário · mês",
-    popular: true,
-    accent: true,
-    cta: "Começar teste de 14 dias",
-    items: ["Tudo do plano Solo", "Lexo IA & Jurimetria", "Portal do Cliente", "Timesheet e relatórios", "Gestão de usuários e funções"],
-  },
-  {
-    name: "Enterprise",
-    tagline: "Para grandes bancas e departamentos jurídicos.",
-    price: "Sob consulta",
-    period: "",
-    popular: false,
-    accent: false,
-    cta: "Falar com vendas",
-    items: ["Tudo do plano Escritório", "SSO e permissões avançadas", "API e integrações dedicadas", "Gerente de conta", "Treinamento e SLA premium"],
-  },
-];
-
-const trustNames = ["Andrade Adv.", "Mendonça & Cruz", "Vector Legal", "Bittencourt Adv.", "Núcleo Jurídico"];
-
-const steps = [
-  {
-    n: "01",
-    hue: AC,
-    title: "Migre em minutos",
-    desc: "Importe processos, clientes e prazos. A Lexo organiza tudo automaticamente — sem planilhas e sem retrabalho.",
-  },
-  {
-    n: "02",
-    hue: AC2,
-    title: "A IA assume a rotina",
-    desc: "Captura publicações do diário, calcula prazos, resume autos e gera minutas enquanto você foca na estratégia.",
-  },
-  {
-    n: "03",
-    hue: AC_MG,
-    title: "Acompanhe e cresça",
-    desc: "Dashboards, jurimetria e portal do cliente em um só lugar. Decisões baseadas em dados reais do escritório.",
-  },
-];
-
-const testimonials = [
-  {
-    quote: "Reduzi em 70% o tempo gasto com controle de prazos. A captação automática do diário sozinha já paga o sistema.",
-    name: "Dra. Camila Andrade",
-    role: "Sócia · Andrade Advocacia",
-    initial: "CA",
-    hue: AC,
-  },
-  {
-    quote: "A Lexo IA resume um processo de 300 páginas em segundos. Minha equipe ganhou horas de volta toda semana.",
-    name: "Dr. Rafael Mendonça",
-    role: "Sócio · Mendonça & Cruz",
-    initial: "RM",
-    hue: AC2,
-  },
-  {
-    quote: "O portal acabou com as ligações de 'como está meu processo?'. Os clientes adoram a transparência em tempo real.",
-    name: "Dra. Letícia Bittencourt",
-    role: "Titular · Bittencourt Advocacia",
-    initial: "LB",
-    hue: AC_MG,
-  },
-];
-
+// ── Conteúdo (idêntico a lexo/src/app/page.tsx) ─────────────────────────────────
 const NAV_ITEMS = [
   ["#recursos", "Recursos"],
   ["#como-funciona", "Como funciona"],
-  ["#ia", "Lexo IA"],
-  ["#portal", "Portal do Cliente"],
   ["#precos", "Preços"],
 ] as const;
 
-// ── CSS ────────────────────────────────────────────────────────────────────────
+const features = [
+  { n: "01", title: "Gestão de processos", novo: false, desc: "Todos os processos, partes, prazos e documentos organizados e pesquisáveis em um clique." },
+  { n: "02", title: "Prazos & agenda", novo: false, desc: "Captura automática de publicações do diário oficial e cálculo de prazos sem digitação manual." },
+  { n: "03", title: "Lexo IA", novo: true, desc: "Resume autos, gera minutas e responde perguntas sobre qualquer processo do escritório." },
+  { n: "04", title: "Jurimetria", novo: true, desc: "Probabilidade de êxito e tempo médio por vara, comarca e relator com base em dados reais." },
+  { n: "05", title: "Financeiro & honorários", novo: false, desc: "Faturamento, timesheet, cobrança recorrente e relatórios de rentabilidade por cliente." },
+  { n: "06", title: "Portal do cliente", novo: true, desc: "Seus clientes acompanham processos, documentos e pagamentos por uma área dedicada." },
+];
+
+const steps = [
+  { n: "01", title: "Migre em minutos", desc: "Importe processos, clientes e prazos. A Lexo organiza tudo automaticamente — sem planilhas e sem retrabalho." },
+  { n: "02", title: "A IA assume a rotina", desc: "Captura publicações do diário, calcula prazos, resume autos e gera minutas enquanto você foca na estratégia." },
+  { n: "03", title: "Acompanhe e cresça", desc: "Dashboards, jurimetria e portal do cliente em um só lugar. Decisões baseadas em dados reais do escritório." },
+];
+
+const statsData = [
+  { display: "620+",   label: "escritórios usando o Lexo" },
+  { display: "+1.200", label: "processos monitorados" },
+  { display: "9h",     label: "economizadas por advogado/semana" },
+  { display: "99,9%",  label: "de disponibilidade (SLA)" },
+];
+
+const plans = [
+  { name: "Solo", tagline: "Para advogados autônomos começando a organizar a rotina.", price: "R$ 79", period: "/usuário · mês", cta: "Começar grátis", popular: false,
+    items: ["Processos e prazos ilimitados", "Agenda e captura de publicações", "Financeiro básico", "Suporte por e-mail"] },
+  { name: "Escritório", tagline: "Para equipes que querem IA e colaboração de verdade.", price: "R$ 149", period: "/usuário · mês", cta: "Começar teste de 14 dias", popular: true,
+    items: ["Tudo do plano Solo", "Lexo IA & Jurimetria", "Portal do Cliente", "Timesheet e relatórios", "Gestão de usuários e funções"] },
+  { name: "Enterprise", tagline: "Para grandes bancas e departamentos jurídicos.", price: "Sob consulta", period: "", cta: "Falar com vendas", popular: false,
+    items: ["Tudo do plano Escritório", "SSO e permissões avançadas", "API e integrações dedicadas", "Gerente de conta", "Treinamento e SLA premium"] },
+];
+
+const testimonials = [
+  { quote: "Reduzi em 70% o tempo gasto com controle de prazos. A captação automática do diário sozinha já paga o sistema.", name: "Dra. Camila Andrade", role: "Sócia · Andrade Advocacia" },
+  { quote: "A Lexo IA resume um processo de 300 páginas em segundos. Minha equipe ganhou horas de volta toda semana.", name: "Dr. Rafael Mendonça", role: "Sócio · Mendonça & Cruz" },
+  { quote: "O portal acabou com as ligações de 'como está meu processo?'. Os clientes adoram a transparência em tempo real.", name: "Dra. Letícia Bittencourt", role: "Titular · Bittencourt Advocacia" },
+];
+
+const trustNames = ["Andrade Adv.", "Mendonça & Cruz", "Vector Legal", "Bittencourt Adv.", "Núcleo Jurídico", "Freitas & Lima", "Costa Prado Adv.", "Almeida Jurídico", "Barros & Salles", "Oliveira Advocacia"];
+
+const iaBullets = [
+  ["Resumo de autos", "todo o processo em um briefing objetivo."],
+  ["Prazos automáticos", "a partir do diário oficial, sem digitação."],
+  ["Jurimetria", "probabilidade de êxito com base em dados reais."],
+];
+
+// ── CSS ──────────────────────────────────────────────────────────────────────
 const CSS = `
-  @keyframes aurora-a {
-    0%   { transform: translate(0,0) scale(1); }
-    33%  { transform: translate(-30px,20px) scale(1.08); }
-    66%  { transform: translate(20px,-15px) scale(0.94); }
-    100% { transform: translate(0,0) scale(1); }
-  }
-  @keyframes aurora-b {
-    0%   { transform: translate(0,0) scale(1); }
-    33%  { transform: translate(25px,-20px) scale(1.06); }
-    66%  { transform: translate(-15px,25px) scale(1.1); }
-    100% { transform: translate(0,0) scale(1); }
-  }
-  @keyframes aurora-c {
-    0%   { transform: translate(0,0) scale(1); }
-    33%  { transform: translate(15px,10px) scale(0.96); }
-    66%  { transform: translate(-20px,-10px) scale(1.07); }
-    100% { transform: translate(0,0) scale(1); }
-  }
-  @keyframes aurora-d {
-    0%   { transform: translate(0,0) scale(1); }
-    33%  { transform: translate(-20px,-25px) scale(1.05); }
-    66%  { transform: translate(25px,15px) scale(0.95); }
-    100% { transform: translate(0,0) scale(1); }
-  }
   [data-reveal] {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
     transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  [data-reveal].reveal-visible {
-    opacity: 1;
-    transform: translateY(0);
+  [data-reveal].reveal-visible { opacity: 1; transform: translateY(0); }
+  .lp2-btn-filled {
+    display: inline-flex; align-items: center; gap: 8px;
+    border-radius: 8px; padding: 8px 16px;
+    font-family: ${FM}; font-size: 13px; font-weight: 400; text-transform: uppercase; letter-spacing: -0.02em;
+    text-decoration: none; transition: opacity 250ms ease;
   }
-  .feature-card {
-    position: relative;
-    transition: transform 300ms ease, background 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+  .lp2-btn-filled:hover { opacity: 0.85; }
+  .lp2-btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    border-radius: 8px; padding: 8px 16px; border: 1px solid ${GRAPHITE};
+    font-family: ${FM}; font-size: 13px; font-weight: 400; text-transform: uppercase; letter-spacing: -0.02em;
+    text-decoration: none; background: transparent; transition: border-color 250ms ease, opacity 250ms ease;
   }
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(220px at var(--mx,50%) var(--my,50%), oklch(0.68 0.24 274 / 7%), transparent 70%);
-    opacity: 0;
-    transition: opacity 300ms;
-    pointer-events: none;
+  .lp2-btn-ghost:hover { opacity: 0.7; }
+  .lp2-arrow-cta {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 8px; background: ${LIME}; flex-shrink: 0;
+    transition: transform 250ms ease;
   }
-  .feature-card:hover::before { opacity: 1; }
-  .feature-card:hover {
-    border-color: color-mix(in oklab, oklch(0.68 0.24 274) 40%, transparent) !important;
-    background: oklch(0.15 0.020 264) !important;
-    transform: translateY(-3px);
-    box-shadow: 0 0 0 1px color-mix(in oklab, oklch(0.68 0.24 274) 25%, transparent),
-                0 8px 32px oklch(0 0 0 / 0.3),
-                0 0 40px color-mix(in oklab, oklch(0.68 0.24 274) 12%, transparent);
+  .lp2-arrow-cta:hover { transform: translateX(3px); }
+  .lp2-arrow-cta::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+    animation: lp2-shimmer 3s 1s infinite;
   }
-  @keyframes pulse-ring {
-    0%   { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(2.2); opacity: 0; }
-  }
-  .badge-pulse {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-  }
-  .badge-pulse::after {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    border: 1.5px solid oklch(0.68 0.24 274 / 0.5);
-    animation: pulse-ring 2.5s ease-out infinite;
-    pointer-events: none;
-  }
-  .hero-panel {
-    opacity: 0;
-    transform: translateX(20px);
-    transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms, transform 900ms cubic-bezier(0.22, 1, 0.36, 1) 200ms;
-  }
-  .hero-panel.mounted { opacity: 1; transform: translateX(0); }
-  .hero-card {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 750ms cubic-bezier(0.22, 1, 0.36, 1) 500ms, transform 750ms cubic-bezier(0.22, 1, 0.36, 1) 500ms;
-  }
-  .hero-card.mounted { opacity: 1; transform: translateY(0); }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
-  .marquee-inner {
-    display: flex;
-    width: max-content;
-    animation: marquee 28s linear infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  .cursor-blink { animation: blink 0.8s step-end infinite; }
-  @keyframes shimmer-badge {
+  @keyframes lp2-shimmer {
     from { transform: translateX(-150%); }
     to   { transform: translateX(250%); }
   }
-  .badge-shimmer {
-    position: relative;
-    overflow: hidden;
+  .lp2-textlink { color: inherit; text-decoration: none; transition: color 250ms ease; }
+  .lp2-textlink:hover { color: ${LIME}; }
+
+  @keyframes lp2-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
-  .badge-shimmer::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    left: -20%; width: 40%;
-    background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.22), transparent);
-    animation: shimmer-badge 2.5s 1s infinite;
+  .lp2-marquee-track { display: flex; width: max-content; animation: lp2-marquee 26s linear infinite; }
+
+  @keyframes lp2-ping {
+    0%   { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
   }
-  @keyframes ping {
-    0%   { transform: scale(1); opacity: 1; }
-    100% { transform: scale(2.2); opacity: 0; }
-  }
-  .live-dot {
-    position: relative;
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: oklch(0.72 0.15 150);
-    flex-shrink: 0;
-  }
-  .live-dot::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: oklch(0.72 0.15 150);
-    animation: ping 1.5s ease-out infinite;
-  }
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.4; }
-    50%       { opacity: 0.8; }
-  }
-  .pricing-card {
-    transition: transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
-  }
-  .pricing-card:not(.pricing-popular):hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in oklab, oklch(0.68 0.24 274) 25%, transparent) !important;
-  }
-  .cta-btn {
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent 30%, oklch(1 0 0 / 0.12) 50%, transparent 70%);
-    transform: translateX(-200%);
-    transition: transform 0ms;
-  }
-  .cta-btn:hover::after {
-    transform: translateX(200%);
-    transition: transform 500ms ease;
-  }
-  @keyframes chat-appear {
-    from { opacity: 0; transform: translateY(5px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .chat-item-late {
-    opacity: 0;
-    animation: chat-appear 400ms ease-out 1.4s forwards;
-  }
-  .nav-link {
-    transition: color 250ms cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .nav-pill {
-    transition: transform 520ms cubic-bezier(0.34, 1.18, 0.64, 1),
-                width 400ms cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 240ms ease,
-                box-shadow 300ms ease;
-  }
-  .nav-hover-pill {
-    transition: transform 160ms cubic-bezier(0.25, 1, 0.5, 1),
-                width 160ms cubic-bezier(0.25, 1, 0.5, 1),
-                opacity 110ms ease;
-  }
-  @keyframes wf-populate {
-    0%, 10%  { opacity: 0; transform: translateY(7px); }
-    26%, 82% { opacity: 1; transform: translateY(0); }
-    100%     { opacity: 0; transform: translateY(7px); }
-  }
-  @keyframes wf-pop {
-    0%, 38%  { opacity: 0; transform: scale(0.82); }
-    50%, 90% { opacity: 1; transform: scale(1); }
-    100%     { opacity: 0; transform: scale(0.82); }
-  }
-  @keyframes wf-bar {
-    0%, 100% { transform: scaleY(0.18); }
-    50%      { transform: scaleY(1); }
-  }
-  @keyframes wf-dash { to { stroke-dashoffset: -24; } }
-  @keyframes wf-arrow {
-    0%, 100% { transform: translateY(0);   opacity: 0.45; }
-    50%      { transform: translateY(4px); opacity: 1; }
-  }
-  .wf-curve { stroke-dasharray: 5 7; animation: wf-dash 0.9s linear infinite; }
-  .wf-arrow { animation: wf-arrow 1.5s ease-in-out infinite; }
-  .wf-row   { animation: wf-populate 4.5s ease-in-out infinite; }
-  .wf-pop   { animation: wf-pop 4s ease-in-out infinite; }
-  .wf-bar   { transform-origin: bottom; animation: wf-bar 2.4s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce) {
-    .aurora-blob { animation: none !important; }
-    .bg-beam { animation: none !important; opacity: 0 !important; }
-    .text-flow { animation: none !important; }
-    .flow-border::before { animation: none !important; }
-    [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
-    .marquee-inner { animation: none !important; }
-    .hero-panel, .hero-card { opacity: 1 !important; transform: none !important; transition: none !important; }
-    .badge-pulse::after, .live-dot::before, .badge-shimmer::after,
-    .cursor-blink, .chat-item-late { animation: none !important; opacity: 1 !important; }
-    .nav-pill, .nav-hover-pill { transition: none !important; }
-    .wf-curve, .wf-arrow, .wf-row, .wf-pop { animation: none !important; opacity: 1 !important; transform: none !important; }
-    .wf-bar { animation: none !important; transform: scaleY(1) !important; }
-  }
-  @keyframes gradient-flow {
-    0%   { background-position:   0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position:   0% 50%; }
-  }
-  .text-flow {
-    background: linear-gradient(100deg,
-      oklch(0.98 0.01 264) 0%,
-      oklch(0.74 0.16 200) 30%,
-      oklch(0.72 0.20 300) 55%,
-      oklch(0.70 0.22 330) 80%,
-      oklch(0.98 0.01 264) 100%);
-    background-size: 220% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-flow 9s ease-in-out infinite;
-  }
-  .flow-border {
-    position: relative;
-  }
-  .flow-border::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(120deg,
-      oklch(0.68 0.24 274), oklch(0.74 0.16 200),
-      oklch(0.70 0.22 330), oklch(0.68 0.24 274));
-    background-size: 220% auto;
-    animation: gradient-flow 10s ease-in-out infinite;
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    opacity: 0.7;
-  }
-  @keyframes beam-sweep {
-    0%   { transform: translate3d(-40%, -40%, 0) rotate(8deg); opacity: 0; }
-    15%  { opacity: 0.6; }
-    85%  { opacity: 0.6; }
-    100% { transform: translate3d(40%, 40%, 0) rotate(8deg); opacity: 0; }
-  }
-  .bg-beam {
-    position: absolute;
-    top: -30%; left: -30%;
-    width: 160%; height: 160%;
-    background: linear-gradient(115deg, transparent 42%, oklch(0.74 0.16 200 / 0.10) 50%, transparent 58%);
-    mix-blend-mode: screen;
-    animation: beam-sweep 14s linear infinite;
-    will-change: transform, opacity;
+  .lp2-live-dot { position: relative; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${LIME}; flex-shrink: 0; }
+  .lp2-live-dot::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%; background: ${LIME};
+    animation: lp2-ping 1.8s ease-out infinite;
   }
 
-  /* ── RESPONSIVO ─────────────────────────────────────────────── */
+  .lp2-shimmer-badge { position: relative; overflow: hidden; }
+  .lp2-shimmer-badge::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    animation: lp2-shimmer 2.5s 1s infinite;
+  }
+
+  @keyframes lp2-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  .lp2-cursor-blink { animation: lp2-blink 0.8s step-end infinite; }
+
+  @keyframes lp2-wf-populate {
+    0%, 100% { opacity: 0.35; transform: translateX(0); }
+    50%      { opacity: 1;    transform: translateX(3px); }
+  }
+  @keyframes lp2-wf-pop {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+  @keyframes lp2-wf-bar {
+    0%, 100% { transform: scaleY(0.7); }
+    50%      { transform: scaleY(1); }
+  }
+  @keyframes lp2-wf-arrow {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50%      { transform: translateY(3px); opacity: 1; }
+  }
+  .lp2-wf-row   { animation: lp2-wf-populate 3.6s ease-in-out infinite; }
+  .lp2-wf-pop   { animation: lp2-wf-pop 3.2s ease-in-out infinite; }
+  .lp2-wf-bar   { transform-origin: bottom; animation: lp2-wf-bar 2.2s ease-in-out infinite; }
+  .lp2-wf-arrow { animation: lp2-wf-arrow 1.6s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .lp2-marquee-track { animation: none !important; }
+    .lp2-live-dot::before { animation: none !important; }
+    .lp2-arrow-cta::after { animation: none !important; }
+    .lp2-shimmer-badge::after { animation: none !important; }
+    .lp2-cursor-blink { animation: none !important; opacity: 1 !important; }
+    .lp2-wf-row, .lp2-wf-pop, .lp2-wf-bar, .lp2-wf-arrow { animation: none !important; opacity: 1 !important; transform: none !important; }
+  }
+
+  /* ── RESPONSIVO ─────────────────────────────────────────── */
   html, body { max-width: 100%; overflow-x: clip; }
-  @media (max-width: 1024px) {
-    .lp-hero { grid-template-columns: 1fr !important; gap: 40px !important; padding-top: 54px !important; }
-    .lp-grid-3 { grid-template-columns: 1fr 1fr !important; }
-    .lp-grid-4 { grid-template-columns: 1fr 1fr !important; }
-    .lp-ia, .lp-portal { grid-template-columns: 1fr !important; }
-    .lp-ia { padding: 34px !important; gap: 34px !important; }
-    .hero-card { left: auto !important; right: 0 !important; }
+  @media (max-width: 900px) {
+    .lp2-portal { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .lp2-step { grid-template-columns: 1fr !important; text-align: left !important; }
+    .lp2-ia { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .lp2-stats { grid-template-columns: 1fr 1fr !important; }
+    .lp2-footer { grid-template-columns: 1fr !important; gap: 28px !important; }
+    .lp2-pricing-grid { grid-template-columns: 1fr !important; }
   }
-  @media (max-width: 768px) {
-    .lp-nav { padding-left: 18px !important; padding-right: 18px !important; gap: 12px !important; }
-    .lp-navlinks { display: none !important; }
-    .lp-section { padding-left: 20px !important; padding-right: 20px !important; }
-    .lp-grid-2, .lp-grid-3 { grid-template-columns: 1fr !important; }
-    .lp-step { width: 100% !important; grid-template-columns: 1fr !important; }
-    .lp-stats { grid-template-columns: 1fr 1fr !important; gap: 28px 16px !important; }
-    .lp-stats > div { border-right: none !important; margin-right: 0 !important; padding-right: 0 !important; }
-    .hero-card { display: none !important; }
-    .lp-ia { padding: 24px !important; }
-  }
-  @media (max-width: 480px) {
-    .lp-grid-4 { grid-template-columns: 1fr !important; }
-    .lp-stats { grid-template-columns: 1fr !important; }
-    .lp-navcta-label { display: none !important; }
+  @media (max-width: 640px) {
+    .lp2-navlinks { display: none !important; }
+    .lp2-section { padding-left: 20px !important; padding-right: 20px !important; }
+    .lp2-stats { grid-template-columns: 1fr !important; }
   }
 `;
 
-// ── Page ───────────────────────────────────────────────────────────────────────
-// Mini-wireframe animado que demonstra a funcionalidade de cada etapa
-function Wireframe({ i, hue }: { i: number; hue: string }) {
+// ── Componentes reutilizáveis ────────────────────────────────────────────────
+function FilledBtn({ href, children, on = "dark", full = false }: { href: string; children: React.ReactNode; on?: "dark" | "light"; full?: boolean }) {
+  const bg = on === "dark" ? PAPER : ABYSSAL;
+  const color = on === "dark" ? ABYSSAL : PAPER;
+  return <Link href={href} className="lp2-btn-filled" style={{ background: bg, color, ...(full ? { width: "100%", justifyContent: "center" } : {}) }}>{children}</Link>;
+}
+
+function GhostBtn({ href, children, color }: { href: string; children: React.ReactNode; color: string }) {
+  return <Link href={href} className="lp2-btn-ghost" style={{ color, borderColor: color === PAPER ? GRAPHITE : LICHEN }}>{children}</Link>;
+}
+
+function ArrowCta({ href }: { href: string }) {
+  return (
+    <Link href={href} className="lp2-arrow-cta" aria-label="Continuar">
+      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={ABYSSAL} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </Link>
+  );
+}
+
+function Counter({ n, color }: { n: string; color: string }) {
+  return (
+    <span style={{ display: "inline-block", fontFamily: FM, fontSize: 13, fontWeight: 400, color, border: `1px solid ${color}`, borderRadius: 9999, padding: "4px 11px" }}>{n}</span>
+  );
+}
+
+function Tag({ label }: { label: string }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: FM, fontSize: 13, textTransform: "uppercase", letterSpacing: "-0.02em" }}>
+      <span className="lp2-live-dot" />
+      {label}
+    </span>
+  );
+}
+
+function Divider({ on = "dark" }: { on?: "dark" | "light" }) {
+  return <div style={{ borderTop: `1px solid ${on === "dark" ? GRAPHITE : LICHEN}` }} />;
+}
+
+// ── Hero com vídeo (public/hero-video.mp4): toca uma vez até o fim, sem loop ──────────
+function ScrollFrameHero() {
+  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  return (
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "120px 40px 88px" }}>
+      <video
+        src="/hero-video.mp4"
+        muted
+        playsInline
+        preload="auto"
+        autoPlay={!reduced}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
+      />
+      <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, ${ABYSSAL}cc, ${ABYSSAL}66 40%, ${ABYSSAL}cc)`, zIndex: 1 }} />
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 9, fontFamily: FM, fontSize: 12, color: LIME, border: `1px solid ${LIME}55`, background: `${LIME}1a`, borderRadius: 999, padding: "6px 13px", letterSpacing: "0.3px" }}>
+          <span className="lp2-live-dot" /> Agora com Lexo IA &amp; Jurimetria
+        </span>
+        <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 5.2vw, 84px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.02em", color: PAPER, margin: "16px 0 0", maxWidth: 900 }}>
+          O sistema que cuida do escritório enquanto você cuida da causa.
+        </h1>
+      </div>
+      <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12 }}>
+        <FilledBtn href="/registrar" on="dark">Criar conta grátis</FilledBtn>
+        <GhostBtn href="/login" color={PAPER}>Entrar na área do cliente</GhostBtn>
+        <ArrowCta href="/registrar" />
+      </div>
+    </div>
+  );
+}
+
+// ── Mini-wireframe animado por etapa (Como funciona) ──────────
+function StepVisual({ i }: { i: number }) {
+  const box: React.CSSProperties = { background: `${VOID}33`, border: `1px solid ${GRAPHITE}`, borderRadius: 12, padding: 16, height: "100%" };
   if (i === 0) {
-    // Importação de processos: linhas populando em cascata
     return (
-      <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, height: "100%" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, letterSpacing: "1.5px", color: "oklch(0.55 0.02 264)" }}>PROCESSOS</span>
-          <span style={{ fontFamily: FM, fontSize: 10, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, borderRadius: 99, padding: "2px 8px" }}>+128 importados</span>
+      <div style={box}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{ fontFamily: FM, fontSize: 10, letterSpacing: "1.5px", color: MIST }}>PROCESSOS</span>
+          <span style={{ fontFamily: FM, fontSize: 10, color: LIME, border: `1px solid ${LIME}66`, borderRadius: 999, padding: "2px 8px" }}>+128 importados</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[0, 1, 2, 3].map((r) => (
-            <div key={r} className="wf-row" style={{ display: "flex", alignItems: "center", gap: 9, animationDelay: `${r * 0.35}s` }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: hue, flexShrink: 0 }} />
-              <span style={{ height: 7, borderRadius: 4, background: "oklch(0.42 0.02 264)", flex: 1 }} />
-              <span style={{ height: 7, width: 46, borderRadius: 4, background: "oklch(0.28 0.015 264)" }} />
-              <span style={{ height: 14, width: 38, borderRadius: 5, background: `color-mix(in oklab,${hue} 18%,oklch(0.16 0.02 264))`, flexShrink: 0 }} />
+            <div key={r} className="lp2-wf-row" style={{ display: "flex", alignItems: "center", gap: 9, animationDelay: `${r * 0.3}s` }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: LIME, flexShrink: 0 }} />
+              <span style={{ height: 6, borderRadius: 4, background: GRAPHITE, flex: 1 }} />
+              <span style={{ height: 6, width: 44, borderRadius: 4, background: GRAPHITE, opacity: 0.5 }} />
             </div>
           ))}
         </div>
@@ -523,70 +275,40 @@ function Wireframe({ i, hue }: { i: number; hue: string }) {
     );
   }
   if (i === 1) {
-    // Captura do diário → cálculo de prazo (chip que estoura)
     return (
-      <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ background: "oklch(0.13 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 9, padding: "10px 12px" }}>
-          <div style={{ fontFamily: FM, fontSize: 9.5, fontWeight: 600, letterSpacing: "1.3px", color: "oklch(0.5 0.02 264)", marginBottom: 7 }}>DIÁRIO OFICIAL · INTIMAÇÃO</div>
-          <div style={{ height: 6, width: "92%", borderRadius: 3, background: "oklch(0.34 0.02 264)", marginBottom: 5 }} />
-          <div style={{ height: 6, width: "64%", borderRadius: 3, background: "oklch(0.26 0.015 264)" }} />
+      <div style={{ ...box, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ border: `1px solid ${GRAPHITE}`, borderRadius: 8, padding: "10px 12px" }}>
+          <div style={{ fontFamily: FM, fontSize: 9.5, letterSpacing: "1.3px", color: MIST, marginBottom: 7 }}>DIÁRIO OFICIAL</div>
+          <div style={{ height: 6, width: "90%", borderRadius: 3, background: GRAPHITE, marginBottom: 5 }} />
+          <div style={{ height: 6, width: "60%", borderRadius: 3, background: GRAPHITE, opacity: 0.6 }} />
         </div>
-        <svg className="wf-arrow" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={hue} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" style={{ alignSelf: "center" }}><path d="M12 5v14M6 13l6 6 6-6" /></svg>
-        <div className="wf-pop" style={{ display: "flex", alignItems: "center", gap: 9, alignSelf: "center", background: `color-mix(in oklab,${hue} 14%,oklch(0.12 0.018 264))`, border: `1px solid color-mix(in oklab,${hue} 30%,transparent)`, borderRadius: 10, padding: "9px 14px" }}>
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "oklch(0.80 0.13 85)" }} />
-          <span style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: "oklch(0.92 0.01 264)" }}>Prazo calculado:</span>
-          <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 600, color: hue }}>5 dias</span>
+        <svg className="lp2-wf-arrow" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={LIME} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" style={{ alignSelf: "center" }}><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        <div className="lp2-wf-pop" style={{ alignSelf: "center", display: "flex", alignItems: "center", gap: 8, background: `${LIME}1a`, border: `1px solid ${LIME}66`, borderRadius: 8, padding: "8px 13px" }}>
+          <span style={{ fontFamily: F, fontSize: 12, color: PAPER }}>Prazo calculado:</span>
+          <span style={{ fontFamily: FM, fontSize: 12, color: LIME }}>5 dias</span>
         </div>
       </div>
     );
   }
-  // Dashboard: barras subindo + índice de êxito
   return (
-    <div style={{ background: "oklch(0.09 0.018 264)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 12, padding: 14, height: "100%" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-        <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, letterSpacing: "1.5px", color: "oklch(0.55 0.02 264)" }}>JURIMETRIA</span>
-        <span style={{ fontFamily: FM, fontSize: 11, fontWeight: 600, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, borderRadius: 99, padding: "2px 9px" }}>68% êxito</span>
+    <div style={box}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <span style={{ fontFamily: FM, fontSize: 10, letterSpacing: "1.5px", color: MIST }}>JURIMETRIA</span>
+        <span style={{ fontFamily: FM, fontSize: 11, color: LIME, border: `1px solid ${LIME}66`, borderRadius: 999, padding: "2px 9px" }}>68% êxito</span>
       </div>
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 64 }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 56 }}>
         {[34, 52, 42, 64, 48].map((h, b) => (
-          <div key={b} className="wf-bar" style={{ flex: 1, height: h, borderRadius: "4px 4px 0 0", background: `linear-gradient(${hue},color-mix(in oklab,${hue} 40%,transparent))`, animationDelay: `${b * 0.18}s` }} />
+          <div key={b} className="lp2-wf-bar" style={{ flex: 1, height: h, borderRadius: "3px 3px 0 0", background: LIME, opacity: 0.85, animationDelay: `${b * 0.15}s` }} />
         ))}
       </div>
     </div>
   );
 }
 
-// Seta curva animada que costura uma etapa à próxima (zigue-zague)
-function CurvedArrow({ toRight, hue }: { toRight: boolean; hue: string }) {
-  const W = 760, H = 84;
-  const x1 = toRight ? W * 0.3 : W * 0.7;
-  const x2 = toRight ? W * 0.7 : W * 0.3;
-  const d = `M ${x1} 0 C ${x1} ${H * 0.55} ${x2} ${H * 0.45} ${x2} ${H - 2}`;
-  return (
-    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} fill="none" aria-hidden="true" style={{ display: "block", margin: "2px 0" }}>
-      <path className="wf-curve" d={d} stroke={hue} strokeWidth={2.2} strokeLinecap="round" opacity={0.7} />
-      <polyline points={`${x2 - 7},${H - 12} ${x2},${H - 2} ${x2 + 7},${H - 12}`} stroke={hue} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+// ── Página ─────────────────────────────────────────────────────────────────────
+export default function LandingV2Page() {
+  const [scrolled, setScrolled] = useState(false);
 
-export default function LandingPage() {
-  const auroraRef      = useRef<HTMLDivElement>(null);
-  const heroMockupRef  = useRef<HTMLDivElement>(null);
-  const heroCardRef    = useRef<HTMLDivElement>(null);
-  const statsRef       = useRef<HTMLDivElement>(null);
-  const statValueRefs  = useRef<(HTMLSpanElement | null)[]>([]);
-  const featureCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
-  const navLinkRefs    = useRef<(HTMLAnchorElement | null)[]>([]);
-  const navContainerRef = useRef<HTMLDivElement>(null);
-  const pillRef        = useRef<HTMLDivElement>(null);
-  const hoverPillRef   = useRef<HTMLDivElement>(null);
-  const scrollTargetRef = useRef<string | null>(null);
-  const scrollTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Scroll reveals
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const reveals = document.querySelectorAll("[data-reveal]");
@@ -598,694 +320,292 @@ export default function LandingPage() {
     return () => obs.disconnect();
   }, []);
 
-  // Hero mount animation
   useEffect(() => {
-    requestAnimationFrame(() => {
-      heroMockupRef.current?.classList.add("mounted");
-      heroCardRef.current?.classList.add("mounted");
-    });
-  }, []);
-
-  // Parallax leve da aurora
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = auroraRef.current;
-    if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        const max = window.innerHeight * 0.1;
-        el.style.transform = `translateY(${Math.min(window.scrollY * 0.08, max)}px)`;
-        raf = 0;
-      });
-    };
+    const onScroll = () => setScrolled(window.scrollY > 32);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
-  }, []);
-
-  // Active section via IntersectionObserver
-  useEffect(() => {
-    const intersecting = new Set<string>();
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        const id = "#" + e.target.id;
-        if (e.isIntersecting) intersecting.add(id);
-        else intersecting.delete(id);
-      });
-      const active = NAV_ITEMS.map(([href]) => href).find(href => intersecting.has(href)) ?? null;
-      if (!scrollTargetRef.current) setActiveSection(active);
-    }, { threshold: 0.3 });
-    NAV_ITEMS.forEach(([href]) => {
-      const el = document.getElementById(href.slice(1));
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
-  }, []);
-
-  // Active pill position
-  useEffect(() => {
-    const pill = pillRef.current;
-    const container = navContainerRef.current;
-    if (!pill || !container) return;
-    const idx = NAV_ITEMS.findIndex(([href]) => href === activeSection);
-    if (idx === -1) { pill.style.opacity = "0"; return; }
-    const link = navLinkRefs.current[idx];
-    if (!link) return;
-    const cRect = container.getBoundingClientRect();
-    const lRect = link.getBoundingClientRect();
-    pill.style.opacity = "1";
-    pill.style.transform = `translateX(${lRect.left - cRect.left}px)`;
-    pill.style.width = `${lRect.width}px`;
-    pill.style.boxShadow = `0 0 12px color-mix(in oklab,${AC} 20%,transparent)`;
-  }, [activeSection]);
-
-  // Hover pill position
-  useEffect(() => {
-    const pill = hoverPillRef.current;
-    const container = navContainerRef.current;
-    if (!pill || !container) return;
-    if (!hoveredHref) { pill.style.opacity = "0"; return; }
-    const idx = NAV_ITEMS.findIndex(([href]) => href === hoveredHref);
-    if (idx === -1) { pill.style.opacity = "0"; return; }
-    const link = navLinkRefs.current[idx];
-    if (!link) return;
-    const cRect = container.getBoundingClientRect();
-    const lRect = link.getBoundingClientRect();
-    pill.style.opacity = "1";
-    pill.style.transform = `translateX(${lRect.left - cRect.left}px)`;
-    pill.style.width = `${lRect.width}px`;
-  }, [hoveredHref]);
-
-  // Count-up on stats enter
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const container = statsRef.current;
-    if (!container) return;
-    let started = false;
-    const obs = new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting || started) return;
-      started = true;
-      obs.disconnect();
-      const duration = 1200;
-      const t0 = performance.now();
-      const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
-      const tick = (now: number) => {
-        const p = Math.min((now - t0) / duration, 1);
-        const ep = easeOutQuart(p);
-        statValueRefs.current.forEach((el, i) => {
-          if (!el) return;
-          const s = statsData[i];
-          const cur = ep * s.target;
-          let fmt: string;
-          if (s.decimal !== undefined) {
-            fmt = cur.toFixed(s.decimal).replace(".", ",");
-          } else if (s.thousands) {
-            fmt = Math.round(cur).toLocaleString("pt-BR");
-          } else {
-            fmt = Math.round(cur).toString();
-          }
-          el.textContent = (s.prefix ?? "") + fmt + (s.suffix ?? "");
-        });
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, { threshold: 0.3 });
-    obs.observe(container);
-    return () => obs.disconnect();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <div style={{ fontFamily: F, color: "oklch(0.97 0.005 264)", background: BG, minHeight: "100vh", position: "relative" }}>
-      {/* eslint-disable-next-line react/no-danger */}
+    <div style={{ fontFamily: F, color: PAPER, background: ABYSSAL, minHeight: "100vh", position: "relative" }}>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
-      {/* ── BG: AURORA (camada 1) ── */}
-      <div ref={auroraRef} className="bg-aurora" style={{ position: "fixed", inset: "-10% 0 0 0", overflow: "hidden", zIndex: 0, pointerEvents: "none", willChange: "transform" }}>
-        <div className="aurora-blob" style={{ position: "absolute", top: "-12%", right: "-6%",  width: 360, height: 420, borderRadius: "50%", background: "oklch(0.50 0.30 274)", filter: "blur(120px)", opacity: 0.26, animation: "aurora-a 35s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "16%",  left: "-9%",  width: 320, height: 360, borderRadius: "50%", background: "oklch(0.46 0.28 310)", filter: "blur(120px)", opacity: 0.24, animation: "aurora-b 42s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "44%",  left: "44%",  width: 380, height: 300, borderRadius: "50%", background: "oklch(0.50 0.20 200)", filter: "blur(130px)", opacity: 0.20, animation: "aurora-c 30s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "68%",  right: "2%",   width: 340, height: 320, borderRadius: "50%", background: "oklch(0.48 0.26 330)", filter: "blur(125px)", opacity: 0.18, animation: "aurora-d 38s ease-in-out infinite" }} />
-        <div className="aurora-blob" style={{ position: "absolute", top: "88%",  left: "12%",   width: 360, height: 300, borderRadius: "50%", background: "oklch(0.46 0.24 274)", filter: "blur(130px)", opacity: 0.18, animation: "aurora-b 46s ease-in-out infinite" }} />
+      {/* ── NAV ── */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, height: 66, zIndex: 30,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 40px", background: scrolled ? ABYSSAL : "transparent",
+        borderBottom: scrolled ? `1px solid ${GRAPHITE}` : "1px solid transparent",
+        transition: "background 400ms ease, border-color 400ms ease", color: PAPER,
+      }}>
+        <Link href="/" className="lp2-textlink" style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em" }}>Lexo</Link>
+        <div className="lp2-navlinks" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          {NAV_ITEMS.map(([href, label]) => (
+            <a key={href} href={href} className="lp2-textlink" style={{ fontFamily: FM, fontSize: 13 }}>{label}</a>
+          ))}
+          <FilledBtn href="/login" on="dark">Entrar</FilledBtn>
+        </div>
+      </nav>
+
+      <ScrollFrameHero />
+
+      {/* ── TRUST BAR ── */}
+      <div style={{ padding: "48px 0", overflow: "hidden", WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)", maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}>
+        <div className="lp2-marquee-track" style={{ fontFamily: FM, fontSize: 13, color: MIST, letterSpacing: "-0.02em" }}>
+          {[...trustNames, ...trustNames].map((name, i) => (
+            <span key={i} style={{ padding: "0 24px", whiteSpace: "nowrap" }}>{name}</span>
+          ))}
+        </div>
       </div>
 
-      {/* ── BG: DOT GRID + BEAM (camada 2) ── */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden",
-        backgroundImage: "radial-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px)",
-        backgroundSize: "32px 32px",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 35%, black, transparent 75%)",
-        maskImage: "radial-gradient(ellipse 80% 60% at 50% 35%, black, transparent 75%)" }}>
-        <div className="bg-beam" />
-      </div>
+      {/* ── FEATURES ── */}
+      <section id="recursos" className="lp2-section" style={{ maxWidth: 900, margin: "0 auto", padding: "64px 40px" }}>
+        <div data-reveal="">
+          {features.map((f) => (
+            <div key={f.n}>
+              <div style={{ display: "grid", gridTemplateColumns: "60px 1fr", gap: 28, padding: "28px 0", alignItems: "baseline" }}>
+                <Counter n={f.n} color={MIST} />
+                <div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+                    <span style={{ fontSize: 22, fontWeight: 400 }}>{f.title}</span>
+                    {f.novo && <span style={{ fontFamily: FM, fontSize: 11, color: LIME }}>· novo</span>}
+                  </div>
+                  <p style={{ fontSize: 18, lineHeight: 1.5, color: MIST, margin: "8px 0 0" }}>{f.desc}</p>
+                </div>
+              </div>
+              <Divider on="dark" />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* ── BG: VINHETA + GRÃO (camada 3) ── */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 100% 100% at 50% 30%, transparent 55%, oklch(0.05 0.02 264 / 0.55) 100%)" }} />
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", opacity: 0.03,
-        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
+      {/* ── COMO FUNCIONA ── */}
+      <section id="como-funciona" className="lp2-section" style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 40px" }}>
+        <h2 data-reveal="" style={{ fontFamily: F, fontSize: 36, fontWeight: 400, letterSpacing: "-0.006em", margin: "0 0 48px" }}>
+          Do primeiro processo ao escritório no automático
+        </h2>
+        {steps.map(({ n, title, desc }, i) => {
+          const onRight = i % 2 === 1;
+          const textBlock = (
+            <div style={{ maxWidth: 420 }}>
+              <Counter n={n} color={MIST} />
+              <h3 style={{ fontSize: 24, fontWeight: 400, margin: "14px 0 8px" }}>{title}</h3>
+              <p style={{ fontSize: 16, lineHeight: 1.5, color: MIST, margin: 0 }}>{desc}</p>
+            </div>
+          );
+          const visual = <StepVisual i={i} />;
+          return (
+            <div key={n}>
+              <div data-reveal="" className="lp2-step" style={{ display: "grid", gridTemplateColumns: onRight ? "1fr 0.85fr" : "0.85fr 1fr", gap: 32, alignItems: "center", padding: "40px 0" }}>
+                {onRight ? <>{visual}{textBlock}</> : <>{textBlock}{visual}</>}
+              </div>
+              {i < steps.length - 1 && <Divider on="dark" />}
+            </div>
+          );
+        })}
+      </section>
 
-      <div style={{ position: "relative", zIndex: 1 }}>
-
-        {/* ── NAV ── */}
-        <nav className="lp-nav" style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", alignItems: "center", gap: 22, padding: "15px 40px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.07 0.022 264 / 0.82)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-            <span style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
-              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 4.5V15H15" />
-                <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
-              </svg>
-            </span>
-            <span style={{ fontFamily: F, fontSize: 21, fontWeight: 700, letterSpacing: "-.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
-          </Link>
-
-          <div
-            ref={navContainerRef}
-            className="lp-navlinks"
-            onMouseLeave={() => setHoveredHref(null)}
-            style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14, position: "relative" }}
-          >
-            {/* Hover pill — aparece imediatamente ao hover */}
-            <div ref={hoverPillRef} className="nav-hover-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: "oklch(1 0 0 / 5%)", opacity: 0, pointerEvents: "none", zIndex: 0 }} />
-            {/* Active pill — desliza com spring ao rolar */}
-            <div ref={pillRef} className="nav-pill" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: 0, borderRadius: 8, background: `color-mix(in oklab,${AC} 14%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 24%,transparent)`, opacity: 0, pointerEvents: "none", zIndex: 1 }} />
-            {NAV_ITEMS.map(([href, label], i) => (
-              <a
-                key={href}
-                href={href}
-                ref={el => { navLinkRefs.current[i] = el; }}
-                onClick={e => {
-                  e.preventDefault();
-                  if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-                  scrollTargetRef.current = href;
-                  setActiveSection(href);
-                  document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-                  scrollTimerRef.current = setTimeout(() => { scrollTargetRef.current = null; }, 1400);
-                }}
-                onMouseEnter={() => setHoveredHref(href)}
-                className="nav-link"
-                style={{ fontFamily: F, fontSize: 14, fontWeight: 500, color: activeSection === href ? "oklch(0.93 0.01 264)" : "oklch(0.62 0.02 264)", padding: "8px 13px", borderRadius: 8, textDecoration: "none", position: "relative", zIndex: 2 }}
-              >
-                {label}
-              </a>
+      {/* ── LEXO IA ── */}
+      <section id="ia" className="lp2-section lp2-ia" style={{ maxWidth: 1100, margin: "0 auto", padding: "104px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
+        <div>
+          <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.7px", margin: 0 }}>
+            Uma inteligência treinada para o jurídico brasileiro
+          </h2>
+          <p data-reveal="" style={{ fontSize: 17, lineHeight: 1.5, color: MIST, margin: "20px 0 0" }}>
+            Resuma processos de centenas de páginas em segundos, gere minutas, calcule prazos a partir das publicações e descubra padrões de decisão por vara, comarca e relator.
+          </p>
+          <div data-reveal="" style={{ marginTop: 32 }}>
+            {iaBullets.map(([bold, text]) => (
+              <div key={bold}>
+                <div style={{ padding: "16px 0" }}>
+                  <Tag label={bold} />
+                  <div style={{ fontSize: 15, color: MIST, marginTop: 6, marginLeft: 14 }}>{text}</div>
+                </div>
+                <Divider on="dark" />
+              </div>
             ))}
-          </div>
-
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
-            <Link href="/login" style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.92 0.01 264)", border: "1px solid oklch(1 0 0 / 14%)", borderRadius: 10, padding: "9px 16px", background: "oklch(0.155 0.02 264)", textDecoration: "none" }}>
-              <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round"><circle cx={12} cy={8} r={4}/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-              <span className="lp-navcta-label">Área do Cliente</span>
-            </Link>
-            <Link href="/registrar" className="cta-btn" style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "#fff", borderRadius: 10, padding: "10px 17px", background: AC, boxShadow: `0 6px 18px color-mix(in oklab,${AC} 40%,transparent)`, textDecoration: "none" }}>
-              Criar conta grátis
-            </Link>
-          </div>
-        </nav>
-
-        {/* ── HERO ── */}
-        <header className="lp-hero lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "78px 40px 60px", display: "grid", gridTemplateColumns: "1.05fr 1fr", gap: 54, alignItems: "center" }}>
-          <div>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: FM, fontSize: 12, fontWeight: 500, color: "oklch(0.78 0.06 274)", border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "6px 13px", letterSpacing: ".3px" }}>
-              <span className="badge-pulse" style={{ fontSize: 14, lineHeight: 1 }}>✦</span>
-              {" "}Agora com Lexo IA &amp; Jurimetria
-            </span>
-
-            <h1 className="text-flow" style={{ fontFamily: F, fontSize: "clamp(38px, 6vw, 64px)", fontWeight: 800, lineHeight: 1.02, letterSpacing: "-2px", margin: "22px 0 0" }}>
-              O sistema que cuida do escritório enquanto você cuida da causa.
-            </h1>
-
-            <p style={{ fontFamily: F, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.68 0.015 264)", maxWidth: 520, margin: "20px 0 0" }}>
-              Processos, prazos, financeiro e relacionamento com o cliente em um só lugar — com inteligência artificial que lê os autos, calcula prazos e antecipa decisões.
-            </p>
-
-            <div style={{ display: "flex", gap: 13, marginTop: 32, flexWrap: "wrap" }}>
-              <Link href="/registrar" className="cta-btn" style={{ display: "flex", alignItems: "center", gap: 9, fontFamily: F, fontSize: 15, fontWeight: 600, color: "#fff", borderRadius: 11, padding: "14px 24px", background: AC, boxShadow: `0 10px 26px color-mix(in oklab,${AC} 42%,transparent)`, textDecoration: "none" }}>
-                Começar teste de 14 dias
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </Link>
-              <Link href="/login" style={{ display: "flex", alignItems: "center", gap: 9, fontFamily: F, fontSize: 15, fontWeight: 600, color: "oklch(0.92 0.01 264)", border: "1px solid oklch(1 0 0 / 16%)", borderRadius: 11, padding: "14px 22px", background: "oklch(0.155 0.02 264)", textDecoration: "none" }}>
-                Entrar na Área do Cliente
-              </Link>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 34, fontFamily: F, fontSize: 13, color: "oklch(0.52 0.015 264)" }}>
-              {["Sem cartão de crédito", "Migração assistida", "LGPD & ISO 27001"].map((t, i) => (
-                <span key={t} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <span style={{ color: i === 2 ? AC3 : AC }}>✓</span>{t}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Dual Mockup ── */}
-          <div style={{ position: "relative", minHeight: 400 }}>
-            <div style={{ position: "absolute", inset: "-12% -8% -8% -8%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 22%,transparent),transparent)`, filter: "blur(34px)", zIndex: 0 }} />
-
-            {/* Main browser panel */}
-            <div ref={heroMockupRef} className="hero-panel" style={{ position: "relative", zIndex: 1, borderRadius: 16, border: "1px solid oklch(1 0 0 / 10%)", background: SURF1, boxShadow: "0 30px 70px oklch(0 0 0 / 0.5)", overflow: "hidden" }}>
-              {/* Browser chrome */}
-              <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "11px 14px", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
-                <span style={{ width: 10, height: 10, borderRadius: "50%", background: "oklch(0.55 0.15 25)" }} />
-                <span style={{ width: 10, height: 10, borderRadius: "50%", background: "oklch(0.78 0.14 80)" }} />
-                <span style={{ width: 10, height: 10, borderRadius: "50%", background: "oklch(0.72 0.15 150)" }} />
-                <span style={{ marginLeft: 10, fontFamily: FM, fontSize: 11, color: "oklch(0.5 0.02 264)" }}>app.lexo.com.br/dashboard</span>
-              </div>
-              {/* Sidebar + content */}
-              <div style={{ display: "flex" }}>
-                {/* Collapsed sidebar */}
-                <div style={{ width: 44, flexShrink: 0, borderRight: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.09 0.018 264)", display: "flex", flexDirection: "column", alignItems: "center", padding: "12px 0", gap: 14 }}>
-                  {[true, false, false, false].map((active, i) => (
-                    <div key={i} style={{ width: 22, height: 22, borderRadius: 6, background: active ? `color-mix(in oklab,${AC} 20%,transparent)` : "oklch(1 0 0 / 5%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 2, background: active ? AC : "oklch(0.55 0.02 264)", opacity: active ? 1 : 0.4 }} />
-                    </div>
-                  ))}
-                </div>
-                {/* Main content */}
-                <div style={{ flex: 1, padding: 14, display: "flex", flexDirection: "column", gap: 11 }}>
-                  {/* KPIs */}
-                  <div style={{ display: "flex", gap: 9 }}>
-                    {[
-                      { label: "Processos ativos", value: "148", accent: false },
-                      { label: "Prazos urgentes",  value: "9",   accent: true  },
-                      { label: "Horas faturáveis", value: "312h", accent: false },
-                    ].map(({ label, value, accent }) => (
-                      <div key={label} style={{ flex: 1, background: accent ? `linear-gradient(160deg,color-mix(in oklab,${AC} 22%,oklch(0.16 0.02 264)),oklch(0.16 0.02 264))` : "oklch(0.16 0.02 264)", border: accent ? `1px solid color-mix(in oklab,${AC} 32%,transparent)` : "1px solid oklch(1 0 0 / 7%)", borderRadius: 10, padding: 11 }}>
-                        <div style={{ fontFamily: F, fontSize: 9, fontWeight: 500, color: accent ? "oklch(0.74 0.05 274)" : "oklch(0.55 0.02 264)" }}>{label}</div>
-                        <div style={{ fontFamily: F, fontSize: 20, fontWeight: 700, color: "oklch(0.97 0.008 264)", marginTop: 4 }}>{value}</div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* AI summary */}
-                  <div style={{ background: "oklch(0.16 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 10, padding: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 9 }}>
-                      <span style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: "oklch(0.86 0.01 264)" }}>Resumo gerado pela Lexo IA</span>
-                      <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 500, color: AC, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, borderRadius: 99, padding: "2px 7px" }}>IA</span>
-                    </div>
-                    {[88, 72, 55].map(w => <div key={w} style={{ height: 6, borderRadius: 99, background: "oklch(1 0 0 / 9%)", marginBottom: 7, width: `${w}%` }} />)}
-                  </div>
-                  {/* Process list with risk badges */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                    {[
-                      { label: "Contestação · Proc. 1023-45", badge: "ALTO", bc: "oklch(0.65 0.18 25)",  dl: "2 dias",  dc: "oklch(0.78 0.14 80)"  },
-                      { label: "Audiência · Proc. 0987-32",   badge: "MED",  bc: "oklch(0.72 0.14 80)",  dl: "5 dias",  dc: "oklch(0.72 0.15 150)" },
-                    ].map(({ label, badge, bc, dl, dc }) => (
-                      <div key={label} style={{ display: "flex", gap: 8, alignItems: "center", background: "oklch(0.16 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 9, padding: "9px 11px" }}>
-                        <span style={{ fontFamily: FM, fontSize: 8, fontWeight: 700, color: bc, background: `color-mix(in oklab,${bc} 18%,transparent)`, borderRadius: 4, padding: "2px 5px", flexShrink: 0 }}>{badge}</span>
-                        <span style={{ fontFamily: F, fontSize: 11, fontWeight: 500, color: "oklch(0.82 0.01 264)", flex: 1 }}>{label}</span>
-                        <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 500, color: dc, flexShrink: 0 }}>{dl}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating AI card */}
-            <div ref={heroCardRef} className="hero-card" style={{ position: "absolute", bottom: -20, left: -40, zIndex: 2, borderRadius: 14, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 10%,oklch(0.13 0.018 264))`, boxShadow: `0 20px 50px oklch(0 0 0 / 0.5), 0 0 0 1px color-mix(in oklab,${AC} 15%,transparent)`, padding: "14px 16px", minWidth: 220, transform: "rotate(-3deg)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                <span style={{ width: 22, height: 22, borderRadius: 7, background: `linear-gradient(135deg,${AC},${AC2})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 3 11 8l5 1.5L11 11l-1.5 5L8 11l-5-1.5L8 8z"/></svg>
-                </span>
-                <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, color: AC, letterSpacing: ".3px" }}>LEXO IA</span>
-              </div>
-              <div style={{ fontFamily: F, fontSize: 11, color: "oklch(0.78 0.01 264)", lineHeight: 1.5, marginBottom: 9 }}>
-                Razões finais vencem em 2 dias. Recomendo priorizar.
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {[
-                  ["Razões finais", "2 dias",  "oklch(0.78 0.14 80)"],
-                  ["Audiência una", "14 dias", "oklch(0.72 0.15 150)"],
-                ].map(([label, prazo, color]) => (
-                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 7, background: "oklch(0.09 0.018 264 / 0.7)", borderRadius: 7, padding: "6px 9px" }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                    <span style={{ fontFamily: F, fontSize: 10, fontWeight: 500, color: "oklch(0.82 0.01 264)", flex: 1 }}>{label}</span>
-                    <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 600, color }}>{prazo}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* ── TRUST BAR ── */}
-        <div className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "8px 40px 18px" }}>
-          <div style={{ fontFamily: FM, fontSize: 12, fontWeight: 500, color: "oklch(0.45 0.02 264)", textAlign: "center", letterSpacing: "1px", marginBottom: 18 }}>
-            USADO POR ESCRITÓRIOS E DEPARTAMENTOS JURÍDICOS EM TODO O BRASIL
-          </div>
-          <div style={{ overflow: "hidden", WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)", maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
-            <div className="marquee-inner">
-              {[...trustNames, ...trustNames].map((n, i) => (
-                <span key={i} style={{ fontFamily: F, fontSize: 19, fontWeight: 700, color: "oklch(0.7 0.02 264)", letterSpacing: "-.5px", whiteSpace: "nowrap", padding: "0 46px", opacity: 0.62 }}>{n}</span>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* ── FEATURES ── */}
-        <section id="recursos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px 32px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
-            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLATAFORMA COMPLETA</div>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Tudo que o escritório precisa, sem trocar de aba</h2>
-          </div>
-          <div
-            onMouseMove={(e) => {
-              featureCardRefs.current.forEach(card => {
-                if (!card) return;
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-                card.style.setProperty("--my", `${e.clientY - rect.top}px`);
-              });
-            }}
-          >
-            {/* Row 1: 2 featured cards */}
-            <div className="lp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-              {features.slice(0, 2).map(({ title, novo, desc, icon, hue }, i) => (
-                <div
-                  key={title}
-                  className="feature-card"
-                  ref={el => { featureCardRefs.current[i] = el; }}
-                  data-reveal=""
-                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 32, transitionDelay: `${i * 80}ms` }}
-                >
-                  <span style={{ width: 48, height: 48, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", color: hue, background: `color-mix(in oklab,${hue} 13%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 22%,transparent)` }}>{icon}</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "20px 0 9px" }}>
-                    <span style={{ fontFamily: F, fontSize: 19, fontWeight: 600, color: "oklch(0.96 0.01 264)" }}>{title}</span>
-                    {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
-                  </div>
-                  <p style={{ fontFamily: F, fontSize: 15, fontWeight: 400, lineHeight: 1.65, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-            {/* Row 2: 4 detail cards */}
-            <div className="lp-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
-              {features.slice(2).map(({ title, novo, desc, icon, hue }, i) => (
-                <div
-                  key={title}
-                  className="feature-card"
-                  ref={el => { featureCardRefs.current[i + 2] = el; }}
-                  data-reveal=""
-                  style={{ background: SURF1, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 16, padding: 22, transitionDelay: `${(i + 2) * 80}ms` }}
-                >
-                  <span style={{ width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: hue, background: `color-mix(in oklab,${hue} 13%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 22%,transparent)` }}>{icon}</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "14px 0 6px" }}>
-                    <span style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>{title}</span>
-                    {novo && <span style={{ fontFamily: FM, fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab,${AC} 16%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, padding: "1px 7px", borderRadius: 999, letterSpacing: ".5px" }}>NOVO</span>}
-                  </div>
-                  <p style={{ fontFamily: F, fontSize: 13, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.60 0.02 264)", margin: 0 }}>{desc}</p>
-                </div>
-              ))}
+        {/* Demo de chat */}
+        <div data-reveal="" style={{ background: `${VOID}33`, border: `1px solid ${GRAPHITE}`, borderRadius: 16, padding: 18 }}>
+          <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+            <span style={{ width: 28, height: 28, borderRadius: 8, background: GRAPHITE, flexShrink: 0 }} />
+            <div style={{ background: `${GRAPHITE}55`, borderRadius: "10px 10px 10px 3px", padding: "10px 13px", fontSize: 13, color: PAPER, lineHeight: 1.5 }}>
+              Resuma o processo 1023-45 e me diga os próximos prazos.
             </div>
           </div>
-        </section>
-
-        {/* ── COMO FUNCIONA ── */}
-        <section id="como-funciona" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 56px" }}>
-            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>COMO FUNCIONA</div>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Do primeiro processo ao escritório no automático</h2>
-            <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: "14px 0 0" }}>Três etapas — veja o que acontece em cada tela.</p>
-          </div>
-          <div style={{ maxWidth: 760, margin: "0 auto" }}>
-            {steps.map(({ n, hue, title, desc }, i) => {
-              const onRight = i % 2 === 1;
-              const textBlock = (
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 13 }}>
-                    <span style={{ fontFamily: FM, fontSize: 12, fontWeight: 700, color: hue, background: `color-mix(in oklab,${hue} 14%,transparent)`, border: `1px solid color-mix(in oklab,${hue} 26%,transparent)`, borderRadius: 8, padding: "4px 9px" }}>{n}</span>
-                    <span style={{ fontFamily: FM, fontSize: 10, fontWeight: 500, letterSpacing: "2px", color: "oklch(0.5 0.02 264)" }}>ETAPA</span>
-                  </div>
-                  <h3 style={{ fontFamily: F, fontSize: 21, fontWeight: 600, letterSpacing: "-0.3px", color: "oklch(0.96 0.01 264)", margin: "0 0 8px" }}>{title}</h3>
-                  <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 400, lineHeight: 1.6, color: "oklch(0.64 0.02 264)", margin: 0 }}>{desc}</p>
-                </div>
-              );
-              const wf = <Wireframe i={i} hue={hue} />;
-              return (
-                <div key={n}>
-                  <div
-                    data-reveal=""
-                    className="lp-step"
-                    style={{ width: "74%", marginLeft: onRight ? "auto" : 0, marginRight: onRight ? 0 : "auto", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 22, display: "grid", gridTemplateColumns: onRight ? "1fr 0.8fr" : "0.8fr 1fr", gap: 22, alignItems: "center", transitionDelay: `${i * 90}ms` }}
-                  >
-                    {onRight ? <>{wf}{textBlock}</> : <>{textBlock}{wf}</>}
-                  </div>
-                  {i < steps.length - 1 && <CurvedArrow toRight={!onRight} hue={steps[i + 1].hue} />}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ── LEXO IA ── */}
-        <section id="ia" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div className="flow-border lp-ia" style={{ borderRadius: 22, background: `linear-gradient(150deg,color-mix(in oklab,${AC} 16%,oklch(0.12 0.018 264)),oklch(0.12 0.018 264) 62%)`, padding: 46, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 46, alignItems: "center" }}>
-            <div>
-              <span data-reveal="" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: FM, fontSize: 11, fontWeight: 600, color: AC, border: `1px solid color-mix(in oklab,${AC} 32%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: "1.5px" }}>✦ LEXO IA</span>
-              <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(26px, 4vw, 34px)", fontWeight: 800, letterSpacing: "-1px", color: "oklch(0.98 0.008 264)", margin: "18px 0 0", lineHeight: 1.1, transitionDelay: "100ms" }}>
-                Uma inteligência treinada para o jurídico brasileiro
-              </h2>
-              <p data-reveal="" style={{ fontFamily: F, fontSize: 16, lineHeight: 1.62, color: "oklch(0.68 0.02 264)", margin: "16px 0 0", transitionDelay: "200ms" }}>
-                Resuma processos de centenas de páginas em segundos, gere minutas, calcule prazos a partir das publicações e descubra padrões de decisão por vara, comarca e relator.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 13, marginTop: 26 }}>
-                {([
-                  ["Resumo de autos",    "— todo o processo em um briefing objetivo.",        300],
-                  ["Prazos automáticos", "— a partir do diário oficial, sem digitação.",       400],
-                  ["Jurimetria",         "— probabilidade de êxito com base em dados reais.", 500],
-                ] as [string, string, number][]).map(([bold, text, delay]) => (
-                  <div key={bold} data-reveal="" style={{ display: "flex", gap: 11, alignItems: "flex-start", transitionDelay: `${delay}ms` }}>
-                    <span style={{ color: AC, marginTop: 2 }}>✓</span>
-                    <span style={{ fontFamily: F, fontSize: 15, color: "oklch(0.82 0.01 264)" }}>
-                      <b style={{ color: "oklch(0.95 0.01 264)", fontWeight: 600 }}>{bold}</b> {text}
-                    </span>
+          <div style={{ display: "flex", gap: 10, flexDirection: "row-reverse" }}>
+            <span style={{ width: 28, height: 28, borderRadius: 8, background: LIME, flexShrink: 0 }} />
+            <div style={{ background: `${LIME}14`, border: `1px solid ${LIME}40`, borderRadius: "10px 3px 10px 10px", padding: "13px 15px", flex: 1 }}>
+              <div style={{ fontSize: 13, color: PAPER, lineHeight: 1.55, marginBottom: 10 }}>
+                Ação trabalhista, fase de instrução. Audiência designada e contestação já protocolada. Próximos prazos:
+                <span className="lp2-cursor-blink" style={{ display: "inline-block", width: 2, height: "1em", background: LIME, verticalAlign: "text-bottom", marginLeft: 2 }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                {[["Razões finais", "2 dias"], ["Audiência una", "14 dias"], ["Análise de mérito", "30 dias"]].map(([label, prazo]) => (
+                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 9, background: `${VOID}55`, borderRadius: 8, padding: "8px 11px" }}>
+                    <span className="lp2-live-dot" />
+                    <span style={{ fontSize: 12, color: PAPER }}>{label}</span>
+                    <span style={{ marginLeft: "auto", fontFamily: FM, fontSize: 11, color: LIME }}>{prazo}</span>
                   </div>
                 ))}
               </div>
             </div>
-            {/* Chat demo */}
-            <div style={{ background: "oklch(0.11 0.018 264 / 0.7)", border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 14, padding: 18 }}>
-              <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
-                <span style={{ width: 30, height: 30, borderRadius: 8, background: "oklch(0.2 0.02 264)", flexShrink: 0 }} />
-                <div style={{ background: "oklch(0.165 0.02 264)", borderRadius: "12px 12px 12px 3px", padding: "11px 14px", fontFamily: F, fontSize: 13, color: "oklch(0.8 0.01 264)", lineHeight: 1.5 }}>
-                  Resuma o processo 1023-45 e me diga os próximos prazos.
-                </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS ── */}
+      <section className="lp2-section lp2-stats" style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 40px", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 40 }}>
+        {statsData.map((s) => (
+          <div key={s.display} data-reveal="">
+            <div style={{ fontFamily: F, fontSize: 58, fontWeight: 400, letterSpacing: "-0.7px", lineHeight: 1 }}>{s.display}</div>
+            <div style={{ fontFamily: FM, fontSize: 13, color: MIST, marginTop: 12 }}>{s.label}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* ── PORTAL DO CLIENTE (flip pra canvas claro, como o Newsroom do source) ── */}
+      <section id="portal" style={{ background: BONE, color: ABYSSAL }}>
+        <div className="lp2-section lp2-portal" style={{ maxWidth: 1200, margin: "0 auto", padding: "104px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div data-reveal="">
+            <h2 style={{ fontFamily: F, fontSize: 36, fontWeight: 400, letterSpacing: "-0.22px", margin: 0, lineHeight: 1.2 }}>
+              Seu cliente acompanha tudo, sem ligar para o escritório
+            </h2>
+            <p style={{ fontSize: 18, lineHeight: 1.5, color: GRAPHITE, margin: "20px 0 0" }}>
+              Pelo acesso à <b style={{ fontWeight: 400, color: ABYSSAL }}>Área do Cliente</b>, ele vê o andamento dos processos, documentos, audiências e situação financeira — com transparência e em tempo real.
+            </p>
+            <div style={{ marginTop: 32 }}>
+              <FilledBtn href="/login" on="light">Acessar Área do Cliente</FilledBtn>
+            </div>
+          </div>
+
+          <div style={{ background: PAPER, border: `1px solid ${LICHEN}`, borderRadius: 20, padding: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 16 }}>
+              <span style={{ width: 36, height: 36, borderRadius: "50%", background: ABYSSAL, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: PAPER }}>MS</span>
+              <div>
+                <div style={{ fontSize: 14 }}>Maria Silva</div>
+                <div style={{ fontFamily: FM, fontSize: 11, color: GRAPHITE }}>Acompanhamento do processo</div>
               </div>
-              <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexDirection: "row-reverse" }}>
-                <span style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg,${AC},${AC2})`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 3 11 8l5 1.5L11 11l-1.5 5L8 11l-5-1.5L8 8z"/></svg>
-                </span>
-                <div style={{ background: `color-mix(in oklab,${AC} 14%,oklch(0.165 0.02 264))`, border: `1px solid color-mix(in oklab,${AC} 26%,transparent)`, borderRadius: "12px 3px 12px 12px", padding: "13px 15px", flex: 1 }}>
-                  <div style={{ fontFamily: F, fontSize: 13, color: "oklch(0.88 0.01 264)", lineHeight: 1.55, marginBottom: 10 }}>
-                    Ação trabalhista, fase de instrução. Audiência designada e contestação já protocolada. Próximos prazos:
-                    <span className="cursor-blink" style={{ display: "inline-block", width: 2, height: "1em", background: AC, verticalAlign: "text-bottom", marginLeft: 2 }} />
+              <span style={{ marginLeft: "auto" }}><Tag label="Em dia" /></span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ border: `1px solid ${LICHEN}`, borderRadius: 12, padding: 13 }}>
+                <div style={{ fontFamily: FM, fontSize: 11, color: GRAPHITE, marginBottom: 6 }}>PROC. 1023-45</div>
+                <div style={{ fontSize: 14 }}>Última movimentação: juntada de petição</div>
+              </div>
+              <div style={{ border: `1px solid ${LICHEN}`, borderRadius: 12, padding: "10px 13px" }}>
+                <div style={{ fontFamily: FM, fontSize: 11, color: GRAPHITE, marginBottom: 4 }}>Notificação</div>
+                <div style={{ fontSize: 13 }}>Nova movimentação no Proc. 1023-45 — prazo de 5 dias a partir de hoje.</div>
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                {[["Honorários", "Em dia"], ["Documentos", "7 arquivos"]].map(([label, value]) => (
+                  <div key={label} style={{ flex: 1, border: `1px solid ${LICHEN}`, borderRadius: 12, padding: 12 }}>
+                    <div style={{ fontFamily: FM, fontSize: 11, color: GRAPHITE }}>{label}</div>
+                    <div style={{ fontSize: 15, marginTop: 3 }}>{value}</div>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                    {([
-                      ["Razões finais",    "2 dias",  "oklch(0.78 0.14 80)",  ""],
-                      ["Audiência una",    "14 dias", "oklch(0.72 0.15 150)", ""],
-                      ["Análise de mérito","30 dias", AC,                     "chat-item-late"],
-                    ] as [string, string, string, string][]).map(([label, prazo, color, cls]) => (
-                      <div key={label} className={cls || undefined} style={{ display: "flex", alignItems: "center", gap: 9, background: "oklch(0.11 0.018 264 / 0.6)", borderRadius: 8, padding: "8px 11px" }}>
-                        <span style={{ width: 7, height: 7, borderRadius: "50%", background: color, flexShrink: 0 }} />
-                        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 500, color: "oklch(0.85 0.01 264)" }}>{label}</span>
-                        <span style={{ marginLeft: "auto", fontFamily: FM, fontSize: 11, fontWeight: 500, color }}>{prazo}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── STATS ── */}
-        <section className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "0px 40px 96px" }}>
-          <div ref={statsRef} data-reveal="" className="flow-border lp-stats" style={{ borderRadius: 18, padding: "40px 32px", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
-            {statsData.map((s, i) => (
-              <div key={s.display} style={{ padding: "0 32px 0 0", borderRight: i < 3 ? "1px solid oklch(1 0 0 / 8%)" : "none", marginRight: i < 3 ? 32 : 0 }}>
-                <div style={{ fontFamily: F, fontSize: "clamp(44px, 7vw, 72px)", fontWeight: 800, letterSpacing: "-2.5px", background: `linear-gradient(120deg,oklch(0.98 0.008 264),color-mix(in oklab,${AC} 60%,oklch(0.9 0.01 264)))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", lineHeight: 1 }}>
-                  <span ref={el => { statValueRefs.current[i] = el; }}>{s.display}</span>
-                </div>
-                <div style={{ fontFamily: F, fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 10, lineHeight: 1.45 }}>{s.label}</div>
+      {/* ── DEPOIMENTOS (segue no canvas claro) ── */}
+      <section id="depoimentos" style={{ background: BONE, color: ABYSSAL }}>
+        <div className="lp2-section" style={{ maxWidth: 780, margin: "0 auto", padding: "64px 40px" }}>
+          {testimonials.map((t, i) => (
+            <div key={t.name}>
+              <div data-reveal="" style={{ padding: "40px 0" }}>
+                <blockquote style={{ fontFamily: F, fontSize: 24, fontWeight: 400, lineHeight: 1.35, margin: 0 }}>{t.quote}</blockquote>
+                <div style={{ fontFamily: FM, fontSize: 13, color: GRAPHITE, marginTop: 20 }}>{t.name} — {t.role}</div>
               </div>
-            ))}
-          </div>
-        </section>
+              {i < testimonials.length - 1 && <Divider on="light" />}
+            </div>
+          ))}
+        </div>
+      </section>
 
-        {/* ── PORTAL DO CLIENTE ── */}
-        <section id="portal" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div className="lp-portal" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 50, alignItems: "center" }}>
-            <div style={{ borderRadius: 16, border: "1px solid oklch(1 0 0 / 10%)", background: SURF1, boxShadow: "0 24px 60px oklch(0 0 0 / 0.45)", padding: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 16 }}>
-                <span style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,oklch(0.55 0.1 210),oklch(0.6 0.1 230))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: F, fontSize: 13, fontWeight: 600, color: "#fff" }}>MS</span>
-                <div>
-                  <div style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>Maria Silva</div>
-                  <div style={{ fontFamily: F, fontSize: 11, color: "oklch(0.55 0.02 264)" }}>Acompanhamento do processo</div>
-                </div>
-                <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, fontFamily: FM, fontSize: 10, fontWeight: 500, color: "oklch(0.72 0.15 150)", background: "oklch(0.72 0.15 150 / 0.14)", borderRadius: 99, padding: "3px 10px" }}>
-                  <span className="live-dot" />
-                  Em dia
+      {/* ── PREÇOS ── */}
+      <section id="precos" className="lp2-section" style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 40px" }}>
+        <h2 data-reveal="" style={{ fontFamily: F, fontSize: 36, fontWeight: 400, letterSpacing: "-0.22px", margin: "0 0 48px", textAlign: "center" }}>
+          Preço por usuário, sem surpresas
+        </h2>
+        <div className="lp2-pricing-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, alignItems: "start" }}>
+          {plans.map((plan, i) => (
+            <div
+              key={plan.name}
+              data-reveal=""
+              style={{
+                position: "relative", borderRadius: 20, padding: 28,
+                border: plan.popular ? `1.5px solid ${LIME}` : `1px solid ${GRAPHITE}`,
+                background: plan.popular ? `${LIME}0d` : "transparent",
+                transitionDelay: `${i * 90}ms`,
+              }}
+            >
+              {plan.popular && (
+                <span className="lp2-shimmer-badge" style={{ position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)", fontFamily: FM, fontSize: 10, color: ABYSSAL, background: LIME, borderRadius: 999, padding: "5px 14px", letterSpacing: ".5px", whiteSpace: "nowrap" }}>
+                  MAIS POPULAR
                 </span>
+              )}
+              <div style={{ fontSize: 18, fontWeight: 400 }}>{plan.name}</div>
+              <div style={{ fontSize: 13, color: MIST, marginTop: 6, minHeight: 36 }}>{plan.tagline}</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 5, margin: "16px 0 4px" }}>
+                <span style={{ fontFamily: F, fontSize: 34, fontWeight: 400, letterSpacing: "-0.5px" }}>{plan.price}</span>
+                {plan.period && <span style={{ fontFamily: FM, fontSize: 12, color: MIST }}>{plan.period}</span>}
+              </div>
+              <div style={{ margin: "18px 0 20px" }}>
+                <FilledBtn href="/registrar" on="dark" full>{plan.cta}</FilledBtn>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ background: "oklch(0.16 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 11, padding: 13 }}>
-                  <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: "oklch(0.55 0.02 264)", marginBottom: 6 }}>PROC. 1023-45</div>
-                  <div style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "oklch(0.86 0.01 264)" }}>Última movimentação: juntada de petição</div>
-                </div>
-                <div style={{ background: "oklch(0.14 0.018 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 11, padding: "10px 13px" }}>
-                  <div style={{ fontFamily: F, fontSize: 11, color: "oklch(0.52 0.015 264)", marginBottom: 4 }}>Notificação</div>
-                  <div style={{ fontFamily: F, fontSize: 12, fontWeight: 500, color: "oklch(0.80 0.01 264)" }}>Nova movimentação no Proc. 1023-45 — prazo de 5 dias a partir de hoje.</div>
-                </div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  {[["Honorários", "Em dia", "oklch(0.72 0.15 150)"], ["Documentos", "7 arquivos", "oklch(0.88 0.01 264)"]].map(([label, value, color]) => (
-                    <div key={label} style={{ flex: 1, background: "oklch(0.16 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 11, padding: 12 }}>
-                      <div style={{ fontFamily: F, fontSize: 10, color: "oklch(0.55 0.02 264)" }}>{label}</div>
-                      <div style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color, marginTop: 3 }}>{value}</div>
-                    </div>
-                  ))}
-                </div>
+                {plan.items.map((item) => (
+                  <div key={item} style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: MIST }}>
+                    <span style={{ color: LIME, flexShrink: 0 }}>✓</span>{item}
+                  </div>
+                ))}
               </div>
             </div>
-            <div data-reveal="">
-              <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PORTAL DO CLIENTE</div>
-              <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
-                Seu cliente acompanha tudo, sem ligar para o escritório
-              </h2>
-              <p style={{ fontFamily: F, fontSize: 16, lineHeight: 1.62, color: "oklch(0.68 0.02 264)", margin: "16px 0 0" }}>
-                Pelo acesso à <b style={{ color: "oklch(0.92 0.01 264)", fontWeight: 600 }}>Área do Cliente</b>, ele vê o andamento dos processos, documentos, audiências e situação financeira — com transparência e em tempo real.
-              </p>
-              <Link href="/login" className="cta-btn" style={{ display: "inline-flex", alignItems: "center", gap: 9, marginTop: 26, fontFamily: F, fontSize: 15, fontWeight: 600, color: "#fff", borderRadius: 11, padding: "13px 22px", background: AC, boxShadow: `0 10px 26px color-mix(in oklab,${AC} 42%,transparent)`, textDecoration: "none" }}>
-                Acessar Área do Cliente
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </Link>
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </section>
 
-        {/* ── RELATOS DE CLIENTES ── */}
-        <section id="depoimentos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 52px" }}>
-            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>RELATOS DE CLIENTES</div>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>Escritórios que já vivem sem retrabalho</h2>
-          </div>
-          <div className="lp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
-            {testimonials.map(({ quote, name, role, initial, hue }, i) => (
-              <figure
-                key={name}
-                data-reveal=""
-                style={{ display: "flex", flexDirection: "column", background: SURF1, border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 18, padding: 28, margin: 0, transitionDelay: `${i * 90}ms` }}
-              >
-                <div style={{ display: "flex", gap: 3, marginBottom: 16 }} aria-label="5 de 5 estrelas">
-                  {Array.from({ length: 5 }).map((_, s) => (
-                    <svg key={s} width={15} height={15} viewBox="0 0 24 24" fill="oklch(0.80 0.13 85)" stroke="none" aria-hidden="true"><path d="M12 2l3 6.5 7 .9-5.1 4.8 1.3 7-6.2-3.4-6.2 3.4 1.3-7L2 9.4l7-.9z"/></svg>
-                  ))}
-                </div>
-                <blockquote style={{ flex: 1, fontFamily: F, fontSize: 15.5, fontWeight: 400, lineHeight: 1.62, color: "oklch(0.84 0.012 264)", margin: 0 }}>“{quote}”</blockquote>
-                <figcaption style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 22 }}>
-                  <span style={{ width: 40, height: 40, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: F, fontSize: 13, fontWeight: 600, color: "#fff", background: `linear-gradient(135deg,${hue},color-mix(in oklab,${hue} 55%,oklch(0.30 0.04 274)))` }}>{initial}</span>
-                  <span>
-                    <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.93 0.01 264)" }}>{name}</span>
-                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: "oklch(0.55 0.02 264)" }}>{role}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
+      {/* ── CTA FINAL ── */}
+      <section className="lp2-section" style={{ maxWidth: 900, margin: "0 auto", padding: "104px 40px", textAlign: "center" }}>
+        <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 5vw, 58px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.7px", margin: 0 }}>
+          Pronto para tirar o escritório do caos?
+        </h2>
+        <p data-reveal="" style={{ fontSize: 18, color: MIST, maxWidth: 480, margin: "20px auto 0" }}>
+          Comece grátis hoje. Migramos seus processos e treinamos sua equipe sem custo.
+        </p>
+        <div data-reveal="" style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 40, flexWrap: "wrap" }}>
+          <FilledBtn href="/registrar" on="dark">Começar teste de 14 dias</FilledBtn>
+          <GhostBtn href="/registrar" color={PAPER}>Falar com vendas</GhostBtn>
+        </div>
+      </section>
 
-        {/* ── PRICING ── */}
-        <section id="precos" className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "104px 40px" }}>
-          <div data-reveal="" style={{ textAlign: "center", maxWidth: 600, margin: "0 auto 52px" }}>
-            <div style={{ fontFamily: FM, fontSize: 11, fontWeight: 500, color: AC, letterSpacing: "2.5px", marginBottom: 14 }}>PLANOS</div>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0 }}>Preço por usuário, sem surpresas</h2>
+      {/* ── FOOTER ── */}
+      <footer style={{ background: VOID, color: MIST }}>
+        <div className="lp2-section lp2-footer" style={{ maxWidth: 1200, margin: "0 auto", padding: "64px 40px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 40, fontFamily: FM, fontSize: 13 }}>
+          <div>
+            <div style={{ fontFamily: F, fontSize: 20, color: PAPER, marginBottom: 8 }}>Lexo</div>
+            <div style={{ marginTop: 8 }}>© 2026 Lexo Tecnologia Jurídica</div>
+            <div style={{ marginTop: 8 }}>LGPD &amp; ISO 27001</div>
           </div>
-          <div className="lp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, alignItems: "start" }}>
-            {plans.map((plan, i) => (
-              <div
-                key={plan.name}
-                className={`pricing-card${plan.popular ? " pricing-popular" : ""}`}
-                data-reveal=""
-                style={{
-                  borderRadius: 18, padding: 28, position: "relative",
-                  border: plan.accent ? `1px solid color-mix(in oklab,${AC} 40%,transparent)` : "1px solid oklch(1 0 0 / 9%)",
-                  background: plan.accent ? `linear-gradient(160deg,color-mix(in oklab,${AC} 14%,oklch(0.13 0.018 264)),oklch(0.13 0.018 264))` : "oklch(0.13 0.018 264)",
-                  boxShadow: plan.popular ? `0 0 60px color-mix(in oklab,${AC} 20%,transparent), 0 0 120px color-mix(in oklab,${AC_MG} 12%,transparent)` : "none",
-                  transitionDelay: `${i * 100}ms`,
-                }}
-              >
-                {plan.popular && (
-                  <span className="badge-shimmer" style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", fontFamily: FM, fontSize: 10, fontWeight: 600, color: "#fff", background: AC, borderRadius: 999, padding: "4px 13px", letterSpacing: ".5px", whiteSpace: "nowrap" }}>MAIS POPULAR</span>
-                )}
-                <div style={{ fontFamily: F, fontSize: 16, fontWeight: 600, color: "oklch(0.95 0.01 264)" }}>{plan.name}</div>
-                <div style={{ fontFamily: F, fontSize: 13, color: "oklch(0.6 0.02 264)", marginTop: 5, minHeight: 38 }}>{plan.tagline}</div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 5, margin: "16px 0 4px" }}>
-                  <span style={{ fontFamily: F, fontSize: 38, fontWeight: 800, color: "oklch(0.98 0.008 264)", letterSpacing: "-1.5px" }}>{plan.price}</span>
-                  {plan.period && <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.58 0.02 264)" }}>{plan.period}</span>}
-                </div>
-                <Link href="/registrar" className="cta-btn" style={{ display: "block", textAlign: "center", margin: "18px 0 20px", fontFamily: F, fontSize: 14, fontWeight: 600, borderRadius: 10, padding: 12, color: plan.accent ? "#fff" : "oklch(0.92 0.01 264)", background: plan.accent ? AC : "oklch(0.18 0.02 264)", border: plan.accent ? "none" : "1px solid oklch(1 0 0 / 14%)", textDecoration: "none" }}>
-                  {plan.cta}
-                </Link>
-                <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
-                  {plan.items.map(item => (
-                    <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start", fontFamily: F, fontSize: 13, color: "oklch(0.74 0.02 264)" }}>
-                      <span style={{ color: AC, flexShrink: 0, marginTop: 1 }}>✓</span>{item}
-                    </div>
-                  ))}
-                </div>
+          <div>
+            {["#recursos", "#precos"].map((href) => (
+              <div key={href} style={{ marginTop: 8 }}>
+                <a href={href} className="lp2-textlink">{href === "#recursos" ? "Recursos" : "Preços"}</a>
               </div>
             ))}
+            <div style={{ marginTop: 8 }}><Link href="/login" className="lp2-textlink">Área do Cliente</Link></div>
           </div>
-        </section>
-
-        {/* ── CTA FINAL ── */}
-        <section className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: "40px 40px 96px" }}>
-          <div style={{ borderRadius: 22, border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`, background: "oklch(0.10 0.018 264)", padding: "56px 40px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-            {/* Static outer orb */}
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 320, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC} 18%,transparent),transparent)`, filter: "blur(40px)", opacity: 0.5, pointerEvents: "none" }} />
-            {/* Pulsing inner orb */}
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 400, height: 180, borderRadius: "50%", background: `radial-gradient(closest-side,color-mix(in oklab,${AC_MG} 26%,transparent),transparent)`, filter: "blur(28px)", animation: "glow-pulse 3s ease-in-out infinite", pointerEvents: "none" }} />
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <h2 data-reveal="" style={{ fontFamily: F, fontSize: "clamp(28px, 4.8vw, 42px)", fontWeight: 800, letterSpacing: "-1.2px", color: "oklch(0.98 0.008 264)", margin: 0, lineHeight: 1.1 }}>
-                Pronto para tirar o escritório do caos?
-              </h2>
-              <p data-reveal="" style={{ fontFamily: F, fontSize: 17, color: "oklch(0.68 0.02 264)", margin: "14px auto 0", maxWidth: 480, transitionDelay: "100ms" }}>
-                Comece grátis hoje. Migramos seus processos e treinamos sua equipe sem custo.
-              </p>
-              <div data-reveal="" style={{ display: "flex", gap: 13, justifyContent: "center", marginTop: 30, flexWrap: "wrap", transitionDelay: "200ms" }}>
-                <Link href="/registrar" className="cta-btn" style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: "#fff", borderRadius: 11, padding: "14px 26px", background: AC, boxShadow: `0 10px 26px color-mix(in oklab,${AC} 42%,transparent)`, textDecoration: "none" }}>
-                  Começar teste de 14 dias
-                </Link>
-                <Link href="/registrar" className="cta-btn" style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: "oklch(0.92 0.01 264)", border: "1px solid oklch(1 0 0 / 16%)", borderRadius: 11, padding: "14px 24px", background: "oklch(0.155 0.02 264)", textDecoration: "none" }}>
-                  Falar com vendas
-                </Link>
-              </div>
-            </div>
+          <div>
+            <div style={{ marginTop: 8 }}>São Paulo, Brasil</div>
           </div>
-        </section>
-
-        {/* ── FOOTER ── */}
-        <footer style={{ borderTop: "1px solid oklch(1 0 0 / 7%)" }}>
-          <div className="lp-section" style={{ maxWidth: 1180, margin: "0 auto", padding: 40, display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-              <span style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.16 0.020 264)" }}>
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8 4.5V15H15" />
-                  <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
-                </svg>
-              </span>
-              <span style={{ fontFamily: F, fontSize: 18, fontWeight: 700, color: "oklch(0.98 0.008 264)", letterSpacing: "-.5px" }}>Lexo</span>
-            </Link>
-            <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.52 0.015 264)" }}>
-              © 2026 Lexo Tecnologia Jurídica · LGPD &amp; ISO 27001
-            </span>
-            <div style={{ marginLeft: "auto", display: "flex", gap: 20 }}>
-              {[["#recursos", "Recursos"], ["#precos", "Preços"]].map(([href, label]) => (
-                <a key={href} href={href} className="nav-link" style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "oklch(0.6 0.02 264)", textDecoration: "none" }}>{label}</a>
-              ))}
-              <Link href="/login" style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "oklch(0.6 0.02 264)", textDecoration: "none" }}>Área do Cliente</Link>
-            </div>
-          </div>
-        </footer>
-
-      </div>
+        </div>
+      </footer>
     </div>
   );
 }
