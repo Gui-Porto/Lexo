@@ -4,8 +4,7 @@ import { useActionState, useState, useRef } from "react";
 import Link from "next/link";
 import { registerOrganization, signupWithGoogle } from "@/actions/auth";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
 const F = "'Geist', var(--font-geist), sans-serif";
 const FM = "'Geist Mono', var(--font-geist-mono), monospace";
 
@@ -19,7 +18,7 @@ function pwStrength(p: string): number {
 }
 
 const STRENGTH = [
-  { w: "0%",   c: "oklch(0.55 0.02 264)", l: "—" },
+  { w: "0%",   c: "#93a09f", l: "—" },
   { w: "33%",  c: "oklch(0.68 0.2 25)",   l: "Fraca" },
   { w: "66%",  c: "oklch(0.78 0.16 80)",  l: "Razoável" },
   { w: "85%",  c: "oklch(0.78 0.14 130)", l: "Boa" },
@@ -95,44 +94,44 @@ export default function RegisterPage() {
         padding: "48px 52px",
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(155deg, oklch(0.14 0.03 280), oklch(0.10 0.018 264))",
+        background: "linear-gradient(155deg, #222f30, #1a2425)",
       }}>
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(900px 600px at 20% 0%, color-mix(in oklab,${AC} 22%,transparent), transparent 60%)`, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", width: 460, height: 460, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC2} 25%,transparent), transparent)`, filter: "blur(30px)", right: -140, bottom: -120, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC} 18%,transparent), transparent)`, filter: "blur(24px)", left: 10, top: 100, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(900px 600px at 20% 0%, color-mix(in oklab,#2c3b3c 22%,transparent), transparent 60%)`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 460, height: 460, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,#2c3b3c 25%,transparent), transparent)`, filter: "blur(30px)", right: -140, bottom: -120, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,#2c3b3c 18%,transparent), transparent)`, filter: "blur(24px)", left: 10, top: 100, pointerEvents: "none" }} />
 
         {/* Logo */}
         <Link href="/" style={{ position: "relative", display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-          <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+          <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#222f30" }}>
             <svg width={19} height={19} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 4.5V15H15" />
-              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+              <path d="M5 19.5h14" stroke="#cef79e" strokeWidth={2} />
             </svg>
           </span>
-          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
+          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.6px", color: "#ffffff" }}>Lexo</span>
         </Link>
 
         <div style={{ position: "relative", marginTop: "auto", paddingTop: 56 }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: `500 11px ${FM}`, color: "oklch(0.82 0.05 274)", border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: ".5px" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: `500 11px ${FM}`, color: "#cef79e", border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: ".5px" }}>
             TESTE GRÁTIS · 14 DIAS · SEM CARTÃO
           </span>
 
-          <h1 style={{ font: `800 40px ${F}`, lineHeight: 1.1, letterSpacing: "-1.5px", color: "oklch(0.98 0.008 264)", margin: "20px 0 0", maxWidth: 420 }}>
+          <h1 style={{ font: `800 40px ${F}`, lineHeight: 1.1, letterSpacing: "-1.5px", color: "#ffffff", margin: "20px 0 0", maxWidth: 420 }}>
             Tire o seu escritório<br />do caos em{" "}
-            <span style={{ background: `linear-gradient(90deg,${AC},${AC2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ color: "#cef79e" }}>
               poucos minutos.
             </span>
           </h1>
-          <p style={{ font: `400 15px ${F}`, lineHeight: 1.65, color: "oklch(0.66 0.02 264)", maxWidth: 390, margin: "14px 0 0" }}>
+          <p style={{ font: `400 15px ${F}`, lineHeight: 1.65, color: "#93a09f", maxWidth: 390, margin: "14px 0 0" }}>
             Centralize processos, prazos e financeiro. Sua equipe começa a usar no mesmo dia.
           </p>
 
           {/* Stats */}
-          <div style={{ display: "flex", marginTop: 26, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 13, overflow: "hidden" }}>
+          <div style={{ display: "flex", marginTop: 26, border: "1px solid #4d5757", borderRadius: 13, overflow: "hidden" }}>
             {[["620+", "escritórios"], ["4.9 ★", "avaliação média"], ["2 min", "p/ configurar"]].map(([n, l], i) => (
-              <div key={i} style={{ flex: 1, textAlign: "center", padding: "14px 10px", background: "oklch(1 0 0 / 4%)", borderLeft: i > 0 ? "1px solid oklch(1 0 0 / 8%)" : undefined }}>
-                <div style={{ font: `700 22px ${F}`, color: "oklch(0.98 0.008 264)" }}>{n}</div>
-                <div style={{ font: `400 11px ${F}`, color: "oklch(0.52 0.02 264)", marginTop: 2 }}>{l}</div>
+              <div key={i} style={{ flex: 1, textAlign: "center", padding: "14px 10px", background: "#4d57570a", borderLeft: i > 0 ? "1px solid #4d5757" : undefined }}>
+                <div style={{ font: `700 22px ${F}`, color: "#ffffff" }}>{n}</div>
+                <div style={{ font: `400 11px ${F}`, color: "#93a09f", marginTop: 2 }}>{l}</div>
               </div>
             ))}
           </div>
@@ -144,22 +143,22 @@ export default function RegisterPage() {
                 <span style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 13%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 22%,transparent)` }}>
                   {icon}
                 </span>
-                <span style={{ font: `500 14px ${F}`, color: "oklch(0.84 0.01 264)" }}>{text}</span>
+                <span style={{ font: `500 14px ${F}`, color: "#ffffff" }}>{text}</span>
               </div>
             ))}
           </div>
 
           {/* Testimonial */}
-          <div style={{ marginTop: 24, padding: "18px 20px", background: "oklch(1 0 0 / 5%)", border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 14 }}>
+          <div style={{ marginTop: 24, padding: "18px 20px", background: "#4d57570d", border: "1px solid #4d5757", borderRadius: 14 }}>
             <div style={{ color: "oklch(0.78 0.16 80)", fontSize: 13, marginBottom: 10, letterSpacing: 1 }}>★★★★★</div>
-            <p style={{ margin: 0, font: `400 13px ${F}`, color: "oklch(0.74 0.02 264)", lineHeight: 1.65 }}>
+            <p style={{ margin: 0, font: `400 13px ${F}`, color: "#ffffff", lineHeight: 1.65 }}>
               &ldquo;O Lexo reduziu o tempo de abertura de processos em 70%. A equipe adaptou em dois dias.&rdquo;
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: `linear-gradient(135deg,${AC},${AC2})`, display: "flex", alignItems: "center", justifyContent: "center", font: `600 13px ${F}`, color: "#fff", flexShrink: 0 }}>F</div>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#2c3b3c", display: "flex", alignItems: "center", justifyContent: "center", font: `600 13px ${F}`, color: "#fff", flexShrink: 0 }}>F</div>
               <div>
-                <div style={{ font: `600 13px ${F}`, color: "oklch(0.9 0.01 264)" }}>Fernanda Lima</div>
-                <div style={{ font: `400 11px ${F}`, color: "oklch(0.52 0.02 264)" }}>Lima &amp; Faria Advocacia · Curitiba</div>
+                <div style={{ font: `600 13px ${F}`, color: "#ffffff" }}>Fernanda Lima</div>
+                <div style={{ font: `400 11px ${F}`, color: "#93a09f" }}>Lima &amp; Faria Advocacia · Curitiba</div>
               </div>
             </div>
           </div>
@@ -167,36 +166,36 @@ export default function RegisterPage() {
       </div>
 
       {/* ── RIGHT FORM ─────────────────────────────────────────────── */}
-      <div className="auth-form" style={{ flex: 1.12, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
+      <div className="auth-form" style={{ flex: 1.12, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "#222f30", overflowY: "auto" }}>
         <div style={{ width: "100%", maxWidth: 440 }}>
 
           {/* Top nav */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             {step === 1 ? (
-              <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "oklch(0.52 0.02 264)", textDecoration: "none" }}>
+              <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "#93a09f", textDecoration: "none" }}>
                 <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
                 Voltar
               </Link>
             ) : (
-              <button type="button" onClick={() => setStep(1)} style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "oklch(0.52 0.02 264)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <button type="button" onClick={() => setStep(1)} style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "#93a09f", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                 <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
                 Voltar
               </button>
             )}
-            <span style={{ font: `500 11px ${FM}`, color: "oklch(0.42 0.02 264)", letterSpacing: ".4px" }}>
+            <span style={{ font: `500 11px ${FM}`, color: "#93a09f", letterSpacing: ".4px" }}>
               PASSO {step} DE 2
             </span>
           </div>
 
           {/* Step bar */}
-          <div style={{ height: 3, borderRadius: 99, background: "oklch(1 0 0 / 10%)", marginBottom: 22, overflow: "hidden" }}>
+          <div style={{ height: 3, borderRadius: 99, background: "#4d57571a", marginBottom: 22, overflow: "hidden" }}>
             <div style={{ height: "100%", borderRadius: 99, background: AC, width: step === 1 ? "50%" : "100%", transition: "width 0.35s ease" }} />
           </div>
 
-          <h2 style={{ font: `700 26px ${F}`, letterSpacing: "-.7px", color: "oklch(0.98 0.008 264)", margin: 0 }}>
+          <h2 style={{ font: `700 26px ${F}`, letterSpacing: "-.7px", color: "#ffffff", margin: 0 }}>
             {step === 1 ? "Cadastre seu escritório" : "Acesso à conta"}
           </h2>
-          <p style={{ font: `400 14px ${F}`, color: "oklch(0.56 0.02 264)", margin: "6px 0 20px" }}>
+          <p style={{ font: `400 14px ${F}`, color: "#93a09f", margin: "6px 0 20px" }}>
             {step === 1 ? "Leva menos de 2 minutos. Você será o administrador." : "Defina o e-mail e senha para entrar no Lexo."}
           </p>
 
@@ -209,46 +208,46 @@ export default function RegisterPage() {
 
               {/* Nome do escritório */}
               <div>
-                <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>Nome do escritório</label>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: `1px solid ${officeFocused ? AC : "oklch(1 0 0 / 12%)"}`, borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)", transition: "border-color .15s" }}>
-                  <span style={{ color: "oklch(0.5 0.02 264)", display: "flex", flexShrink: 0 }}>
+                <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>Nome do escritório</label>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: `1px solid ${officeFocused ? AC : "#4d5757"}`, borderRadius: 11, padding: "0 14px", background: "#222f30", transition: "border-color .15s" }}>
+                  <span style={{ color: "#93a09f", display: "flex", flexShrink: 0 }}>
                     <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01M9 12h.01M9 15h.01"/></svg>
                   </span>
-                  <input ref={orgNameRef} name="organizationName" type="text" required placeholder="Ex.: Andrade Advocacia" onFocus={() => setOfficeFocused(true)} onBlur={() => setOfficeFocused(false)} style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none" }} />
+                  <input ref={orgNameRef} name="organizationName" type="text" required placeholder="Ex.: Andrade Advocacia" onFocus={() => setOfficeFocused(true)} onBlur={() => setOfficeFocused(false)} style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none" }} />
                 </div>
               </div>
 
               {/* Seu nome */}
               <div>
-                <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>Seu nome</label>
-                <div style={{ display: "flex", alignItems: "center", height: 46, border: "1px solid oklch(1 0 0 / 12%)", borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)" }}>
-                  <input ref={nameRef} name="name" type="text" required placeholder="Nome completo" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none" }} />
+                <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>Seu nome</label>
+                <div style={{ display: "flex", alignItems: "center", height: 46, border: "1px solid #4d5757", borderRadius: 11, padding: "0 14px", background: "#222f30" }}>
+                  <input ref={nameRef} name="name" type="text" required placeholder="Nome completo" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none" }} />
                 </div>
               </div>
 
               {/* OAB */}
               <div>
-                <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>
-                  OAB <span style={{ color: "oklch(0.42 0.02 264)", fontWeight: 400 }}>(opcional)</span>
+                <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>
+                  OAB <span style={{ color: "#93a09f", fontWeight: 400 }}>(opcional)</span>
                 </label>
-                <div style={{ display: "flex", alignItems: "center", height: 46, border: "1px solid oklch(1 0 0 / 12%)", borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)" }}>
-                  <input name="oab" type="text" placeholder="SP 000.000" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none" }} />
+                <div style={{ display: "flex", alignItems: "center", height: 46, border: "1px solid #4d5757", borderRadius: 11, padding: "0 14px", background: "#222f30" }}>
+                  <input name="oab" type="text" placeholder="SP 000.000" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none" }} />
                 </div>
               </div>
 
               {/* Telefone + Tamanho da equipe */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
-                  <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>Telefone</label>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid oklch(1 0 0 / 12%)", borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)" }}>
-                    <span style={{ color: "oklch(0.5 0.02 264)", display: "flex", flexShrink: 0 }}>
+                  <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>Telefone</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid #4d5757", borderRadius: 11, padding: "0 14px", background: "#222f30" }}>
+                    <span style={{ color: "#93a09f", display: "flex", flexShrink: 0 }}>
                       <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5A16 16 0 0 0 12 12.59 16 16 0 0 0 15.5 16.08l.86-.86a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 23 17.5"/></svg>
                     </span>
-                    <input name="phone" type="tel" placeholder="(11) 99999-9999" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none" }} />
+                    <input name="phone" type="tel" placeholder="(11) 99999-9999" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none" }} />
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>Tamanho da equipe</label>
+                  <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>Tamanho da equipe</label>
                   <div style={{ position: "relative" }}>
                     <input type="hidden" name="teamSize" value={teamSizeValue} />
                     {teamSizeOpen && (
@@ -257,21 +256,21 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setTeamSizeOpen((v) => !v)}
-                      style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", height: 46, border: `1px solid ${teamSizeOpen ? AC : "oklch(1 0 0 / 12%)"}`, borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)", cursor: "pointer", transition: "border-color .15s" }}
+                      style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", height: 46, border: `1px solid ${teamSizeOpen ? AC : "#4d5757"}`, borderRadius: 11, padding: "0 14px", background: "#222f30", cursor: "pointer", transition: "border-color .15s" }}
                     >
-                      <span style={{ font: `400 14px ${F}`, color: teamSizeValue ? "oklch(0.95 0.01 264)" : "oklch(0.44 0.02 264)" }}>
+                      <span style={{ font: `400 14px ${F}`, color: teamSizeValue ? "#ffffff" : "#93a09f" }}>
                         {teamSizeValue ? TEAM_SIZES.find((o) => o.value === teamSizeValue)?.label : "Selecione"}
                       </span>
-                      <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="oklch(0.5 0.02 264)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: teamSizeOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .2s" }}><path d="M6 9l6 6 6-6"/></svg>
+                      <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#93a09f" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: teamSizeOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .2s" }}><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     {teamSizeOpen && (
-                      <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "oklch(0.16 0.022 264)", border: "1px solid oklch(1 0 0 / 14%)", borderRadius: 11, overflow: "hidden", zIndex: 10, boxShadow: "0 8px 24px oklch(0 0 0 / 40%)" }}>
+                      <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "#222f30", border: "1px solid #4d5757", borderRadius: 11, overflow: "hidden", zIndex: 10, boxShadow: "0 8px 24px oklch(0 0 0 / 40%)" }}>
                         {TEAM_SIZES.map((opt) => (
                           <button
                             key={opt.value}
                             type="button"
                             onClick={() => { setTeamSizeValue(opt.value); setTeamSizeOpen(false); }}
-                            style={{ width: "100%", textAlign: "left", padding: "11px 14px", font: `400 14px ${F}`, color: teamSizeValue === opt.value ? AC : "oklch(0.88 0.01 264)", background: teamSizeValue === opt.value ? `color-mix(in oklab,${AC} 10%,transparent)` : "transparent", border: "none", cursor: "pointer", display: "block" }}
+                            style={{ width: "100%", textAlign: "left", padding: "11px 14px", font: `400 14px ${F}`, color: teamSizeValue === opt.value ? AC : "#ffffff", background: teamSizeValue === opt.value ? `color-mix(in oklab,${AC} 10%,transparent)` : "transparent", border: "none", cursor: "pointer", display: "block" }}
                           >
                             {opt.label}
                           </button>
@@ -289,10 +288,9 @@ export default function RegisterPage() {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
                   font: `600 15px ${F}`,
-                  color: "#fff",
+                  color: "#222f30",
                   borderRadius: 11, height: 50, border: "none",
-                  background: `linear-gradient(135deg,${AC},${AC2})`,
-                  boxShadow: `0 10px 28px color-mix(in oklab,${AC} 36%,transparent)`,
+                  background: "#cef79e",
                   cursor: "pointer",
                   transition: "all .2s",
                 }}
@@ -306,23 +304,23 @@ export default function RegisterPage() {
 
               {/* E-mail */}
               <div>
-                <label style={{ display: "block", font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)", marginBottom: 7 }}>E-mail de trabalho</label>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid oklch(1 0 0 / 12%)", borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)" }}>
-                  <span style={{ color: "oklch(0.5 0.02 264)", display: "flex", flexShrink: 0 }}>
+                <label style={{ display: "block", font: `500 13px ${F}`, color: "#93a09f", marginBottom: 7 }}>E-mail de trabalho</label>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid #4d5757", borderRadius: 11, padding: "0 14px", background: "#222f30" }}>
+                  <span style={{ color: "#93a09f", display: "flex", flexShrink: 0 }}>
                     <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
                   </span>
-                  <input name="email" type="email" required placeholder="voce@escritorio.com.br" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none" }} />
+                  <input name="email" type="email" required placeholder="voce@escritorio.com.br" style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none" }} />
                 </div>
               </div>
 
               {/* Senha + strength meter */}
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
-                  <label style={{ font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)" }}>Crie uma senha</label>
-                  <span style={{ font: `400 12px ${F}`, color: "oklch(0.44 0.02 264)" }}>Mín. 8 caracteres</span>
+                  <label style={{ font: `500 13px ${F}`, color: "#93a09f" }}>Crie uma senha</label>
+                  <span style={{ font: `400 12px ${F}`, color: "#93a09f" }}>Mín. 8 caracteres</span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid oklch(1 0 0 / 12%)", borderRadius: 11, padding: "0 14px", background: "oklch(0.145 0.02 264)" }}>
-                  <span style={{ color: "oklch(0.5 0.02 264)", display: "flex", flexShrink: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, border: "1px solid #4d5757", borderRadius: 11, padding: "0 14px", background: "#222f30" }}>
+                  <span style={{ color: "#93a09f", display: "flex", flexShrink: 0 }}>
                     <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   </span>
                   <input
@@ -333,9 +331,9 @@ export default function RegisterPage() {
                     value={pwd}
                     onChange={(e) => setPwd(e.target.value)}
                     placeholder="••••••••"
-                    style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "oklch(0.95 0.01 264)", font: `400 14px ${F}`, outline: "none", letterSpacing: ".8px" }}
+                    style={{ flex: 1, minWidth: 0, border: "none", background: "transparent", color: "#ffffff", font: `400 14px ${F}`, outline: "none", letterSpacing: ".8px" }}
                   />
-                  <button type="button" onClick={() => setShowPwd((v) => !v)} style={{ color: "oklch(0.55 0.02 264)", display: "flex", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}>
+                  <button type="button" onClick={() => setShowPwd((v) => !v)} style={{ color: "#93a09f", display: "flex", background: "none", border: "none", cursor: "pointer", padding: 0, lineHeight: 0 }}>
                     {showPwd ? (
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.67 2.68"/><path d="M6.6 6.6A13 13 0 0 0 2 12s3 8 10 8a9 9 0 0 0 5.4-1.6"/><path d="M1 1l22 22"/></svg>
                     ) : (
@@ -344,7 +342,7 @@ export default function RegisterPage() {
                   </button>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 9 }}>
-                  <div style={{ flex: 1, height: 4, borderRadius: 99, background: "oklch(1 0 0 / 9%)", overflow: "hidden" }}>
+                  <div style={{ flex: 1, height: 4, borderRadius: 99, background: "#4d575717", overflow: "hidden" }}>
                     <div style={{ width: lv.w, height: "100%", background: lv.c, borderRadius: 99, transition: "width .25s, background .25s" }} />
                   </div>
                   <span style={{ font: `500 11px ${FM}`, color: lv.c, minWidth: 54, textAlign: "right" }}>{lv.l}</span>
@@ -355,13 +353,13 @@ export default function RegisterPage() {
               <label style={{ display: "flex", alignItems: "flex-start", gap: 9, cursor: "pointer" }}>
                 <span
                   onClick={() => setTerms((v) => !v)}
-                  style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${terms ? AC : "oklch(1 0 0 / 16%)"}`, background: terms ? AC : "oklch(0.145 0.02 264)", color: "#fff", transition: "background .15s, border .15s" }}
+                  style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${terms ? AC : "#4d5757"}`, background: terms ? AC : "#222f30", color: terms ? "#222f30" : "#fff", transition: "background .15s, border .15s" }}
                 >
                   {terms && (
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                   )}
                 </span>
-                <span style={{ font: `400 13px ${F}`, color: "oklch(0.66 0.02 264)", lineHeight: 1.5 }}>
+                <span style={{ font: `400 13px ${F}`, color: "#93a09f", lineHeight: 1.5 }}>
                   Li e concordo com os{" "}
                   <Link href="#" style={{ color: AC, fontWeight: 600, textDecoration: "none" }}>Termos de Uso</Link>{" "}
                   e a{" "}
@@ -383,10 +381,9 @@ export default function RegisterPage() {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
                   font: `600 15px ${F}`,
-                  color: canSubmit ? "#fff" : "oklch(0.48 0.02 264)",
+                  color: canSubmit ? "#222f30" : "#93a09f",
                   borderRadius: 11, height: 50, border: "none",
-                  background: canSubmit ? `linear-gradient(135deg,${AC},${AC2})` : "oklch(1 0 0 / 7%)",
-                  boxShadow: canSubmit ? `0 10px 28px color-mix(in oklab,${AC} 36%,transparent)` : "none",
+                  background: canSubmit ? "#cef79e" : "#4d575712",
                   opacity: canSubmit ? 1 : 0.7,
                   cursor: canSubmit ? "pointer" : "not-allowed",
                   transition: "all .2s",
@@ -405,9 +402,9 @@ export default function RegisterPage() {
           {step === 1 && (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "18px 0 4px" }}>
-                <div style={{ flex: 1, height: 1, background: "oklch(1 0 0 / 8%)" }} />
-                <span style={{ font: `400 12px ${F}`, color: "oklch(0.48 0.02 264)" }}>ou</span>
-                <div style={{ flex: 1, height: 1, background: "oklch(1 0 0 / 8%)" }} />
+                <div style={{ flex: 1, height: 1, background: "#4d5757" }} />
+                <span style={{ font: `400 12px ${F}`, color: "#93a09f" }}>ou</span>
+                <div style={{ flex: 1, height: 1, background: "#4d5757" }} />
               </div>
 
               <form action={signupWithGoogle}>
@@ -417,11 +414,11 @@ export default function RegisterPage() {
                     width: "100%",
                     padding: "12px",
                     borderRadius: 11,
-                    background: "oklch(0.165 0.02 264)",
-                    border: "1px solid oklch(1 0 0 / 10%)",
+                    background: "#222f30",
+                    border: "1px solid #4d5757",
                     cursor: "pointer",
                     font: `600 14px ${F}`,
-                    color: "oklch(0.90 0.01 264)",
+                    color: "#ffffff",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -440,7 +437,7 @@ export default function RegisterPage() {
             </>
           )}
 
-          <p style={{ textAlign: "center", font: `400 13px ${F}`, color: "oklch(0.52 0.02 264)", marginTop: 18 }}>
+          <p style={{ textAlign: "center", font: `400 13px ${F}`, color: "#93a09f", marginTop: 18 }}>
             Já tem conta?{" "}
             <Link href="/login" style={{ color: AC, fontWeight: 600, textDecoration: "none" }}>Entrar</Link>
           </p>
