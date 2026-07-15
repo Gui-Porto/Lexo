@@ -8,10 +8,10 @@ import { formatRelativeDay, formatTime } from "@/lib/format";
 import { isAllDayUTC } from "@/lib/agenda-date";
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  PRAZO:    { bg: "oklch(0.66 0.18 274 / 22%)", color: "oklch(0.80 0.14 274)" },
-  AUDIENCIA:{ bg: "oklch(0.65 0.15 200 / 22%)", color: "oklch(0.78 0.13 200)" },
+  PRAZO:    { bg: "#cef79e38", color: "#cef79e" },
+  AUDIENCIA:{ bg: "#8fae9438", color: "#8fae94" },
   REUNIAO:  { bg: "oklch(0.72 0.15 150 / 22%)", color: "oklch(0.78 0.13 150)" },
-  OUTRO:    { bg: "oklch(0.45 0.02 264 / 28%)", color: "oklch(0.65 0.02 264)" },
+  OUTRO:    { bg: "#93a09f47", color: "#93a09f" },
 };
 
 const TYPE_ICON: Record<string, string> = {
@@ -58,7 +58,7 @@ export function DayOverviewPopover({
                       "--delay": `${idx * 35}ms`,
                       display: "flex", alignItems: "center", gap: 8,
                       border: "none", cursor: "pointer", textAlign: "left",
-                      background: "oklch(1 0 0 / 4%)", borderRadius: 8, padding: "7px 9px",
+                      background: "#4d575714" /* FIXME(theme): revisar contraste — hairline branco usado como fundo, não borda */, borderRadius: 8, padding: "7px 9px",
                       opacity: isDone || isLost ? 0.6 : 1,
                     } as React.CSSProperties}
                   >
@@ -70,7 +70,7 @@ export function DayOverviewPopover({
                       {time}
                     </span>
                     <span style={{
-                      flex: 1, minWidth: 0, fontSize: 13, color: "oklch(0.92 0.01 264)",
+                      flex: 1, minWidth: 0, fontSize: 13, color: "#ffffff",
                       textDecoration: isLost ? "line-through" : "none",
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                     }}>

@@ -4,10 +4,10 @@ import { MONTH_NAMES, DAY_NAMES_SHORT, groupDeadlinesByDay } from "@/lib/agenda-
 import type { CalendarDeadline } from "@/components/agenda/calendar-view";
 
 const TYPE_DOT_COLOR: Record<string, string> = {
-  PRAZO: "oklch(0.66 0.18 274)",
-  AUDIENCIA: "oklch(0.65 0.15 200)",
+  PRAZO: "#cef79e",
+  AUDIENCIA: "#8fae94",
   REUNIAO: "oklch(0.72 0.15 150)",
-  OUTRO: "oklch(0.55 0.02 264)",
+  OUTRO: "#93a09f",
 };
 
 export function YearView({
@@ -40,16 +40,16 @@ export function YearView({
               href={`?view=mes&month=${monthParam}`}
               style={{
                 display: "block", textDecoration: "none",
-                border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 12,
-                padding: 10, background: "oklch(0.11 0.015 264)",
+                border: "1px solid #4d5757", borderRadius: 12,
+                padding: 10, background: "#222f30",
               }}
             >
-              <p style={{ fontSize: 12, fontWeight: 700, color: "oklch(0.85 0.02 264)", margin: "0 0 8px", textAlign: "center" }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#ffffff" /* FIXME(theme): L original 0.85 ficava entre os buckets branco/mist definidos */, margin: "0 0 8px", textAlign: "center" }}>
                 {name}
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2 }}>
                 {DAY_NAMES_SHORT.map((d) => (
-                  <span key={d} style={{ fontSize: 8, color: "oklch(0.40 0.02 264)", textAlign: "center" }}>{d[0]}</span>
+                  <span key={d} style={{ fontSize: 8, color: "#93a09f", textAlign: "center" }}>{d[0]}</span>
                 ))}
                 {cells.map((day, i) => {
                   if (day === null) return <span key={`pad-${i}`} />;
@@ -63,8 +63,8 @@ export function YearView({
                         style={{
                           width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center",
                           borderRadius: "50%", fontSize: 9,
-                          background: isToday ? "oklch(0.66 0.18 274)" : "transparent",
-                          color: isToday ? "#fff" : "oklch(0.60 0.02 264)",
+                          background: isToday ? "#cef79e" : "transparent",
+                          color: isToday ? "#222f30" /* FIXME(theme): branco original perdia contraste sobre Lime sólido */ : "#93a09f",
                         }}
                       >
                         {day}

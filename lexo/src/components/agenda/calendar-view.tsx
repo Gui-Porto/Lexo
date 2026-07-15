@@ -25,10 +25,10 @@ type Props = {
 };
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  PRAZO:    { bg: "oklch(0.66 0.18 274 / 22%)", color: "oklch(0.80 0.14 274)" },
-  AUDIENCIA:{ bg: "oklch(0.65 0.15 200 / 22%)", color: "oklch(0.78 0.13 200)" },
+  PRAZO:    { bg: "#cef79e38", color: "#cef79e" },
+  AUDIENCIA:{ bg: "#8fae9438", color: "#8fae94" },
   REUNIAO:  { bg: "oklch(0.72 0.15 150 / 22%)", color: "oklch(0.78 0.13 150)" },
-  OUTRO:    { bg: "oklch(0.45 0.02 264 / 28%)", color: "oklch(0.65 0.02 264)" },
+  OUTRO:    { bg: "#93a09f47", color: "#93a09f" },
 };
 
 const TYPE_ICON: Record<string, string> = {
@@ -79,11 +79,11 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
     <ViewTransition name={`month-${monthParam}`} share="morph">
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {/* Calendar grid */}
-      <div className="r-tablewrap" style={{ border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
+      <div className="r-tablewrap" style={{ border: "1px solid #4d5757", borderRadius: 16, overflow: "hidden" }}>
         {/* Day headers */}
-        <div className="r-tablegrid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", background: "oklch(0.11 0.015 264)", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
+        <div className="r-tablegrid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", background: "#222f30", borderBottom: "1px solid #4d5757" }}>
           {DAY_NAMES.map((d, i) => (
-            <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: i === 0 ? "oklch(0.65 0.14 30)" : "oklch(0.42 0.02 264)" }}>
+            <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: i === 0 ? "var(--destructive)" : "#93a09f" }}>
               {d}
             </div>
           ))}
@@ -94,12 +94,12 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
           {cells.map((day, i) => {
             const isLastRow = i >= cells.length - 7;
             const isLastCol = (i + 1) % 7 === 0;
-            const borderRight  = !isLastCol ? "1px solid oklch(1 0 0 / 5%)" : "none";
-            const borderBottom = !isLastRow ? "1px solid oklch(1 0 0 / 5%)" : "none";
+            const borderRight  = !isLastCol ? "1px solid #4d5757" : "none";
+            const borderBottom = !isLastRow ? "1px solid #4d5757" : "none";
 
             if (day === null) {
               return (
-                <div key={`pad-${i}`} style={{ minHeight: 110, borderRight, borderBottom, background: "oklch(0.10 0.013 264 / 0.6)" }} />
+                <div key={`pad-${i}`} style={{ minHeight: 110, borderRight, borderBottom, background: "#1a242599" }} />
               );
             }
 
@@ -116,7 +116,7 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
                 onClick={(e) => openCreate(e, dateKey)}
                 style={{
                   minHeight: 110, padding: "8px 6px", borderRight, borderBottom, cursor: "pointer",
-                  background: isToday ? "oklch(0.66 0.18 274 / 6%)" : "transparent",
+                  background: isToday ? "#cef79e0f" : "transparent",
                 }}
               >
                 {/* Day number — drill-in pra visão Dia */}
@@ -129,8 +129,8 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
                       style={{
                         width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center",
                         borderRadius: "50%", textDecoration: "none",
-                        background: isToday ? "oklch(0.66 0.18 274)" : "transparent",
-                        color: isToday ? "#fff" : (i % 7 === 0 ? "oklch(0.60 0.12 30)" : "oklch(0.55 0.02 264)"),
+                        background: isToday ? "#cef79e" : "transparent",
+                        color: isToday ? "#222f30" : (i % 7 === 0 ? "var(--destructive)" : "#93a09f"),
                         fontSize: 12, fontWeight: isToday ? 700 : 400,
                       }}
                     >
@@ -156,8 +156,8 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
                           {
                             "--delay": `${idx * 40}ms`,
                             display: "flex", alignItems: "center", gap: 3, border: "none", cursor: "pointer",
-                            background: isDone || isLost ? "oklch(0.18 0.015 264)" : tc.bg,
-                            color: isDone || isLost ? "oklch(0.42 0.02 264)" : tc.color,
+                            background: isDone || isLost ? "#222f30" : tc.bg,
+                            color: isDone || isLost ? "#93a09f" : tc.color,
                             borderRadius: 5, padding: "2px 5px",
                             fontSize: 11, fontWeight: 500, textAlign: "left",
                             overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
@@ -177,8 +177,8 @@ export function CalendarView({ year, month, deadlines, cases }: Props) {
                       className="animate-fade-up"
                       style={{
                         "--delay": `${MAX * 40}ms`,
-                        fontSize: 10, fontWeight: 600, color: "oklch(0.70 0.14 274)",
-                        background: "oklch(0.66 0.18 274 / 12%)", border: "none", cursor: "pointer",
+                        fontSize: 10, fontWeight: 600, color: "#cef79e",
+                        background: "#cef79e1f", border: "none", cursor: "pointer",
                         borderRadius: 5, padding: "2px 6px", marginLeft: 4, textAlign: "left",
                       } as React.CSSProperties}
                     >

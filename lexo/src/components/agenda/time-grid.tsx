@@ -16,10 +16,10 @@ export type DayColumn = {
 };
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  PRAZO:    { bg: "oklch(0.66 0.18 274 / 22%)", color: "oklch(0.80 0.14 274)" },
-  AUDIENCIA:{ bg: "oklch(0.65 0.15 200 / 22%)", color: "oklch(0.78 0.13 200)" },
+  PRAZO:    { bg: "#cef79e38", color: "#cef79e" },
+  AUDIENCIA:{ bg: "#8fae9438", color: "#8fae94" },
   REUNIAO:  { bg: "oklch(0.72 0.15 150 / 22%)", color: "oklch(0.78 0.13 150)" },
-  OUTRO:    { bg: "oklch(0.45 0.02 264 / 28%)", color: "oklch(0.65 0.02 264)" },
+  OUTRO:    { bg: "#93a09f47", color: "#93a09f" },
 };
 const TYPE_ICON: Record<string, string> = { PRAZO: "⏰", AUDIENCIA: "⚖️", REUNIAO: "🤝", OUTRO: "📌" };
 
@@ -54,24 +54,24 @@ export function TimeGrid({
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 16, overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", border: "1px solid #4d5757", borderRadius: 16, overflow: "hidden" }}>
       {/* Cabeçalho dos dias */}
-      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, background: "oklch(0.11 0.015 264)", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, background: "#222f30", borderBottom: "1px solid #4d5757" }}>
         <div />
         {days.map((d) => (
-          <div key={d.key} style={{ padding: "10px 6px", textAlign: "center", fontSize: 12, fontWeight: 700, color: d.isToday ? "oklch(0.80 0.14 274)" : "oklch(0.60 0.02 264)" }}>
+          <div key={d.key} style={{ padding: "10px 6px", textAlign: "center", fontSize: 12, fontWeight: 700, color: d.isToday ? "#cef79e" : "#93a09f" }}>
             {d.label}
           </div>
         ))}
       </div>
 
       {/* Faixa dia inteiro */}
-      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, borderBottom: "1px solid oklch(1 0 0 / 7%)", minHeight: 34 }}>
-        <div style={{ fontSize: 10, color: "oklch(0.42 0.02 264)", padding: "6px 6px", textAlign: "right" }}>dia</div>
+      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, borderBottom: "1px solid #4d5757", minHeight: 34 }}>
+        <div style={{ fontSize: 10, color: "#93a09f", padding: "6px 6px", textAlign: "right" }}>dia</div>
         {days.map((d) => {
           const items = (byDay.get(d.key) ?? []).filter((ev) => isAllDayUTC(new Date(ev.date)));
           return (
-            <div key={d.key} style={{ display: "flex", flexDirection: "column", gap: 2, padding: "4px 4px", borderLeft: "1px solid oklch(1 0 0 / 5%)" }}>
+            <div key={d.key} style={{ display: "flex", flexDirection: "column", gap: 2, padding: "4px 4px", borderLeft: "1px solid #4d5757" }}>
               {items.map((ev) => {
                 const tc = TYPE_COLORS[ev.type] ?? TYPE_COLORS.OUTRO;
                 return (
@@ -100,7 +100,7 @@ export function TimeGrid({
       <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, maxHeight: 560, overflowY: "auto" }}>
         <div>
           {HOURS.map((h) => (
-            <div key={h} style={{ height: ROW_HEIGHT, borderTop: "1px solid oklch(1 0 0 / 5%)", fontSize: 10, color: "oklch(0.42 0.02 264)", textAlign: "right", padding: "2px 6px" }}>
+            <div key={h} style={{ height: ROW_HEIGHT, borderTop: "1px solid #4d5757", fontSize: 10, color: "#93a09f", textAlign: "right", padding: "2px 6px" }}>
               {String(h).padStart(2, "0")}h
             </div>
           ))}
@@ -109,12 +109,12 @@ export function TimeGrid({
         {days.map((d) => {
           const timed = (byDay.get(d.key) ?? []).filter((ev) => !isAllDayUTC(new Date(ev.date)));
           return (
-            <div key={d.key} style={{ position: "relative", borderLeft: "1px solid oklch(1 0 0 / 5%)" }}>
+            <div key={d.key} style={{ position: "relative", borderLeft: "1px solid #4d5757" }}>
               {HOURS.map((h) => (
                 <div
                   key={h}
                   onClick={(e) => openCreate(e, d.key, h)}
-                  style={{ height: ROW_HEIGHT, borderTop: "1px solid oklch(1 0 0 / 5%)", cursor: "pointer" }}
+                  style={{ height: ROW_HEIGHT, borderTop: "1px solid #4d5757", cursor: "pointer" }}
                 />
               ))}
               {timed.map((ev) => {
