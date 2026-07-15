@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 
 function fmtDate(date: Date): string {
   return date.toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "numeric" });
@@ -77,7 +77,7 @@ export default async function ClientPortalPage({
       className="dark"
       style={{
         minHeight: "100vh",
-        background: "oklch(0.11 0.018 264)",
+        background: "#222f30",
         fontFamily: "system-ui, -apple-system, sans-serif",
         color: "white",
       }}
@@ -85,7 +85,7 @@ export default async function ClientPortalPage({
       {/* Top bar */}
       <header
         style={{
-          borderBottom: "1px solid oklch(0.20 0.018 264)",
+          borderBottom: "1px solid #4d5757",
           padding: "16px 32px",
           display: "flex",
           alignItems: "center",
@@ -111,7 +111,7 @@ export default async function ClientPortalPage({
           </div>
           <div>
             <p style={{ fontSize: 16, fontWeight: 700, color: "white" }}>Portal do Cliente</p>
-            <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)" }}>Acesso seguro e somente leitura</p>
+            <p style={{ fontSize: 12, color: "#93a09f" }}>Acesso seguro e somente leitura</p>
           </div>
         </div>
         <div
@@ -143,13 +143,13 @@ export default async function ClientPortalPage({
               key={label}
               style={{
                 flex: "1 1 160px",
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 14,
                 padding: "16px 20px",
               }}
             >
-              <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginBottom: 4 }}>{label}</p>
+              <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 4 }}>{label}</p>
               <p style={{ fontSize: 24, fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>{value}</p>
             </div>
           ))}
@@ -163,8 +163,8 @@ export default async function ClientPortalPage({
             </h2>
             <div
               style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 14,
                 overflow: "hidden",
               }}
@@ -179,7 +179,7 @@ export default async function ClientPortalPage({
                       gap: 16,
                       padding: "14px 20px",
                       alignItems: "center",
-                      borderBottom: i < upcomingDeadlines.length - 1 ? "1px solid oklch(0.18 0.015 264)" : "none",
+                      borderBottom: i < upcomingDeadlines.length - 1 ? "1px solid #4d5757" : "none",
                     }}
                   >
                     <div
@@ -225,7 +225,7 @@ export default async function ClientPortalPage({
             Processos ({client.cases.length})
           </h2>
           {client.cases.length === 0 ? (
-            <p style={{ color: "oklch(0.45 0.02 264)", fontSize: 14 }}>Nenhum processo cadastrado.</p>
+            <p style={{ color: "#93a09f", fontSize: 14 }}>Nenhum processo cadastrado.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {client.cases.map((c) => {
@@ -237,8 +237,8 @@ export default async function ClientPortalPage({
                   <div
                     key={c.id}
                     style={{
-                      background: "oklch(0.115 0.018 264)",
-                      border: "1px solid oklch(0.22 0.018 264)",
+                      background: "#222f30",
+                      border: "1px solid #4d5757",
                       borderRadius: 14,
                       overflow: "hidden",
                     }}
@@ -250,7 +250,7 @@ export default async function ClientPortalPage({
                         alignItems: "center",
                         gap: 12,
                         padding: "16px 20px",
-                        borderBottom: (c.deadlines.length > 0 || c.invoices.length > 0) ? "1px solid oklch(0.20 0.018 264)" : "none",
+                        borderBottom: (c.deadlines.length > 0 || c.invoices.length > 0) ? "1px solid #4d5757" : "none",
                         flexWrap: "wrap",
                       }}
                     >
@@ -258,7 +258,7 @@ export default async function ClientPortalPage({
                         {c.number}
                       </p>
                       {c.area && (
-                        <span style={{ fontSize: 12, background: "oklch(0.20 0.018 264)", color: "oklch(0.55 0.02 264)", borderRadius: 6, padding: "2px 8px" }}>
+                        <span style={{ fontSize: 12, background: "#283738", color: "#93a09f", borderRadius: 6, padding: "2px 8px" }}>
                           {c.area}
                         </span>
                       )}
@@ -287,14 +287,14 @@ export default async function ClientPortalPage({
                             display: "flex",
                             gap: 12,
                             padding: "10px 20px",
-                            borderBottom: "1px solid oklch(0.17 0.015 264)",
+                            borderBottom: "1px solid #4d5757",
                             alignItems: "center",
                           }}
                         >
-                          <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)" }}>📅</span>
+                          <span style={{ fontSize: 12, color: "#93a09f" }}>📅</span>
                           <span style={{ fontSize: 13, color: "white", flex: 1 }}>{d.title}</span>
                           <span style={{ fontSize: 12, color: ds.color, fontWeight: 500 }}>{ds.label}</span>
-                          <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", whiteSpace: "nowrap" }}>{fmtDate(d.date)}</span>
+                          <span style={{ fontSize: 12, color: "#93a09f", whiteSpace: "nowrap" }}>{fmtDate(d.date)}</span>
                         </div>
                       );
                     })}
@@ -309,11 +309,11 @@ export default async function ClientPortalPage({
                             display: "flex",
                             gap: 12,
                             padding: "10px 20px",
-                            borderBottom: "1px solid oklch(0.17 0.015 264)",
+                            borderBottom: "1px solid #4d5757",
                             alignItems: "center",
                           }}
                         >
-                          <span style={{ fontSize: 12, color: "oklch(0.45 0.02 264)" }}>💳</span>
+                          <span style={{ fontSize: 12, color: "#93a09f" }}>💳</span>
                           <span style={{ fontSize: 13, color: "white", flex: 1 }}>{inv.description}</span>
                           <span style={{ fontSize: 13, fontWeight: 600, color: "white" }}>{fmtCurrency(inv.amount)}</span>
                           <span style={{ fontSize: 12, color: is.color, fontWeight: 500 }}>{is.label}</span>
@@ -328,8 +328,8 @@ export default async function ClientPortalPage({
         </section>
 
         {/* Footer */}
-        <footer style={{ textAlign: "center", paddingTop: 16, borderTop: "1px solid oklch(0.18 0.018 264)" }}>
-          <p style={{ fontSize: 12, color: "oklch(0.35 0.02 264)" }}>
+        <footer style={{ textAlign: "center", paddingTop: 16, borderTop: "1px solid #4d5757" }}>
+          <p style={{ fontSize: 12, color: "#93a09f" }}>
             Acesso seguro · Somente leitura · Lexo Tecnologia Jurídica
           </p>
         </footer>
