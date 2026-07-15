@@ -4,8 +4,7 @@ import { useActionState, useRef, useState } from "react";
 import Link from "next/link";
 import { confirmTwoFactorSetup } from "@/actions/totp";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
 const F = "'Geist', var(--font-geist), sans-serif";
 const FM = "'Geist Mono', var(--font-geist-mono), monospace";
 
@@ -47,11 +46,11 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
 
   const boxStyle = (active: boolean): React.CSSProperties => ({
     width: 52, height: 58, textAlign: "center", borderRadius: 12,
-    border: `1px solid ${active ? AC : "oklch(1 0 0 / 12%)"}`,
+    border: `1px solid ${active ? AC : "#4d5757"}`,
     background: active
-      ? `color-mix(in oklab,${AC} 12%,oklch(0.155 0.02 264))`
-      : "oklch(0.155 0.02 264)",
-    color: "oklch(0.98 0.008 264)", font: `600 24px ${FM}`,
+      ? `color-mix(in oklab,${AC} 12%,#222f30)`
+      : "#222f30",
+    color: "#ffffff", font: `600 24px ${FM}`,
     boxShadow: active ? `0 0 0 3px color-mix(in oklab,${AC} 22%,transparent)` : "none",
     transition: "all .15s", caretColor: AC, outline: "none", flex: "1", minWidth: 0,
   });
@@ -73,9 +72,9 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
 
   return (
     <div className="auth-root" style={{
-      fontFamily: F, color: "oklch(0.95 0.01 264)", minHeight: "100vh",
+      fontFamily: F, color: "#ffffff", minHeight: "100vh",
       display: "grid", gridTemplateColumns: "1fr 1.12fr",
-      background: "oklch(0.10 0.018 264)",
+      background: "#1a2425",
     }}>
       <style dangerouslySetInnerHTML={{ __html: `
         html, body { max-width: 100%; overflow-x: hidden; }
@@ -96,33 +95,34 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
       <div className="auth-brand" style={{
         position: "relative", overflow: "hidden", padding: "48px 52px",
         display: "flex", flexDirection: "column",
-        background: `radial-gradient(900px 600px at 20% 0%, color-mix(in oklab,${AC} 22%,transparent), transparent 60%), linear-gradient(155deg, oklch(0.14 0.03 280), oklch(0.10 0.018 264))`,
+        background: `radial-gradient(900px 600px at 20% 0%, color-mix(in oklab,${AC} 22%,transparent), transparent 60%), linear-gradient(155deg, #222f30, #1a2425)`,
       }}>
-        <div style={{ position: "absolute", width: 460, height: 460, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC2} 25%,transparent), transparent)`, filter: "blur(30px)", right: -140, bottom: -120, pointerEvents: "none" }} />
+        {/* FIXME(theme): glow orb decorativo — design é flat/zero-glow, avaliar se deve ser removido; mantido com tom Lime por ora */}
+        <div style={{ position: "absolute", width: 460, height: 460, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC} 25%,transparent), transparent)`, filter: "blur(30px)", right: -140, bottom: -120, pointerEvents: "none" }} />
         <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: `radial-gradient(closest-side, color-mix(in oklab,${AC} 18%,transparent), transparent)`, filter: "blur(24px)", left: 10, top: 100, pointerEvents: "none" }} />
 
         <Link href="/" style={{ position: "relative", display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-          <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+          <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#222f30" }}>
             <svg width={19} height={19} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 4.5V15H15" />
-              <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+              <path d="M5 19.5h14" stroke={AC} strokeWidth={2} />
             </svg>
           </span>
-          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.6px", color: "oklch(0.98 0.008 264)" }}>Lexo</span>
+          <span style={{ font: `700 22px ${F}`, letterSpacing: "-0.6px", color: "#ffffff" }}>Lexo</span>
         </Link>
 
         <div style={{ position: "relative", marginTop: "auto" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: `500 11px ${FM}`, color: "oklch(0.82 0.05 274)", border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: ".5px" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: `500 11px ${FM}`, color: AC, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)`, background: `color-mix(in oklab,${AC} 12%,transparent)`, borderRadius: 999, padding: "5px 12px", letterSpacing: ".5px" }}>
             PASSO FINAL · SEGURANÇA DA CONTA
           </span>
 
-          <h1 style={{ font: `800 40px ${F}`, lineHeight: 1.1, letterSpacing: "-1.5px", color: "oklch(0.98 0.008 264)", margin: "20px 0 0", maxWidth: 430 }}>
+          <h1 style={{ font: `800 40px ${F}`, lineHeight: 1.1, letterSpacing: "-1.5px", color: "#ffffff", margin: "20px 0 0", maxWidth: 430 }}>
             Mais uma camada e sua conta fica{" "}
-            <span style={{ background: `linear-gradient(90deg,${AC},${AC2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ background: AC, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               blindada.
             </span>
           </h1>
-          <p style={{ font: `400 15px ${F}`, lineHeight: 1.65, color: "oklch(0.66 0.02 264)", maxWidth: 400, margin: "14px 0 0" }}>
+          <p style={{ font: `400 15px ${F}`, lineHeight: 1.65, color: "#93a09f", maxWidth: 400, margin: "14px 0 0" }}>
             A verificação em duas etapas impede que invasores acessem os dados do seu escritório — mesmo que descubram a sua senha.
           </p>
 
@@ -133,17 +133,18 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
                 <span style={{ width: 36, height: 36, borderRadius: 10, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", color: AC, background: `color-mix(in oklab,${AC} 13%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 22%,transparent)` }}>
                   {icon}
                 </span>
-                <span style={{ font: `500 14px ${F}`, color: "oklch(0.84 0.01 264)" }}>{text}</span>
+                {/* FIXME(theme): texto secundário nessa faixa de luminosidade (0.70–0.90) não tem banda explícita na regra de mapeamento; colapsado em Mist por consistência com "uma hierarquia, um tom" */}
+                <span style={{ font: `500 14px ${F}`, color: "#93a09f" }}>{text}</span>
               </div>
             ))}
           </div>
 
           {/* Compliance strip */}
-          <div style={{ display: "flex", marginTop: 26, border: "1px solid oklch(1 0 0 / 8%)", borderRadius: 13, overflow: "hidden" }}>
+          <div style={{ display: "flex", marginTop: 26, border: "1px solid #4d5757", borderRadius: 13, overflow: "hidden" }}>
             {[["LGPD", "conformidade"], ["ISO 27001", "certificado"], ["AES-256", "criptografia"]].map(([n, l], i) => (
-              <div key={n} style={{ flex: 1, textAlign: "center", padding: "14px 10px", background: "oklch(1 0 0 / 4%)", borderLeft: i > 0 ? "1px solid oklch(1 0 0 / 8%)" : undefined }}>
-                <div style={{ font: `700 17px ${F}`, color: "oklch(0.98 0.008 264)" }}>{n}</div>
-                <div style={{ font: `400 11px ${F}`, color: "oklch(0.52 0.02 264)", marginTop: 2 }}>{l}</div>
+              <div key={n} style={{ flex: 1, textAlign: "center", padding: "14px 10px", background: "#4d5757", borderLeft: i > 0 ? "1px solid #4d5757" : undefined }}>
+                <div style={{ font: `700 17px ${F}`, color: "#ffffff" }}>{n}</div>
+                <div style={{ font: `400 11px ${F}`, color: "#93a09f", marginTop: 2 }}>{l}</div>
               </div>
             ))}
           </div>
@@ -151,15 +152,15 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
       </div>
 
       {/* ── RIGHT FORM ─────────────────────────────────────────────── */}
-      <div className="auth-form" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "oklch(0.115 0.018 264)", overflowY: "auto" }}>
+      <div className="auth-form" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "36px 52px", background: "#222f30", overflowY: "auto" }}>
         <div style={{ width: "100%", maxWidth: 448 }}>
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-            <Link href="/registrar" style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "oklch(0.52 0.02 264)", textDecoration: "none" }}>
+            <Link href="/registrar" style={{ display: "inline-flex", alignItems: "center", gap: 7, font: `500 13px ${F}`, color: "#93a09f", textDecoration: "none" }}>
               <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
               Voltar
             </Link>
-            <span style={{ font: `500 11px ${FM}`, color: "oklch(0.42 0.02 264)", letterSpacing: ".4px" }}>PASSO 2 DE 2</span>
+            <span style={{ font: `500 11px ${FM}`, color: "#93a09f", letterSpacing: ".4px" }}>PASSO 2 DE 2</span>
           </div>
 
           {/* Step bar — both filled */}
@@ -168,18 +169,18 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
             <div style={{ flex: 1, height: 3, borderRadius: 99, background: AC }} />
           </div>
 
-          <h2 style={{ font: `700 26px ${F}`, letterSpacing: "-.7px", color: "oklch(0.98 0.008 264)", margin: 0 }}>
+          <h2 style={{ font: `700 26px ${F}`, letterSpacing: "-.7px", color: "#ffffff", margin: 0 }}>
             Ative a verificação em duas etapas
           </h2>
-          <p style={{ font: `400 14px ${F}`, color: "oklch(0.56 0.02 264)", margin: "6px 0 20px" }}>
+          <p style={{ font: `400 14px ${F}`, color: "#93a09f", margin: "6px 0 20px" }}>
             Vincule o Google Authenticator para proteger o acesso de administrador. Leva menos de 1 minuto.
           </p>
 
           {/* Setup panel */}
-          <div style={{ border: "1px solid oklch(1 0 0 / 9%)", borderRadius: 16, background: "oklch(0.135 0.018 264)", overflow: "hidden" }}>
+          <div style={{ border: "1px solid #4d5757", borderRadius: 16, background: "#222f30", overflow: "hidden" }}>
 
             {/* Panel header */}
-            <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "13px 16px", borderBottom: "1px solid oklch(1 0 0 / 7%)", background: "oklch(0.155 0.02 264)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "13px 16px", borderBottom: "1px solid #4d5757", background: "#222f30" }}>
               <span style={{ width: 32, height: 32, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>
                 <svg width={19} height={19} viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/>
@@ -189,8 +190,8 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
                 </svg>
               </span>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ font: `600 13px ${F}`, color: "oklch(0.9 0.01 264)" }}>Google Authenticator</div>
-                <div style={{ font: `400 12px ${F}`, color: "oklch(0.55 0.02 264)" }}>Lexo · {email}</div>
+                <div style={{ font: `600 13px ${F}`, color: "#ffffff" }}>Google Authenticator</div>
+                <div style={{ font: `400 12px ${F}`, color: "#93a09f" }}>Lexo · {email}</div>
               </div>
               <span style={{
                 font: `500 10px ${FM}`,
@@ -214,14 +215,14 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
               <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 14 }}>
                 {[
                   "Abra o Google Authenticator no celular",
-                  <span key="2">Toque em <b style={{ color: "oklch(0.95 0.01 264)", fontWeight: 600 }}>+</b> e escaneie este QR Code</span>,
+                  <span key="2">Toque em <b style={{ color: "#ffffff", fontWeight: 600 }}>+</b> e escaneie este QR Code</span>,
                   "Digite o código de 6 dígitos aqui embaixo",
                 ].map((text, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 11 }}>
                     <span style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", font: `700 12px ${F}`, color: AC, background: `color-mix(in oklab,${AC} 15%,transparent)`, border: `1px solid color-mix(in oklab,${AC} 30%,transparent)` }}>
                       {i + 1}
                     </span>
-                    <span style={{ font: `500 13.5px ${F}`, color: "oklch(0.84 0.01 264)", lineHeight: 1.45 }}>{text}</span>
+                    <span style={{ font: `500 13.5px ${F}`, color: "#93a09f", lineHeight: 1.45 }}>{text}</span>
                   </div>
                 ))}
               </div>
@@ -234,7 +235,7 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
             <input type="hidden" name="code" value={codeStr} readOnly />
 
             <div style={{ marginTop: 22 }}>
-              <label style={{ font: `500 13px ${F}`, color: "oklch(0.76 0.01 264)" }}>
+              <label style={{ font: `500 13px ${F}`, color: "#93a09f" }}>
                 Confirme com o código gerado
               </label>
               <div style={{ display: "flex", gap: 9, justifyContent: "space-between", marginTop: 11 }}>
@@ -251,7 +252,7 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
                     style={boxStyle(!!code[i])}
                   />
                 ))}
-                <span style={{ display: "flex", alignItems: "center", color: "oklch(0.4 0.02 264)", font: `600 20px ${F}` }}>–</span>
+                <span style={{ display: "flex", alignItems: "center", color: "#93a09f", font: `600 20px ${F}` }}>–</span>
                 {[3, 4, 5].map((i) => (
                   <input
                     key={i}
@@ -280,10 +281,9 @@ export function TwoFASetupForm({ qrDataUrl, email }: Props) {
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 9, marginTop: 22,
                 font: `600 15px ${F}`, width: "100%", border: "none",
-                color: allFilled ? "#fff" : "oklch(0.48 0.02 264)",
+                color: allFilled ? "#222f30" : "#93a09f",
                 borderRadius: 12, height: 50,
-                background: allFilled ? `linear-gradient(135deg, ${AC}, ${AC2})` : "oklch(1 0 0 / 7%)",
-                boxShadow: allFilled ? `0 10px 28px color-mix(in oklab,${AC} 36%,transparent)` : "none",
+                background: allFilled ? AC : "#4d5757",
                 opacity: allFilled ? 1 : 0.7,
                 cursor: allFilled ? "pointer" : "not-allowed",
                 transition: "all .2s",
