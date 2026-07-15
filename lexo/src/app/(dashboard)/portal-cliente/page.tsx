@@ -3,8 +3,8 @@ import { db } from "@/lib/db";
 import { requireSession } from "@/lib/session";
 import { PortalToggle } from "./portal-client";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 
 export default async function PortalClientePage() {
   const session = await requireSession();
@@ -36,14 +36,14 @@ export default async function PortalClientePage() {
             style={{
               fontSize: 28,
               fontWeight: 700,
-              color: "oklch(0.97 0.008 264)",
+              color: "#ffffff",
               letterSpacing: "-0.5px",
               margin: 0,
             }}
           >
             Portal Cliente
           </h1>
-        <p style={{ fontSize: 14, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
+        <p style={{ fontSize: 14, color: "#93a09f", marginTop: 4 }}>
           Compartilhe um link seguro com seus clientes para que acompanhem os processos em tempo real.
         </p>
       </div>
@@ -59,13 +59,13 @@ export default async function PortalClientePage() {
             key={label}
             style={{
               flex: "1 1 150px",
-              background: "oklch(0.115 0.018 264)",
-              border: "1px solid oklch(0.22 0.018 264)",
+              background: "#222f30",
+              border: "1px solid #4d5757",
               borderRadius: 14,
               padding: "14px 18px",
             }}
           >
-            <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", marginBottom: 4 }}>{label}</p>
+            <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 4 }}>{label}</p>
             <p style={{ fontSize: 28, fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>{value}</p>
           </div>
         ))}
@@ -84,7 +84,7 @@ export default async function PortalClientePage() {
         }}
       >
         <span style={{ fontSize: 18, flexShrink: 0 }}>ℹ</span>
-        <p style={{ fontSize: 13, color: "oklch(0.60 0.02 264)", lineHeight: 1.5 }}>
+        <p style={{ fontSize: 13, color: "#93a09f", lineHeight: 1.5 }}>
           Ao ativar o portal de um cliente, é gerado um link único e seguro. Compartilhe diretamente com o cliente — ele verá os processos ativos, prazos e faturas sem precisar de conta.
         </p>
       </div>
@@ -99,8 +99,8 @@ export default async function PortalClientePage() {
             justifyContent: "center",
             padding: "80px 32px",
             gap: 16,
-            background: "oklch(0.09 0.015 264)",
-            border: "1px dashed oklch(0.25 0.018 264)",
+            background: "#1a2425",
+            border: "1px dashed #4d5757",
             borderRadius: 16,
           }}
         >
@@ -121,7 +121,7 @@ export default async function PortalClientePage() {
           </div>
           <div style={{ textAlign: "center" }}>
             <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>Nenhum cliente cadastrado</p>
-            <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
               Cadastre clientes em <a href="/clientes" style={{ color: AC }}>Clientes</a> para ativar o portal.
             </p>
           </div>
@@ -130,8 +130,8 @@ export default async function PortalClientePage() {
         <div
           className="r-tablewrap"
           style={{
-            background: "oklch(0.115 0.018 264)",
-            border: "1px solid oklch(0.22 0.018 264)",
+            background: "#222f30",
+            border: "1px solid #4d5757",
             borderRadius: 16,
             overflow: "hidden",
           }}
@@ -144,10 +144,10 @@ export default async function PortalClientePage() {
               gridTemplateColumns: "1fr auto auto auto",
               gap: 16,
               padding: "10px 20px",
-              borderBottom: "1px solid oklch(0.20 0.018 264)",
+              borderBottom: "1px solid #4d5757",
               fontSize: 11,
               fontWeight: 600,
-              color: "oklch(0.45 0.02 264)",
+              color: "#93a09f",
               textTransform: "uppercase",
               letterSpacing: "0.06em",
             }}
@@ -168,14 +168,14 @@ export default async function PortalClientePage() {
                 gap: 16,
                 padding: "16px 20px",
                 alignItems: "center",
-                borderBottom: i < clients.length - 1 ? "1px solid oklch(0.18 0.015 264)" : "none",
+                borderBottom: i < clients.length - 1 ? "1px solid #4d5757" : "none",
               }}
             >
               {/* Name */}
               <div>
                 <p style={{ fontSize: 14, fontWeight: 500, color: "white" }}>{client.name}</p>
                 {client.document && (
-                  <p style={{ fontSize: 12, color: "oklch(0.45 0.02 264)", marginTop: 2, fontFamily: "monospace" }}>
+                  <p style={{ fontSize: 12, color: "#93a09f", marginTop: 2, fontFamily: "monospace" }}>
                     {client.document}
                   </p>
                 )}
@@ -185,7 +185,7 @@ export default async function PortalClientePage() {
               <span
                 style={{
                   fontSize: 13,
-                  color: client.cases.length > 0 ? AC : "oklch(0.40 0.02 264)",
+                  color: client.cases.length > 0 ? AC : "#93a09f",
                   fontWeight: 600,
                   textAlign: "center",
                 }}
@@ -194,7 +194,7 @@ export default async function PortalClientePage() {
               </span>
 
               {/* Email */}
-              <span style={{ fontSize: 13, color: "oklch(0.50 0.02 264)" }}>
+              <span style={{ fontSize: 13, color: "#93a09f" }}>
                 {client.email ?? "—"}
               </span>
 

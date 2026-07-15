@@ -27,8 +27,8 @@ type CasoSemelhante = {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 
 const VARAS = [
   "Vara Cível",
@@ -100,7 +100,7 @@ function RingChart({ pct, color }: { pct: number; color: string }) {
 
   return (
     <svg width={128} height={128} viewBox="0 0 128 128">
-      <circle cx={64} cy={64} r={r} fill="none" stroke="oklch(0.20 0.018 264)" strokeWidth={12} />
+      <circle cx={64} cy={64} r={r} fill="none" stroke="#283738" strokeWidth={12} />
       <circle
         cx={64}
         cy={64}
@@ -116,7 +116,7 @@ function RingChart({ pct, color }: { pct: number; color: string }) {
       <text x={64} y={60} textAnchor="middle" fill="white" fontSize={24} fontWeight={700} fontFamily="Geist, sans-serif">
         {pct}%
       </text>
-      <text x={64} y={78} textAnchor="middle" fill="oklch(0.55 0.02 264)" fontSize={11} fontFamily="Geist, sans-serif">
+      <text x={64} y={78} textAnchor="middle" fill="#93a09f" fontSize={11} fontFamily="Geist, sans-serif">
         êxito
       </text>
     </svg>
@@ -163,8 +163,8 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
       {/* Filtros */}
       <div
         style={{
-          background: "oklch(0.115 0.018 264)",
-          border: "1px solid oklch(0.22 0.018 264)",
+          background: "#222f30",
+          border: "1px solid #4d5757",
           borderRadius: 16,
           padding: "24px 28px",
           display: "flex",
@@ -195,15 +195,15 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
         <div className="r-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 12, alignItems: "end" }}>
           {/* Processo */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontSize: 11, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <label style={{ fontSize: 11, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               Processo
             </label>
             <select
               value={selectedId}
               onChange={(e) => { setSelectedId(e.target.value); setAnalise(null); }}
               style={{
-                background: "oklch(0.09 0.015 264)",
-                border: "1px solid oklch(0.25 0.018 264)",
+                background: "#1a2425",
+                border: "1px solid #4d5757",
                 borderRadius: 10,
                 padding: "10px 12px",
                 fontSize: 13,
@@ -223,19 +223,19 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
 
           {/* Vara */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontSize: 11, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <label style={{ fontSize: 11, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               Vara / Tribunal
             </label>
             <select
               value={vara}
               onChange={(e) => setVara(e.target.value)}
               style={{
-                background: "oklch(0.09 0.015 264)",
-                border: "1px solid oklch(0.25 0.018 264)",
+                background: "#1a2425",
+                border: "1px solid #4d5757",
                 borderRadius: 10,
                 padding: "10px 12px",
                 fontSize: 13,
-                color: vara ? "white" : "oklch(0.40 0.02 264)",
+                color: vara ? "white" : "#93a09f",
                 outline: "none",
                 cursor: "pointer",
               }}
@@ -247,19 +247,19 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
 
           {/* Assunto */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontSize: 11, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <label style={{ fontSize: 11, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               Assunto
             </label>
             <select
               value={assunto}
               onChange={(e) => setAssunto(e.target.value)}
               style={{
-                background: "oklch(0.09 0.015 264)",
-                border: "1px solid oklch(0.25 0.018 264)",
+                background: "#1a2425",
+                border: "1px solid #4d5757",
                 borderRadius: 10,
                 padding: "10px 12px",
                 fontSize: 13,
-                color: assunto ? "white" : "oklch(0.40 0.02 264)",
+                color: assunto ? "white" : "#93a09f",
                 outline: "none",
                 cursor: "pointer",
               }}
@@ -274,13 +274,13 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             onClick={handleAnalisar}
             disabled={!selectedId || loading}
             style={{
-              background: selectedId && !loading ? `linear-gradient(135deg, ${AC}, ${AC2})` : "oklch(0.20 0.018 264)",
+              background: selectedId && !loading ? `linear-gradient(135deg, ${AC}, ${AC2})` : "#283738",
               border: "none",
               borderRadius: 10,
               padding: "10px 24px",
               fontSize: 13,
               fontWeight: 600,
-              color: selectedId && !loading ? "white" : "oklch(0.40 0.02 264)",
+              color: selectedId && !loading ? "#222f30" : "#93a09f",
               cursor: selectedId && !loading ? "pointer" : "not-allowed",
               display: "flex",
               alignItems: "center",
@@ -316,8 +316,8 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             <div
               key={i}
               style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 16,
                 padding: 28,
                 height: 160,
@@ -362,7 +362,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
                   : "incerta"}{" "}
               com base em {analise.casosSemelhantes.length} casos semelhantes
             </span>
-            <span style={{ marginLeft: "auto", fontSize: 11, color: "oklch(0.45 0.02 264)" }}>
+            <span style={{ marginLeft: "auto", fontSize: 11, color: "#93a09f" }}>
               Análise gerada por IA · dados ilustrativos
             </span>
           </div>
@@ -372,8 +372,8 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             {/* Probabilidade de êxito */}
             <div
               style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 16,
                 padding: "28px 24px",
                 display: "flex",
@@ -384,10 +384,10 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             >
               <RingChart pct={analise.probabilidade} color={AC} />
               <div style={{ textAlign: "center" }}>
-                <p style={{ fontSize: 12, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <p style={{ fontSize: 12, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Probabilidade de êxito
                 </p>
-                <p style={{ fontSize: 11, color: "oklch(0.40 0.02 264)", marginTop: 4 }}>
+                <p style={{ fontSize: 11, color: "#93a09f", marginTop: 4 }}>
                   Baseado na jurimetria local
                 </p>
               </div>
@@ -396,8 +396,8 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             {/* Duração estimada */}
             <div
               style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 16,
                 padding: "28px 24px",
                 display: "flex",
@@ -427,18 +427,18 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
               <p style={{ fontSize: 32, fontWeight: 700, color: "#0891b2", fontVariantNumeric: "tabular-nums" }}>
                 {analise.duracaoMin}–{analise.duracaoMax}
               </p>
-              <p style={{ fontSize: 13, fontWeight: 500, color: "oklch(0.55 0.02 264)", marginTop: -8 }}>meses</p>
-              <p style={{ fontSize: 12, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>
+              <p style={{ fontSize: 13, fontWeight: 500, color: "#93a09f", marginTop: -8 }}>meses</p>
+              <p style={{ fontSize: 12, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>
                 Duração estimada
               </p>
-              <p style={{ fontSize: 11, color: "oklch(0.40 0.02 264)" }}>Da distribuição ao trânsito</p>
+              <p style={{ fontSize: 11, color: "#93a09f" }}>Da distribuição ao trânsito</p>
             </div>
 
             {/* Valor provável */}
             <div
               style={{
-                background: "oklch(0.115 0.018 264)",
-                border: "1px solid oklch(0.22 0.018 264)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 borderRadius: 16,
                 padding: "28px 24px",
                 display: "flex",
@@ -468,25 +468,25 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
               <p style={{ fontSize: 26, fontWeight: 700, color: "#059669", fontVariantNumeric: "tabular-nums", textAlign: "center" }}>
                 {formatCurrency(analise.valorMin)} – {formatCurrency(analise.valorMax)}
               </p>
-              <p style={{ fontSize: 12, fontWeight: 500, color: "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>
+              <p style={{ fontSize: 12, fontWeight: 500, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>
                 Valor provável
               </p>
-              <p style={{ fontSize: 11, color: "oklch(0.40 0.02 264)" }}>Faixa de condenação estimada</p>
+              <p style={{ fontSize: 11, color: "#93a09f" }}>Faixa de condenação estimada</p>
             </div>
           </div>
 
           {/* Tabela de casos semelhantes */}
           <div
             style={{
-              background: "oklch(0.115 0.018 264)",
-              border: "1px solid oklch(0.22 0.018 264)",
+              background: "#222f30",
+              border: "1px solid #4d5757",
               borderRadius: 16,
               overflow: "hidden",
             }}
           >
             <div
               style={{
-                borderBottom: "1px solid oklch(0.22 0.018 264)",
+                borderBottom: "1px solid #4d5757",
                 padding: "16px 24px",
                 display: "flex",
                 alignItems: "center",
@@ -515,7 +515,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
 
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ borderBottom: "1px solid oklch(0.20 0.018 264)" }}>
+                <tr style={{ borderBottom: "1px solid #4d5757" }}>
                   {["Número", "Tribunal", "Resultado", "Duração", "Valor", "Similaridade"].map((h) => (
                     <th
                       key={h}
@@ -524,7 +524,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
                         textAlign: "left",
                         fontSize: 11,
                         fontWeight: 500,
-                        color: "oklch(0.45 0.02 264)",
+                        color: "#93a09f",
                         textTransform: "uppercase",
                         letterSpacing: "0.06em",
                       }}
@@ -541,13 +541,13 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
                     <tr
                       key={caso.numero}
                       style={{
-                        borderBottom: i < analise.casosSemelhantes.length - 1 ? "1px solid oklch(0.18 0.015 264)" : "none",
+                        borderBottom: i < analise.casosSemelhantes.length - 1 ? "1px solid #4d5757" : "none",
                         transition: "background 0.15s",
                       }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "oklch(0.14 0.018 264)"; }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#222f30"; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = ""; }}
                     >
-                      <td style={{ padding: "14px 24px", fontSize: 12, color: "oklch(0.75 0.02 264)", fontFamily: "monospace" }}>
+                      <td style={{ padding: "14px 24px", fontSize: 12, color: "#93a09f", fontFamily: "monospace" }}>
                         {caso.numero}
                       </td>
                       <td style={{ padding: "14px 24px", fontSize: 13, fontWeight: 500, color: "white" }}>
@@ -567,15 +567,15 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
                           {caso.resultado}
                         </span>
                       </td>
-                      <td style={{ padding: "14px 24px", fontSize: 13, color: "oklch(0.65 0.02 264)" }}>
+                      <td style={{ padding: "14px 24px", fontSize: 13, color: "#93a09f" }}>
                         {caso.duracao}
                       </td>
-                      <td style={{ padding: "14px 24px", fontSize: 13, color: "oklch(0.65 0.02 264)" }}>
+                      <td style={{ padding: "14px 24px", fontSize: 13, color: "#93a09f" }}>
                         {caso.valor}
                       </td>
                       <td style={{ padding: "14px 24px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <div style={{ flex: 1, height: 4, borderRadius: 2, background: "oklch(0.20 0.018 264)" }}>
+                          <div style={{ flex: 1, height: 4, borderRadius: 2, background: "#283738" }}>
                             <div
                               style={{
                                 height: "100%",
@@ -609,8 +609,8 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
             justifyContent: "center",
             padding: "80px 32px",
             gap: 16,
-            background: "oklch(0.09 0.015 264)",
-            border: "1px dashed oklch(0.25 0.018 264)",
+            background: "#1a2425",
+            border: "1px dashed #4d5757",
             borderRadius: 16,
           }}
         >
@@ -632,7 +632,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
           </div>
           <div style={{ textAlign: "center" }}>
             <p style={{ fontSize: 15, fontWeight: 600, color: "white" }}>Selecione um processo para analisar</p>
-            <p style={{ fontSize: 13, color: "oklch(0.45 0.02 264)", marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
               A IA cruzará dados jurisprudenciais para estimar probabilidade, duração e valor.
             </p>
           </div>

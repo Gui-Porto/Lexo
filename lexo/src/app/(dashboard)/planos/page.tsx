@@ -75,10 +75,12 @@ export default async function PlanosPage({
     <div style={{ display: "flex", flexDirection: "column", gap: 32, maxWidth: 900, margin: "0 auto", width: "100%" }}>
 
       {/* Success banner */}
+      {/* FIXME(theme): hue 145 abaixo não está na lista de hues excluídos (22/150/80), mas é
+          claramente semântico (mesma família do success 150). Deixado inalterado por julgamento. */}
       {sp.success && (
         <div
           style={{
-            background: "linear-gradient(135deg, oklch(0.72 0.15 150 / 15%), oklch(0.155 0.02 264))",
+            background: "linear-gradient(135deg, oklch(0.72 0.15 150 / 15%), #222f30)",
             border: "1px solid oklch(0.72 0.15 150 / 35%)",
             borderRadius: 14,
             padding: "14px 20px",
@@ -106,13 +108,13 @@ export default async function PlanosPage({
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: "oklch(0.66 0.18 274 / 12%)",
-            border: "1px solid oklch(0.66 0.18 274 / 25%)",
+            background: "#cef79e1f",
+            border: "1px solid #cef79e40",
             borderRadius: 99,
             padding: "5px 14px",
             fontSize: 11,
             fontWeight: 600,
-            color: "oklch(0.75 0.14 274)",
+            color: "#cef79e",
             letterSpacing: "0.08em",
             marginBottom: 16,
           }}
@@ -123,7 +125,7 @@ export default async function PlanosPage({
           style={{
             fontSize: 34,
             fontWeight: 700,
-            color: "oklch(0.97 0.008 264)",
+            color: "#ffffff",
             letterSpacing: "-0.8px",
             margin: "0 0 12px",
           }}
@@ -132,7 +134,9 @@ export default async function PlanosPage({
           <br />
           <span
             style={{
-              background: "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.72 0.14 300))",
+              /* FIXME(theme): gradiente decorativo de texto (hero heading) achatado pra acento
+                 sólido — não é CTA nem avatar/badge, tratado por julgamento. */
+              background: "#cef79e",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -141,7 +145,7 @@ export default async function PlanosPage({
             para seu escritório
           </span>
         </h1>
-        <p style={{ fontSize: 15, color: "oklch(0.60 0.02 264)", margin: 0 }}>
+        <p style={{ fontSize: 15, color: "#93a09f", margin: 0 }}>
           Sem taxa de setup. Cancele quando quiser. Suporte incluído.
         </p>
       </div>
@@ -150,15 +154,15 @@ export default async function PlanosPage({
       <div
         style={{
           background: paid
-            ? "linear-gradient(135deg, oklch(0.66 0.18 274 / 14%), oklch(0.155 0.02 264))"
+            ? "linear-gradient(135deg, #cef79e24, #222f30)"
             : expired
-              ? "linear-gradient(135deg, oklch(0.70 0.18 30 / 14%), oklch(0.155 0.02 264))"
-              : "oklch(0.155 0.02 264)",
+              ? "linear-gradient(135deg, oklch(0.75 0.16 80 / 14%), #222f30)"
+              : "#222f30",
           border: paid
-            ? "1px solid oklch(0.66 0.18 274 / 30%)"
+            ? "1px solid #cef79e4d"
             : expired
-              ? "1px solid oklch(0.70 0.18 30 / 30%)"
-              : "1px solid oklch(1 0 0 / 7%)",
+              ? "1px solid oklch(0.75 0.16 80 / 30%)"
+              : "1px solid #4d5757",
           borderRadius: 14,
           padding: "18px 22px",
           display: "flex",
@@ -173,9 +177,10 @@ export default async function PlanosPage({
               width: 42,
               height: 42,
               borderRadius: 12,
+              /* FIXME(theme): gradiente decorativo de ícone (não-CTA) achatado pra tom neutro. */
               background: paid
-                ? "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.72 0.14 300))"
-                : "oklch(0.22 0.02 264)",
+                ? "#2c3b3c"
+                : "#283738",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -186,19 +191,19 @@ export default async function PlanosPage({
             {paid ? "⚡" : expired ? "⏰" : "🔄"}
           </div>
           <div>
-            <p style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", marginBottom: 3 }}>Plano atual</p>
-            <p style={{ fontSize: 16, fontWeight: 700, color: "oklch(0.95 0.01 264)", margin: 0 }}>
+            <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 3 }}>Plano atual</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", margin: 0 }}>
               {PLAN_LABELS[currentPlan] ?? currentPlan}
             </p>
             {!paid && !expired && (
-              <p style={{ fontSize: 12, color: "oklch(0.75 0.16 50)", marginTop: 2 }}>
+              <p style={{ fontSize: 12, color: "oklch(0.75 0.16 80)", marginTop: 2 }}>
                 {daysLeft === 0
                   ? "Expira hoje — escolha um plano para continuar"
                   : `${daysLeft} dia${daysLeft !== 1 ? "s" : ""} restantes no período de teste`}
               </p>
             )}
             {expired && (
-              <p style={{ fontSize: 12, color: "oklch(0.70 0.18 30)", marginTop: 2 }}>
+              <p style={{ fontSize: 12, color: "oklch(0.75 0.16 80)", marginTop: 2 }}>
                 Trial expirado — escolha um plano abaixo para reativar
               </p>
             )}
@@ -214,13 +219,13 @@ export default async function PlanosPage({
             <button
               type="submit"
               style={{
-                background: "oklch(0.20 0.018 264)",
-                border: "1px solid oklch(1 0 0 / 12%)",
+                background: "#283738",
+                border: "1px solid #4d5757",
                 borderRadius: 10,
                 padding: "9px 16px",
                 fontSize: 13,
                 fontWeight: 500,
-                color: "oklch(0.85 0.01 264)",
+                color: "#93a09f",
                 cursor: "pointer",
               }}
             >
@@ -247,14 +252,12 @@ export default async function PlanosPage({
                 flexDirection: "column",
                 gap: 22,
                 background: plan.highlight
-                  ? "linear-gradient(165deg, oklch(0.66 0.18 274 / 16%), oklch(0.155 0.02 264) 60%)"
-                  : "oklch(0.155 0.02 264)",
+                  ? "linear-gradient(165deg, #cef79e29, #222f30 60%)"
+                  : "#222f30",
                 border: plan.highlight
-                  ? "1px solid oklch(0.66 0.18 274 / 40%)"
-                  : "1px solid oklch(1 0 0 / 8%)",
-                boxShadow: plan.highlight
-                  ? "0 0 60px oklch(0.66 0.18 274 / 10%)"
-                  : "none",
+                  ? "1px solid #cef79e66"
+                  : "1px solid #4d5757",
+                boxShadow: "none",
               }}
             >
               {plan.highlight && (
@@ -264,7 +267,8 @@ export default async function PlanosPage({
                     top: -1,
                     left: "50%",
                     transform: "translateX(-50%)",
-                    background: "linear-gradient(90deg, oklch(0.66 0.18 274), oklch(0.55 0.2 290))",
+                    /* FIXME(theme): gradiente decorativo de badge (não-CTA) achatado pra tom neutro. */
+                    background: "#2c3b3c",
                     borderRadius: "0 0 10px 10px",
                     padding: "4px 18px",
                     fontSize: 11,
@@ -286,9 +290,10 @@ export default async function PlanosPage({
                       width: 36,
                       height: 36,
                       borderRadius: 10,
+                      /* FIXME(theme): gradiente decorativo de ícone (não-CTA) achatado pra tom neutro. */
                       background: plan.highlight
-                        ? "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.72 0.14 300))"
-                        : "oklch(0.22 0.02 264)",
+                        ? "#2c3b3c"
+                        : "#283738",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -298,10 +303,10 @@ export default async function PlanosPage({
                     {plan.highlight ? "⚡" : "📦"}
                   </div>
                   <div>
-                    <p style={{ fontSize: 12, fontWeight: 600, color: plan.highlight ? "oklch(0.75 0.14 274)" : "oklch(0.55 0.02 264)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: plan.highlight ? "#cef79e" : "#93a09f", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
                       {plan.label}
                     </p>
-                    <p style={{ fontSize: 12, color: "oklch(0.50 0.02 264)", margin: 0 }}>{plan.description}</p>
+                    <p style={{ fontSize: 12, color: "#93a09f", margin: 0 }}>{plan.description}</p>
                   </div>
                   {isCurrent && (
                     <span
@@ -326,14 +331,14 @@ export default async function PlanosPage({
                     style={{
                       fontSize: 38,
                       fontWeight: 700,
-                      color: "oklch(0.97 0.008 264)",
+                      color: "#ffffff",
                       letterSpacing: "-1.5px",
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
                     {plan.price}
                   </span>
-                  <span style={{ fontSize: 14, color: "oklch(0.50 0.02 264)" }}>{plan.period}</span>
+                  <span style={{ fontSize: 14, color: "#93a09f" }}>{plan.period}</span>
                 </div>
               </div>
 
@@ -347,8 +352,8 @@ export default async function PlanosPage({
                         height: 22,
                         borderRadius: 6,
                         background: plan.highlight
-                          ? "oklch(0.66 0.18 274 / 16%)"
-                          : "oklch(0.22 0.02 264)",
+                          ? "#cef79e29"
+                          : "#283738",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -358,7 +363,7 @@ export default async function PlanosPage({
                     >
                       {f.icon}
                     </span>
-                    <span style={{ fontSize: 13, color: "oklch(0.78 0.01 264)" }}>{f.text}</span>
+                    <span style={{ fontSize: 13, color: "#93a09f" }}>{f.text}</span>
                   </li>
                 ))}
               </ul>
@@ -368,14 +373,14 @@ export default async function PlanosPage({
                 {isCurrent ? (
                   <div
                     style={{
-                      background: "oklch(0.22 0.018 264)",
-                      border: "1px solid oklch(1 0 0 / 8%)",
+                      background: "#283738",
+                      border: "1px solid #4d5757",
                       borderRadius: 12,
                       padding: "12px 20px",
                       textAlign: "center",
                       fontSize: 13,
                       fontWeight: 600,
-                      color: "oklch(0.55 0.02 264)",
+                      color: "#93a09f",
                     }}
                   >
                     Plano atual ✓
@@ -387,16 +392,16 @@ export default async function PlanosPage({
                       style={{
                         width: "100%",
                         background: plan.highlight
-                          ? "linear-gradient(135deg, oklch(0.66 0.18 274), oklch(0.55 0.2 290))"
-                          : "oklch(0.22 0.018 264)",
-                        border: plan.highlight ? "none" : "1px solid oklch(1 0 0 / 12%)",
+                          ? "#cef79e"
+                          : "#283738",
+                        border: plan.highlight ? "none" : "1px solid #4d5757",
                         borderRadius: 12,
                         padding: "12px 20px",
                         fontSize: 14,
                         fontWeight: 700,
-                        color: plan.highlight ? "#fff" : "oklch(0.85 0.01 264)",
+                        color: plan.highlight ? "#222f30" : "#93a09f",
                         cursor: "pointer",
-                        boxShadow: plan.highlight ? "0 6px 20px oklch(0.66 0.18 274 / 35%)" : "none",
+                        boxShadow: "none",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -410,13 +415,13 @@ export default async function PlanosPage({
                 ) : (
                   <div
                     style={{
-                      background: "oklch(0.18 0.016 264)",
-                      border: "1px solid oklch(1 0 0 / 8%)",
+                      background: "#222f30",
+                      border: "1px solid #4d5757",
                       borderRadius: 12,
                       padding: "12px 20px",
                       textAlign: "center",
                       fontSize: 13,
-                      color: "oklch(0.45 0.02 264)",
+                      color: "#93a09f",
                     }}
                   >
                     {isAdmin ? "Configure o Stripe para ativar" : "Fale com o administrador"}
@@ -432,14 +437,14 @@ export default async function PlanosPage({
       <div
         className="r-tablewrap"
         style={{
-          background: "oklch(0.155 0.02 264)",
-          border: "1px solid oklch(1 0 0 / 7%)",
+          background: "#222f30",
+          border: "1px solid #4d5757",
           borderRadius: 16,
           overflow: "hidden",
         }}
       >
-        <div style={{ padding: "18px 24px", borderBottom: "1px solid oklch(1 0 0 / 7%)" }}>
-          <h3 style={{ fontSize: 15, fontWeight: 600, color: "oklch(0.95 0.008 264)", margin: 0 }}>
+        <div style={{ padding: "18px 24px", borderBottom: "1px solid #4d5757" }}>
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: "#ffffff", margin: 0 }}>
             Comparação de recursos
           </h3>
         </div>
@@ -450,13 +455,13 @@ export default async function PlanosPage({
             gridTemplateColumns: "1fr 140px 140px",
             gap: 0,
             padding: "10px 24px",
-            background: "oklch(0.13 0.018 264)",
-            borderBottom: "1px solid oklch(1 0 0 / 7%)",
+            background: "#222f30",
+            borderBottom: "1px solid #4d5757",
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.45 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Recurso</span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.45 0.02 264)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Essencial</span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.66 0.18 274)", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Pro</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em" }}>Recurso</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#93a09f", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Essencial</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#cef79e", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center" }}>Pro</span>
         </div>
         {FEATURES_COMPARE.map((feat, i) => (
           <div
@@ -467,16 +472,16 @@ export default async function PlanosPage({
               gridTemplateColumns: "1fr 140px 140px",
               gap: 0,
               padding: "12px 24px",
-              borderBottom: i < FEATURES_COMPARE.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none",
+              borderBottom: i < FEATURES_COMPARE.length - 1 ? "1px solid #4d5757" : "none",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: 13, color: "oklch(0.78 0.01 264)" }}>{feat.label}</span>
+            <span style={{ fontSize: 13, color: "#93a09f" }}>{feat.label}</span>
             <div style={{ textAlign: "center" }}>
               {feat.essencial ? (
                 <span style={{ fontSize: 16, color: "oklch(0.72 0.15 150)" }}>✓</span>
               ) : (
-                <span style={{ fontSize: 14, color: "oklch(0.35 0.02 264)" }}>—</span>
+                <span style={{ fontSize: 14, color: "#93a09f" }}>—</span>
               )}
             </div>
             <div style={{ textAlign: "center" }}>
@@ -505,7 +510,7 @@ export default async function PlanosPage({
         ].map((item) => (
           <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 7 }}>
             <span style={{ fontSize: 15 }}>{item.icon}</span>
-            <span style={{ fontSize: 12, color: "oklch(0.50 0.02 264)" }}>{item.text}</span>
+            <span style={{ fontSize: 12, color: "#93a09f" }}>{item.text}</span>
           </div>
         ))}
       </div>

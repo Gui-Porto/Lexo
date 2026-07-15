@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { enableClientPortal, disableClientPortal, regeneratePortalToken } from "@/actions/portal-cliente";
 
-const AC = "oklch(0.66 0.18 274)";
+const AC = "#cef79e";
 
 export function PortalToggle({
   clientId,
@@ -49,8 +49,8 @@ export function PortalToggle({
           display: "flex",
           alignItems: "center",
           gap: 8,
-          background: enabled ? "rgb(5 150 105 / 0.15)" : "oklch(0.18 0.018 264)",
-          border: `1px solid ${enabled ? "rgb(5 150 105 / 0.35)" : "oklch(0.28 0.018 264)"}`,
+          background: enabled ? "rgb(5 150 105 / 0.15)" : "#222f30",
+          border: `1px solid ${enabled ? "rgb(5 150 105 / 0.35)" : "#4d5757"}`,
           borderRadius: 20,
           padding: "5px 14px",
           cursor: isPending ? "not-allowed" : "pointer",
@@ -63,11 +63,11 @@ export function PortalToggle({
             width: 10,
             height: 10,
             borderRadius: "50%",
-            background: enabled ? "#34d399" : "oklch(0.35 0.018 264)",
+            background: enabled ? "#34d399" : "#93a09f",
             flexShrink: 0,
           }}
         />
-        <span style={{ fontSize: 12, fontWeight: 600, color: enabled ? "#34d399" : "oklch(0.50 0.02 264)" }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: enabled ? "#34d399" : "#93a09f" }}>
           {isPending ? "…" : enabled ? "Ativo" : "Inativo"}
         </span>
       </button>
@@ -96,12 +96,12 @@ export function PortalToggle({
             disabled={isPending}
             style={{
               background: "none",
-              border: "1px solid oklch(0.28 0.018 264)",
+              border: "1px solid #4d5757",
               borderRadius: 8,
               padding: "5px 10px",
               cursor: isPending ? "not-allowed" : "pointer",
               fontSize: 12,
-              color: "oklch(0.45 0.02 264)",
+              color: "#93a09f",
               opacity: isPending ? 0.5 : 1,
             }}
           >
