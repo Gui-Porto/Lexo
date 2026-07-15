@@ -5,14 +5,14 @@ import { formatCurrency } from "@/lib/format";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
-const TEAL = "oklch(0.65 0.15 200)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
+const TEAL = "#8fae94";
 const SUCCESS = "oklch(0.72 0.15 150)";
-const WARNING = "oklch(0.75 0.16 50)";
-const DANGER = "oklch(0.65 0.2 25)";
-const CARD_BG = "oklch(0.155 0.02 264)";
-const CARD_BORDER = "1px solid oklch(1 0 0 / 7%)";
+const WARNING = "oklch(0.75 0.16 80)";
+const DANGER = "var(--destructive)";
+const CARD_BG = "#222f30";
+const CARD_BORDER = "1px solid #4d5757";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -209,7 +209,7 @@ export default async function DashboardPage() {
   donutGradient =
     areaRows.length > 0
       ? `conic-gradient(${areaRows.map((r) => `${r.color} ${r.from.toFixed(1)}% ${r.to.toFixed(1)}%`).join(", ")})`
-      : `conic-gradient(oklch(0.24 0.02 264) 0% 100%)`;
+      : `conic-gradient(#283738 0% 100%)`;
 
   // Monthly chart data
   const fatMonthly = months12.map(({ year, month }) => {
@@ -268,18 +268,18 @@ export default async function DashboardPage() {
       {/* ── Header ── */}
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 14, flexWrap: "wrap", marginBottom: 6 }}>
         <div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 27, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.6px" }}>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 27, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.6px" }}>
             {greeting}, {firstName} 👋
           </div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, color: "oklch(0.6 0.02 264)", marginTop: 3 }}>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, color: "#93a09f", marginTop: 3 }}>
             Visão geral do escritório · {dateLabel}
           </div>
         </div>
         <div style={{ display: "flex", gap: 9 }}>
-          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500, color: "oklch(0.85 0.01 264)", border: "1px solid oklch(1 0 0 / 10%)", borderRadius: 9, padding: "8px 14px", background: CARD_BG }}>
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500, color: "#93a09f", border: "1px solid #4d5757", borderRadius: 9, padding: "8px 14px", background: CARD_BG }}>
             Últimos 30 dias ▾
           </span>
-          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 600, color: "#fff", borderRadius: 9, padding: "8px 16px", background: AC, boxShadow: `0 6px 18px color-mix(in oklab, ${AC} 40%, transparent)` }}>
+          <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 600, color: "#222f30", borderRadius: 9, padding: "8px 16px", background: AC }}>
             Exportar
           </span>
         </div>
@@ -289,15 +289,15 @@ export default async function DashboardPage() {
       <div className="r-grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
         {/* Processos ativos */}
         <Card style={{ padding: 16 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.6 0.02 264)" }}>Processos ativos</div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>{processosAtivos}</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "#93a09f" }}>Processos ativos</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "#ffffff", margin: "7px 0 4px", letterSpacing: -1 }}>{processosAtivos}</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: SUCCESS }}>↑ este mês</div>
         </Card>
 
         {/* Prazos próximos */}
         <Card style={{ padding: 16 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.6 0.02 264)" }}>Prazos próximos</div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>{prazos7dias}</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "#93a09f" }}>Prazos próximos</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "#ffffff", margin: "7px 0 4px", letterSpacing: -1 }}>{prazos7dias}</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: risco["Crítico"] > 0 ? DANGER : WARNING }}>
             {risco["Crítico"] > 0 ? `${risco["Crítico"]} urgentes` : "nos próximos 7 dias"}
           </div>
@@ -312,8 +312,8 @@ export default async function DashboardPage() {
             border: `1px solid color-mix(in oklab, ${AC} 30%, transparent)`,
           }}
         >
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.7 0.04 274)" }}>Horas faturáveis</div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>{horasFaturaveis}h</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "#cef79e" }}>Horas faturáveis</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "#ffffff", margin: "7px 0 4px", letterSpacing: -1 }}>{horasFaturaveis}h</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: SUCCESS }}>este mês</div>
         </Card>
 
@@ -326,15 +326,15 @@ export default async function DashboardPage() {
             border: `1px solid color-mix(in oklab, ${AC} 30%, transparent)`,
           }}
         >
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.7 0.04 274)" }}>Taxa de êxito prevista</div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>74%</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "#cef79e" }}>Taxa de êxito prevista</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "#ffffff", margin: "7px 0 4px", letterSpacing: -1 }}>74%</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: TEAL }}>carteira ativa · IA</div>
         </Card>
 
         {/* Faturas em aberto */}
         <Card style={{ padding: 16 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "oklch(0.6 0.02 264)" }}>Faturas em aberto</div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "oklch(0.97 0.008 264)", margin: "7px 0 4px", letterSpacing: -1 }}>{formatCurrency(totalAberto)}</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: "#93a09f" }}>Faturas em aberto</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 28, fontWeight: 700, color: "#ffffff", margin: "7px 0 4px", letterSpacing: -1 }}>{formatCurrency(totalAberto)}</div>
           <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500, color: WARNING }}>pendentes</div>
         </Card>
       </div>
@@ -345,17 +345,17 @@ export default async function DashboardPage() {
         {/* Line chart */}
         <Card style={{ padding: 18 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: 600, color: "oklch(0.95 0.008 264)" }}>Faturamento × Horas trabalhadas</div>
+            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: 600, color: "#ffffff" }}>Faturamento × Horas trabalhadas</div>
             <div style={{ display: "flex", gap: 14, fontFamily: "'Geist', sans-serif", fontSize: 12, fontWeight: 500 }}>
-              <span style={{ color: "oklch(0.7 0.04 274)", display: "flex", alignItems: "center", gap: 5 }}>
+              <span style={{ color: "#cef79e", display: "flex", alignItems: "center", gap: 5 }}>
                 <span style={{ width: 9, height: 9, borderRadius: 2, background: AC, display: "inline-block" }} />Faturamento
               </span>
-              <span style={{ color: "oklch(0.65 0.06 200)", display: "flex", alignItems: "center", gap: 5 }}>
+              <span style={{ color: "#8fae94", display: "flex", alignItems: "center", gap: 5 }}>
                 <span style={{ width: 9, height: 9, borderRadius: 2, background: TEAL, display: "inline-block" }} />Horas
               </span>
             </div>
           </div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: "oklch(0.55 0.02 264)", marginBottom: 14 }}>últimos 12 meses</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: "#93a09f", marginBottom: 14 }}>últimos 12 meses</div>
           <svg viewBox="0 0 600 200" preserveAspectRatio="none" style={{ width: "100%", height: 200, display: "block" }}>
             <defs>
               <linearGradient id="gFat" x1="0" y1="0" x2="0" y2="1">
@@ -367,15 +367,15 @@ export default async function DashboardPage() {
                 <stop offset="100%" stopColor={TEAL} stopOpacity="0" />
               </linearGradient>
             </defs>
-            <line x1="0" y1="65" x2="600" y2="65" stroke="oklch(1 0 0 / 6%)" strokeWidth="1" />
-            <line x1="0" y1="120" x2="600" y2="120" stroke="oklch(1 0 0 / 6%)" strokeWidth="1" />
-            <line x1="0" y1="175" x2="600" y2="175" stroke="oklch(1 0 0 / 6%)" strokeWidth="1" />
+            <line x1="0" y1="65" x2="600" y2="65" stroke="#4d5757" strokeWidth="1" />
+            <line x1="0" y1="120" x2="600" y2="120" stroke="#4d5757" strokeWidth="1" />
+            <line x1="0" y1="175" x2="600" y2="175" stroke="#4d5757" strokeWidth="1" />
             <path d={fatArea} fill="url(#gFat)" />
             <path d={fatPath} fill="none" stroke={AC} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             <path d={horArea} fill="url(#gHor)" />
             <path d={horPath} fill="none" stroke={TEAL} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'Geist Mono', monospace", fontSize: 10, color: "oklch(0.45 0.02 264)", marginTop: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'Geist Mono', monospace", fontSize: 10, color: "#93a09f", marginTop: 8 }}>
             {monthLabels.map((l) => <span key={l}>{l}</span>)}
           </div>
         </Card>
@@ -395,9 +395,9 @@ export default async function DashboardPage() {
                 <path d="M18 14l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z" />
               </svg>
             </span>
-            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: 600, color: "oklch(0.96 0.01 264)" }}>A Lexo IA sugere</div>
+            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: 600, color: "#ffffff" }}>A Lexo IA sugere</div>
           </div>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: "oklch(0.62 0.03 274)", marginBottom: 14 }}>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: "#cef79e", marginBottom: 14 }}>
             {iaSugestoes.filter(Boolean).length} ações sugeridas para hoje
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -405,14 +405,14 @@ export default async function DashboardPage() {
               <div
                 key={i}
                 style={{
-                  background: "oklch(0.13 0.018 264 / 0.6)",
+                  background: "#222f3099",
                   border: CARD_BORDER,
                   borderRadius: 10,
                   padding: "11px 12px",
                   fontFamily: "'Geist', sans-serif",
                   fontSize: 13,
                   fontWeight: 500,
-                  color: "oklch(0.9 0.01 264)",
+                  color: "#ffffff",
                   lineHeight: 1.4,
                 }}
               >
@@ -428,9 +428,9 @@ export default async function DashboardPage() {
 
         {/* Donut — Processos por área */}
         <Card style={{ padding: 18 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "oklch(0.95 0.008 264)", marginBottom: 14 }}>Processos por área</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "#ffffff", marginBottom: 14 }}>Processos por área</div>
           {porArea.length === 0 ? (
-            <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: "oklch(0.5 0.02 264)", textAlign: "center", padding: "20px 0" }}>Nenhum processo cadastrado.</p>
+            <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: "#93a09f", textAlign: "center", padding: "20px 0" }}>Nenhum processo cadastrado.</p>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {/* Donut */}
@@ -458,17 +458,17 @@ export default async function DashboardPage() {
                     justifyContent: "center",
                   }}
                 >
-                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 17, fontWeight: 700, color: "oklch(0.95 0.01 264)" }}>{totalPorArea}</span>
-                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 9, color: "oklch(0.55 0.02 264)" }}>total</span>
+                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 17, fontWeight: 700, color: "#ffffff" }}>{totalPorArea}</span>
+                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 9, color: "#93a09f" }}>total</span>
                 </div>
               </div>
               {/* Legend */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, fontFamily: "'Geist', sans-serif", fontSize: 12, color: "oklch(0.75 0.02 264)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, fontFamily: "'Geist', sans-serif", fontSize: 12, color: "#93a09f" }}>
                 {areaRows.map((r, i) => (
                   <span key={i} style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <span style={{ width: 8, height: 8, borderRadius: 2, background: r.color, display: "inline-block", flexShrink: 0 }} />
                     {r.area ?? "Sem área"}{" "}
-                    <b style={{ color: "oklch(0.9 0.01 264)", fontWeight: 600, marginLeft: 2 }}>{r.pct.toFixed(0)}%</b>
+                    <b style={{ color: "#ffffff", fontWeight: 600, marginLeft: 2 }}>{r.pct.toFixed(0)}%</b>
                   </span>
                 ))}
               </div>
@@ -478,13 +478,13 @@ export default async function DashboardPage() {
 
         {/* Bar — Prazos por risco */}
         <Card style={{ padding: 18 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "oklch(0.95 0.008 264)", marginBottom: 18 }}>Prazos por risco</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "#ffffff", marginBottom: 18 }}>Prazos por risco</div>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 14, height: 108 }}>
             {(
               [
                 { label: "Baixo", count: risco["Baixo"], color: SUCCESS },
                 { label: "Médio", count: risco["Médio"], color: WARNING },
-                { label: "Alto", count: risco["Alto"], color: "oklch(0.72 0.17 50)" },
+                { label: "Alto", count: risco["Alto"], color: "oklch(0.75 0.16 80)" },
                 { label: "Crítico", count: risco["Crítico"], color: DANGER },
               ] as const
             ).map(({ label, count, color }) => (
@@ -497,7 +497,7 @@ export default async function DashboardPage() {
                     background: color,
                   }}
                 />
-                <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 10, color: "oklch(0.55 0.02 264)" }}>{label}</span>
+                <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 10, color: "#93a09f" }}>{label}</span>
               </div>
             ))}
           </div>
@@ -506,11 +506,11 @@ export default async function DashboardPage() {
         {/* Feed — Andamentos recentes */}
         <Card style={{ padding: 18, position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", marginBottom: 14 }}>
-            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "oklch(0.95 0.008 264)" }}>Andamentos recentes</div>
+            <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, fontWeight: 600, color: "#ffffff" }}>Andamentos recentes</div>
             <span style={{ marginLeft: "auto", fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 600, color: AC, background: `color-mix(in oklab, ${AC} 16%, transparent)`, padding: "1px 7px", borderRadius: 999 }}>AUTO</span>
           </div>
           {andamentosRecentes.length === 0 ? (
-            <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: "oklch(0.5 0.02 264)", textAlign: "center", padding: "20px 0" }}>Nenhuma atividade recente.</p>
+            <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: "#93a09f", textAlign: "center", padding: "20px 0" }}>Nenhuma atividade recente.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
               {andamentosRecentes.map((log, i) => (
@@ -520,18 +520,17 @@ export default async function DashboardPage() {
                       width: 9,
                       height: 9,
                       borderRadius: "50%",
-                      background: i === 0 ? AC : "oklch(0.4 0.03 264)",
+                      background: i === 0 ? AC : "#93a09f",
                       marginTop: 4,
                       flexShrink: 0,
-                      boxShadow: i === 0 ? `0 0 7px ${AC}` : undefined,
                     }}
                   />
                   <div>
-                    <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500, color: "oklch(0.9 0.01 264)" }}>
+                    <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500, color: "#ffffff" }}>
                       {log.action}{" "}
-                      <span style={{ color: "oklch(0.6 0.02 264)" }}>· {log.case.number}</span>
+                      <span style={{ color: "#93a09f" }}>· {log.case.number}</span>
                     </div>
-                    <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: "oklch(0.5 0.02 264)", marginTop: 2 }}>
+                    <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: "#93a09f", marginTop: 2 }}>
                       {new Date(log.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
                       {" · "}{log.userName}
                     </div>

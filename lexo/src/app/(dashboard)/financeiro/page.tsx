@@ -22,8 +22,8 @@ const STATUS_OPTIONS = [
 const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   PAGO:      { bg: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)" },
   PENDENTE:  { bg: "oklch(0.75 0.16 80 / 14%)",  color: "oklch(0.75 0.16 80)"  },
-  ATRASADO:  { bg: "oklch(0.70 0.18 30 / 14%)",  color: "oklch(0.70 0.18 30)"  },
-  CANCELADO: { bg: "oklch(0.45 0.02 264 / 20%)", color: "oklch(0.55 0.02 264)" },
+  ATRASADO:  { bg: "color-mix(in oklab, var(--destructive) 14%, transparent)", color: "var(--destructive)" },
+  CANCELADO: { bg: "#93a09f33", color: "#93a09f" },
 };
 
 export default async function FinanceiroPage({
@@ -113,9 +113,9 @@ export default async function FinanceiroPage({
   ];
 
   const accentStyle = (accent: string) => {
-    if (accent === "success") return { bg: "linear-gradient(160deg, oklch(0.72 0.15 150 / 14%), oklch(0.155 0.02 264))", border: "1px solid oklch(0.72 0.15 150 / 28%)", subColor: "oklch(0.72 0.15 150)" };
-    if (accent === "danger") return { bg: "linear-gradient(160deg, oklch(0.70 0.18 30 / 14%), oklch(0.155 0.02 264))", border: "1px solid oklch(0.70 0.18 30 / 28%)", subColor: "oklch(0.70 0.18 30)" };
-    return { bg: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", subColor: "oklch(0.45 0.02 264)" };
+    if (accent === "success") return { bg: "linear-gradient(160deg, oklch(0.72 0.15 150 / 14%), #222f30)", border: "1px solid oklch(0.72 0.15 150 / 28%)", subColor: "oklch(0.72 0.15 150)" };
+    if (accent === "danger") return { bg: "linear-gradient(160deg, color-mix(in oklab, var(--destructive) 14%, transparent), #222f30)", border: "1px solid color-mix(in oklab, var(--destructive) 28%, transparent)", subColor: "var(--destructive)" };
+    return { bg: "#222f30", border: "1px solid #4d5757", subColor: "#93a09f" };
   };
 
   return (
@@ -123,10 +123,10 @@ export default async function FinanceiroPage({
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: 26, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.5px", margin: 0 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.5px", margin: 0 }}>
             Financeiro
           </h1>
-          <p style={{ fontSize: 13, color: "oklch(0.55 0.02 264)", marginTop: 4 }}>
+          <p style={{ fontSize: 13, color: "#93a09f", marginTop: 4 }}>
             Honorários, faturas e controle de recebimentos
           </p>
         </div>
@@ -138,8 +138,8 @@ export default async function FinanceiroPage({
               display: "inline-flex",
               alignItems: "center",
               gap: 7,
-              background: "oklch(0.66 0.18 274)",
-              color: "#fff",
+              background: "#cef79e",
+              color: "#222f30",
               border: "none",
               borderRadius: 10,
               padding: "9px 16px",
@@ -147,7 +147,6 @@ export default async function FinanceiroPage({
               fontWeight: 600,
               cursor: "pointer",
               textDecoration: "none",
-              boxShadow: "0 4px 14px oklch(0.66 0.18 274 / 35%)",
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -172,12 +171,12 @@ export default async function FinanceiroPage({
                 padding: "16px 20px",
               }}
             >
-              <p style={{ fontSize: 12, color: "oklch(0.55 0.02 264)", marginBottom: 6 }}>{k.label}</p>
+              <p style={{ fontSize: 12, color: "#93a09f", marginBottom: 6 }}>{k.label}</p>
               <p
                 style={{
                   fontSize: 20,
                   fontWeight: 700,
-                  color: "oklch(0.97 0.008 264)",
+                  color: "#ffffff",
                   letterSpacing: "-0.5px",
                   margin: 0,
                   fontVariantNumeric: "tabular-nums",
@@ -200,8 +199,8 @@ export default async function FinanceiroPage({
       <div
         className="r-tablewrap"
         style={{
-          background: "oklch(0.155 0.02 264)",
-          border: "1px solid oklch(1 0 0 / 7%)",
+          background: "#222f30",
+          border: "1px solid #4d5757",
           borderRadius: 14,
           overflow: "hidden",
         }}
@@ -214,8 +213,8 @@ export default async function FinanceiroPage({
             gridTemplateColumns: "2fr 1.5fr 1.2fr 1.2fr 1.1fr 1fr 120px",
             gap: 12,
             padding: "12px 20px",
-            borderBottom: "1px solid oklch(1 0 0 / 7%)",
-            background: "oklch(0.13 0.018 264)",
+            borderBottom: "1px solid #4d5757",
+            background: "#222f30",
           }}
         >
           {["Descrição", "Cliente", "Processo", "Valor", "Vencimento", "Status", ""].map((h) => (
@@ -224,7 +223,7 @@ export default async function FinanceiroPage({
               style={{
                 fontSize: 11,
                 fontWeight: 600,
-                color: "oklch(0.45 0.02 264)",
+                color: "#93a09f",
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
               }}
@@ -235,7 +234,7 @@ export default async function FinanceiroPage({
         </div>
 
         {invoices.length === 0 && (
-          <div style={{ padding: "60px 20px", textAlign: "center", color: "oklch(0.50 0.02 264)", fontSize: 14 }}>
+          <div style={{ padding: "60px 20px", textAlign: "center", color: "#93a09f", fontSize: 14 }}>
             Nenhum honorário encontrado.
           </div>
         )}
@@ -251,23 +250,23 @@ export default async function FinanceiroPage({
                 gridTemplateColumns: "2fr 1.5fr 1.2fr 1.2fr 1.1fr 1fr 120px",
                 gap: 12,
                 padding: "14px 20px",
-                borderBottom: i < invoices.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none",
+                borderBottom: i < invoices.length - 1 ? "1px solid #4d5757" : "none",
                 alignItems: "center",
               }}
             >
-              <span style={{ fontSize: 13, color: "oklch(0.88 0.01 264)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span style={{ fontSize: 13, color: "#ffffff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {inv.description}
               </span>
-              <span style={{ fontSize: 12, color: "oklch(0.70 0.02 264)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span style={{ fontSize: 12, color: "#93a09f", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {inv.client.name}
               </span>
-              <span style={{ fontSize: 12, color: "oklch(0.60 0.02 264)", fontFamily: "monospace" }}>
+              <span style={{ fontSize: 12, color: "#93a09f", fontFamily: "monospace" }}>
                 {inv.case?.number ?? "—"}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "oklch(0.90 0.01 264)", fontVariantNumeric: "tabular-nums" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#ffffff", fontVariantNumeric: "tabular-nums" }}>
                 {formatCurrency(Number(inv.amount))}
               </span>
-              <span style={{ fontSize: 12, color: "oklch(0.60 0.02 264)" }}>
+              <span style={{ fontSize: 12, color: "#93a09f" }}>
                 {formatDate(inv.dueDate)}
               </span>
               <span
@@ -289,11 +288,11 @@ export default async function FinanceiroPage({
                   href={`/financeiro/${inv.id}`}
                   style={{
                     fontSize: 11,
-                    color: "oklch(0.55 0.02 264)",
+                    color: "#93a09f",
                     textDecoration: "none",
                     padding: "4px 8px",
                     borderRadius: 6,
-                    border: "1px solid oklch(1 0 0 / 8%)",
+                    border: "1px solid #4d5757",
                   }}
                 >
                   Editar

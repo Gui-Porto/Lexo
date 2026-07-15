@@ -70,14 +70,14 @@ export default async function RelatorioFinanceiroPage({
         {/* Resumo */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            { label: "Total geral", value: totalGeral, color: "oklch(0.66 0.18 274)" },
+            { label: "Total geral", value: totalGeral, color: "#cef79e" },
             { label: "Recebido (PAGO)", value: totalPago, color: "oklch(0.65 0.15 150)" },
-            { label: "A receber", value: totalPendente, color: "oklch(0.65 0.15 55)" },
+            { label: "A receber", value: totalPendente, color: "oklch(0.75 0.16 80)" },
           ].map((card) => (
             <div
               key={card.label}
               className="rounded-xl p-4"
-              style={{ background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)" }}
+              style={{ background: "#222f30", border: "1px solid #4d5757" }}
             >
               <p className="text-xs text-muted-foreground">{card.label}</p>
               <p className="text-xl font-bold mt-1" style={{ color: card.color }}>
@@ -90,7 +90,7 @@ export default async function RelatorioFinanceiroPage({
         {/* Tabela */}
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ borderBottom: "2px solid oklch(0.66 0.18 274 / 0.4)" }}>
+            <tr style={{ borderBottom: "2px solid #cef79e66" }}>
               {["Descrição", "Cliente", "Processo", "Vencimento", "Valor", "Status"].map((h) => (
                 <th key={h} className="text-left py-2 px-3 font-medium text-muted-foreground">
                   {h}
@@ -110,8 +110,8 @@ export default async function RelatorioFinanceiroPage({
               <tr
                 key={inv.id}
                 style={{
-                  background: i % 2 === 0 ? "transparent" : "oklch(0.155 0.02 264 / 0.5)",
-                  borderBottom: "1px solid oklch(1 0 0 / 5%)",
+                  background: i % 2 === 0 ? "transparent" : "#222f3080",
+                  borderBottom: "1px solid #4d5757",
                 }}
               >
                 <td className="py-2 px-3">{inv.description}</td>
@@ -127,14 +127,14 @@ export default async function RelatorioFinanceiroPage({
                         inv.status === "PAGO"
                           ? "oklch(0.65 0.15 150 / 0.2)"
                           : inv.status === "ATRASADO"
-                            ? "oklch(0.55 0.2 25 / 0.2)"
-                            : "oklch(0.6 0.02 264 / 0.2)",
+                            ? "color-mix(in oklab, var(--destructive) 20%, transparent)"
+                            : "#93a09f33",
                       color:
                         inv.status === "PAGO"
                           ? "oklch(0.65 0.15 150)"
                           : inv.status === "ATRASADO"
-                            ? "oklch(0.65 0.2 25)"
-                            : "oklch(0.7 0.02 264)",
+                            ? "var(--destructive)"
+                            : "#93a09f",
                     }}
                   >
                     {inv.status}
@@ -144,7 +144,7 @@ export default async function RelatorioFinanceiroPage({
             ))}
           </tbody>
           <tfoot>
-            <tr style={{ borderTop: "2px solid oklch(0.66 0.18 274 / 0.4)" }}>
+            <tr style={{ borderTop: "2px solid #cef79e66" }}>
               <td colSpan={4} className="py-3 px-3 font-medium">
                 Total ({invoices.length} lançamentos)
               </td>
