@@ -19,19 +19,19 @@ const STATUS_OPTIONS = [
 ];
 
 const AREA_COLORS: Record<string, string> = {
-  Cível: "oklch(0.66 0.18 274)",
-  Trabalhista: "oklch(0.65 0.15 200)",
+  Cível: "#cef79e",
+  Trabalhista: "#8fae94",
   Tributário: "oklch(0.72 0.15 150)",
   Família: "oklch(0.75 0.16 80)",
-  Criminal: "oklch(0.70 0.18 30)",
-  Empresarial: "oklch(0.72 0.14 300)",
+  Criminal: "var(--destructive)",
+  Empresarial: "#6d7f78",
 };
 
 const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   ATIVO:     { bg: "oklch(0.72 0.15 150 / 14%)", color: "oklch(0.72 0.15 150)" },
-  SUSPENSO:  { bg: "oklch(0.75 0.16 50 / 14%)",  color: "oklch(0.75 0.16 50)"  },
-  ARQUIVADO: { bg: "oklch(0.45 0.02 264 / 20%)", color: "oklch(0.55 0.02 264)" },
-  ENCERRADO: { bg: "oklch(0.45 0.02 264 / 20%)", color: "oklch(0.55 0.02 264)" },
+  SUSPENSO:  { bg: "oklch(0.75 0.16 80 / 14%)",  color: "oklch(0.75 0.16 80)"  },
+  ARQUIVADO: { bg: "#93a09f33", color: "#93a09f" },
+  ENCERRADO: { bg: "#93a09f33", color: "#93a09f" },
 };
 
 type View = "table" | "kanban" | "timeline";
@@ -105,10 +105,10 @@ export default async function ProcessosPage({
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "oklch(0.97 0.008 264)", letterSpacing: "-0.4px", margin: 0 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.4px", margin: 0 }}>
             Processos
           </h1>
-          <p style={{ fontSize: 13, color: "oklch(0.60 0.02 264)", marginTop: 3 }}>
+          <p style={{ fontSize: 13, color: "#93a09f", marginTop: 3 }}>
             {totalCases} processos · {kAtivo} ativos · acompanhados nos tribunais com prazos vinculados
           </p>
         </div>
@@ -118,10 +118,9 @@ export default async function ProcessosPage({
             href="/processos/novo"
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              background: "oklch(0.66 0.18 274)", color: "#fff",
+              background: "#cef79e", color: "#222f30",
               borderRadius: 9, padding: "8px 16px",
               fontSize: 13, fontWeight: 600, textDecoration: "none",
-              boxShadow: "0 6px 18px oklch(0.66 0.18 274 / 40%)",
             }}
           >
             + Novo processo
@@ -135,13 +134,13 @@ export default async function ProcessosPage({
           <div
             key={k.label}
             style={{
-              background: "oklch(0.155 0.02 264)",
-              border: "1px solid oklch(1 0 0 / 7%)",
+              background: "#222f30",
+              border: "1px solid #4d5757",
               borderRadius: 14, padding: "15px 16px",
             }}
           >
-            <div style={{ fontSize: 12, fontWeight: 500, color: "oklch(0.60 0.02 264)" }}>{k.label}</div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: "oklch(0.97 0.008 264)", marginTop: 5, letterSpacing: "-1px" }}>{k.value}</div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: "#93a09f" }}>{k.label}</div>
+            <div style={{ fontSize: 26, fontWeight: 700, color: "#ffffff", marginTop: 5, letterSpacing: "-1px" }}>{k.value}</div>
           </div>
         ))}
       </div>
@@ -154,30 +153,30 @@ export default async function ProcessosPage({
       {/* Table view */}
       {view === "table" && (
         <>
-          <div className="r-tablewrap" style={{ background: "oklch(0.155 0.02 264)", border: "1px solid oklch(1 0 0 / 7%)", borderRadius: 14, overflow: "hidden" }}>
+          <div className="r-tablewrap" style={{ background: "#222f30", border: "1px solid #4d5757", borderRadius: 14, overflow: "hidden" }}>
             {/* Header row */}
             <div className="r-tablegrid" style={{
               display: "grid",
               gridTemplateColumns: "1.6fr 1.5fr 1.1fr 1.2fr 0.9fr 0.9fr",
               gap: 12, padding: "13px 18px",
-              borderBottom: "1px solid oklch(1 0 0 / 7%)",
-              background: "oklch(0.13 0.018 264)",
+              borderBottom: "1px solid #4d5757",
+              background: "#222f30",
             }}>
               {["PROCESSO", "CLIENTE", "ÁREA", "RESPONSÁVEL", "PRÓX. PRAZO", "STATUS"].map((h) => (
-                <span key={h} style={{ fontSize: 11, fontWeight: 600, color: "oklch(0.50 0.02 264)", letterSpacing: "0.05em", fontFamily: "monospace" }}>
+                <span key={h} style={{ fontSize: 11, fontWeight: 600, color: "#93a09f", letterSpacing: "0.05em", fontFamily: "monospace" }}>
                   {h}
                 </span>
               ))}
             </div>
 
             {cases.length === 0 && (
-              <div style={{ padding: "60px 20px", textAlign: "center", color: "oklch(0.50 0.02 264)", fontSize: 14 }}>
+              <div style={{ padding: "60px 20px", textAlign: "center", color: "#93a09f", fontSize: 14 }}>
                 Nenhum processo encontrado.
               </div>
             )}
 
             {cases.map((c, i) => {
-              const areaColor = AREA_COLORS[c.area ?? ""] ?? "oklch(0.55 0.02 264)";
+              const areaColor = AREA_COLORS[c.area ?? ""] ?? "#93a09f";
               const sc = STATUS_STYLE[c.status] ?? STATUS_STYLE.ENCERRADO;
               const nextDeadline = c.deadlines[0]?.date ?? null;
 
@@ -189,33 +188,33 @@ export default async function ProcessosPage({
                     display: "grid",
                     gridTemplateColumns: "1.6fr 1.5fr 1.1fr 1.2fr 0.9fr 0.9fr",
                     gap: 12, padding: "14px 18px",
-                    borderBottom: i < cases.length - 1 ? "1px solid oklch(1 0 0 / 5%)" : "none",
+                    borderBottom: i < cases.length - 1 ? "1px solid #4d5757" : "none",
                     alignItems: "center",
                   }}
                 >
                   <Link
                     href={`/processos/${c.id}`}
-                    style={{ fontSize: 13, fontWeight: 600, color: "oklch(0.88 0.01 264)", textDecoration: "none", fontFamily: "monospace" }}
+                    style={{ fontSize: 13, fontWeight: 600, color: "#ffffff", textDecoration: "none", fontFamily: "monospace" }}
                   >
                     {c.number}
                   </Link>
-                  <span style={{ fontSize: 13, color: "oklch(0.75 0.01 264)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 13, color: "#93a09f", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {c.client.name}
                   </span>
                   <span>
                     {c.area ? (
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12 }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: areaColor, flexShrink: 0 }} />
-                        <span style={{ color: "oklch(0.75 0.01 264)" }}>{c.area}</span>
+                        <span style={{ color: "#93a09f" }}>{c.area}</span>
                       </span>
                     ) : (
-                      <span style={{ fontSize: 12, color: "oklch(0.40 0.02 264)" }}>—</span>
+                      <span style={{ fontSize: 12, color: "#93a09f" }}>—</span>
                     )}
                   </span>
-                  <span style={{ fontSize: 12, color: "oklch(0.65 0.02 264)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 12, color: "#93a09f", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {c.responsavel?.name ?? "—"}
                   </span>
-                  <span style={{ fontSize: 12, color: nextDeadline ? "oklch(0.75 0.16 50)" : "oklch(0.40 0.02 264)", fontFamily: "monospace" }}>
+                  <span style={{ fontSize: 12, color: nextDeadline ? "oklch(0.75 0.16 80)" : "#93a09f", fontFamily: "monospace" }}>
                     {nextDeadline ? formatDate(nextDeadline) : "—"}
                   </span>
                   <span style={{
