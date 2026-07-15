@@ -5,20 +5,20 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { login, loginWithGoogle } from "@/actions/login";
 
-const AC = "oklch(0.66 0.18 274)";
-const AC2 = "oklch(0.72 0.14 300)";
+const AC = "#cef79e";
+const AC2 = "#cef79e";
 const F = "'Geist', var(--font-geist), sans-serif";
 const FM = "'Geist Mono', var(--font-geist-mono), monospace";
 
 const INPUT: React.CSSProperties = {
   width: "100%",
   padding: "11px 13px 11px 38px",
-  background: "oklch(0.165 0.02 264)",
-  border: "1px solid oklch(1 0 0 / 10%)",
+  background: "#222f30",
+  border: "1px solid #4d5757",
   borderRadius: 10,
   fontFamily: F,
   fontSize: 14,
-  color: "oklch(0.90 0.01 264)",
+  color: "#ffffff",
   outline: "none",
   boxSizing: "border-box",
   transition: "border-color 0.15s ease",
@@ -93,7 +93,7 @@ export default function LoginPage() {
       {/* ── Brand panel (esquerda) ───────────────────────────────── */}
       <div className="auth-brand" style={{
         flex: "1.05",
-        background: "oklch(0.09 0.022 264)",
+        background: "#1a2425",
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -122,13 +122,13 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ marginBottom: 52, position: "relative" }}>
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-            <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "oklch(0.18 0.02 264)" }}>
+            <span style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#222f30" }}>
               <svg width={19} height={19} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8 4.5V15H15" />
-                <path d="M5 19.5h14" stroke="oklch(0.72 0.16 290)" strokeWidth={2} />
+                <path d="M5 19.5h14" stroke="#cef79e" strokeWidth={2} />
               </svg>
             </span>
-            <span style={{ fontFamily: F, fontSize: 22, fontWeight: 700, color: "oklch(0.98 0.008 264)", letterSpacing: "-0.6px" }}>Lexo</span>
+            <span style={{ fontFamily: F, fontSize: 22, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.6px" }}>Lexo</span>
           </Link>
         </div>
 
@@ -137,7 +137,7 @@ export default function LoginPage() {
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
-          background: `color-mix(in oklab,${AC} 14%,oklch(0.15 0.02 264))`,
+          background: `color-mix(in oklab,${AC} 14%,#222f30)`,
           border: `1px solid color-mix(in oklab,${AC} 28%,transparent)`,
           borderRadius: 99,
           padding: "5px 14px",
@@ -157,7 +157,7 @@ export default function LoginPage() {
           fontSize: 36,
           fontWeight: 800,
           letterSpacing: "-1.2px",
-          color: "oklch(0.96 0.008 264)",
+          color: "#ffffff",
           lineHeight: 1.15,
           margin: "0 0 16px",
           maxWidth: 380,
@@ -169,7 +169,7 @@ export default function LoginPage() {
         <p style={{
           fontFamily: F,
           fontSize: 15,
-          color: "oklch(0.65 0.02 264)",
+          color: "#93a09f",
           lineHeight: 1.68,
           margin: "0 0 38px",
           maxWidth: 360,
@@ -185,7 +185,7 @@ export default function LoginPage() {
               <span style={{
                 width: 34, height: 34,
                 borderRadius: 9,
-                background: `color-mix(in oklab,${AC} 14%,oklch(0.18 0.02 264))`,
+                background: `color-mix(in oklab,${AC} 14%,#222f30)`,
                 border: `1px solid color-mix(in oklab,${AC} 22%,transparent)`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: AC,
@@ -194,8 +194,8 @@ export default function LoginPage() {
                 {icon}
               </span>
               <div style={{ paddingTop: 2 }}>
-                <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "oklch(0.90 0.01 264)" }}>{bold} </span>
-                <span style={{ fontFamily: F, fontSize: 14, color: "oklch(0.62 0.02 264)" }}>{text}</span>
+                <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "#ffffff" }}>{bold} </span>
+                <span style={{ fontFamily: F, fontSize: 14, color: "#93a09f" }}>{text}</span>
               </div>
             </div>
           ))}
@@ -205,7 +205,7 @@ export default function LoginPage() {
       {/* ── Form panel (direita) ─────────────────────────────────── */}
       <div className="auth-form" style={{
         flex: "1",
-        background: "oklch(0.115 0.018 264)",
+        background: "#222f30",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -215,7 +215,7 @@ export default function LoginPage() {
       }}>
         {/* Voltar ao site */}
         <div style={{ position: "absolute", top: 28, left: 32 }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: "oklch(0.58 0.02 264)", textDecoration: "none" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: "#93a09f", textDecoration: "none" }}>
             <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
@@ -224,10 +224,10 @@ export default function LoginPage() {
         </div>
 
         <div style={{ width: "100%", maxWidth: 380 }}>
-          <h2 style={{ fontFamily: F, fontSize: 26, fontWeight: 700, letterSpacing: "-0.7px", color: "oklch(0.95 0.008 264)", margin: "0 0 6px" }}>
+          <h2 style={{ fontFamily: F, fontSize: 26, fontWeight: 700, letterSpacing: "-0.7px", color: "#ffffff", margin: "0 0 6px" }}>
             Entrar na sua conta
           </h2>
-          <p style={{ fontFamily: F, fontSize: 14, color: "oklch(0.58 0.02 264)", margin: "0 0 28px" }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: "#93a09f", margin: "0 0 28px" }}>
             Use o e-mail cadastrado pelo seu escritório.
           </p>
 
@@ -235,11 +235,11 @@ export default function LoginPage() {
 
             {/* E-mail */}
             <div>
-              <label style={{ display: "block", fontFamily: F, fontSize: 13, fontWeight: 500, color: "oklch(0.78 0.01 264)", marginBottom: 6 }}>
+              <label style={{ display: "block", fontFamily: F, fontSize: 13, fontWeight: 500, color: "#93a09f", marginBottom: 6 }}>
                 E-mail
               </label>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "oklch(0.52 0.02 264)", pointerEvents: "none" }}>
+                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#93a09f", pointerEvents: "none" }}>
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                   </svg>
@@ -258,15 +258,15 @@ export default function LoginPage() {
             {/* Senha */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <label style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "oklch(0.78 0.01 264)" }}>
+                <label style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "#93a09f" }}>
                   Senha
                 </label>
-                <span style={{ fontFamily: F, fontSize: 12, color: "oklch(0.50 0.02 264)", cursor: "default" }}>
+                <span style={{ fontFamily: F, fontSize: 12, color: "#93a09f", cursor: "default" }}>
                   Esqueci minha senha
                 </span>
               </div>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "oklch(0.52 0.02 264)", pointerEvents: "none" }}>
+                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#93a09f", pointerEvents: "none" }}>
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                   </svg>
@@ -282,7 +282,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPass((v) => !v)}
-                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "oklch(0.52 0.02 264)", padding: 0, lineHeight: 0 }}
+                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#93a09f", padding: 0, lineHeight: 0 }}
                 >
                   {showPass ? (
                     <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -300,7 +300,7 @@ export default function LoginPage() {
             {/* Manter conectado */}
             <label style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer" }}>
               <input type="checkbox" name="remember" style={{ accentColor: AC, width: 15, height: 15, cursor: "pointer" }} />
-              <span style={{ fontFamily: F, fontSize: 13, color: "oklch(0.65 0.02 264)" }}>
+              <span style={{ fontFamily: F, fontSize: 13, color: "#93a09f" }}>
                 Manter-me conectado neste dispositivo
               </span>
             </label>
@@ -319,15 +319,15 @@ export default function LoginPage() {
                 padding: "13px",
                 borderRadius: 11,
                 background: pending
-                  ? "oklch(0.45 0.05 274)"
-                  : `linear-gradient(135deg,${AC},${AC2})`,
+                  ? "#283738" // FIXME(theme): revisar contraste do estado pendente/disabled
+                  : AC,
                 border: "none",
                 cursor: pending ? "not-allowed" : "pointer",
                 fontFamily: F,
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#fff",
-                boxShadow: pending ? "none" : `0 8px 24px color-mix(in oklab,${AC} 38%,transparent)`,
+                color: pending ? "#93a09f" : "#222f30",
+                boxShadow: "none",
                 transition: "all 0.2s ease",
                 display: "flex",
                 alignItems: "center",
@@ -349,9 +349,9 @@ export default function LoginPage() {
 
           {/* Divisor */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "22px 0" }}>
-            <div style={{ flex: 1, height: 1, background: "oklch(1 0 0 / 8%)" }} />
-            <span style={{ fontFamily: F, fontSize: 12, color: "oklch(0.48 0.02 264)" }}>ou</span>
-            <div style={{ flex: 1, height: 1, background: "oklch(1 0 0 / 8%)" }} />
+            <div style={{ flex: 1, height: 1, background: "#4d5757" }} />
+            <span style={{ fontFamily: F, fontSize: 12, color: "#93a09f" }}>ou</span>
+            <div style={{ flex: 1, height: 1, background: "#4d5757" }} />
           </div>
 
           {/* Login com Google */}
@@ -362,13 +362,13 @@ export default function LoginPage() {
                 width: "100%",
                 padding: "12px",
                 borderRadius: 11,
-                background: "oklch(0.165 0.02 264)",
-                border: "1px solid oklch(1 0 0 / 10%)",
+                background: "#222f30",
+                border: "1px solid #4d5757",
                 cursor: "pointer",
                 fontFamily: F,
                 fontSize: 14,
                 fontWeight: 600,
-                color: "oklch(0.90 0.01 264)",
+                color: "#ffffff",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -387,7 +387,7 @@ export default function LoginPage() {
           </form>
 
           {/* Link cadastro */}
-          <p style={{ textAlign: "center", fontFamily: F, fontSize: 13, color: "oklch(0.55 0.02 264)", margin: "0 0 20px" }}>
+          <p style={{ textAlign: "center", fontFamily: F, fontSize: 13, color: "#93a09f", margin: "0 0 20px" }}>
             Primeiro acesso?{" "}
             <Link href="/registrar" style={{ color: AC, fontWeight: 600, textDecoration: "none" }}>
               Ative sua conta
@@ -396,10 +396,10 @@ export default function LoginPage() {
 
           {/* Rodapé segurança */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="oklch(0.44 0.02 264)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#93a09f" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
-            <span style={{ fontFamily: F, fontSize: 11, color: "oklch(0.44 0.02 264)" }}>
+            <span style={{ fontFamily: F, fontSize: 11, color: "#93a09f" }}>
               Conexão segura · dados protegidos por LGPD
             </span>
           </div>
