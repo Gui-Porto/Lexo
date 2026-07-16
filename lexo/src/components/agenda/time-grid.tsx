@@ -54,9 +54,9 @@ export function TimeGrid({
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", border: "1px solid #4d5757", borderRadius: 16, overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", border: "1px solid #4d5757", borderRadius: 16, overflowX: "auto", overflowY: "hidden" }}>
       {/* Cabeçalho dos dias */}
-      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, background: "#222f30", borderBottom: "1px solid #4d5757" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, minmax(72px, 1fr))`, minWidth: 56 + days.length * 72, background: "#222f30", borderBottom: "1px solid #4d5757" }}>
         <div />
         {days.map((d) => (
           <div key={d.key} style={{ padding: "10px 6px", textAlign: "center", fontSize: 12, fontWeight: 700, color: d.isToday ? "#cef79e" : "#93a09f" }}>
@@ -66,7 +66,7 @@ export function TimeGrid({
       </div>
 
       {/* Faixa dia inteiro */}
-      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, borderBottom: "1px solid #4d5757", minHeight: 34 }}>
+      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, minmax(72px, 1fr))`, minWidth: 56 + days.length * 72, borderBottom: "1px solid #4d5757", minHeight: 34 }}>
         <div style={{ fontSize: 10, color: "#93a09f", padding: "6px 6px", textAlign: "right" }}>dia</div>
         {days.map((d) => {
           const items = (byDay.get(d.key) ?? []).filter((ev) => isAllDayUTC(new Date(ev.date)));
@@ -97,7 +97,7 @@ export function TimeGrid({
       </div>
 
       {/* Grade de horas */}
-      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, 1fr)`, maxHeight: 560, overflowY: "auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${days.length}, minmax(72px, 1fr))`, minWidth: 56 + days.length * 72, maxHeight: 560, overflowY: "auto" }}>
         <div>
           {HOURS.map((h) => (
             <div key={h} style={{ height: ROW_HEIGHT, borderTop: "1px solid #4d5757", fontSize: 10, color: "#93a09f", textAlign: "right", padding: "2px 6px" }}>

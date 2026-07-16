@@ -146,9 +146,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const dbUser = await db.user.findUnique({ where: { email } });
       if (dbUser) {
+        // Veio do botão "Continuar com Google" da página de CADASTRO com um email
+        // que já tem conta: não loga automaticamente — manda pro /login com um
+        // aviso claro, em vez de simplesmente entrar como se fosse a intenção do
+        // usuário (ele clicou em cadastrar, não em entrar). Retornar string aqui
+        // é seguro porque a página de destino (/login) não exige sessão.
+        if (signupFlag) return "/login?error=already_registered";
+
         user.id = dbUser.id;
         (user as { organizationId?: string; role?: string }).organizationId = dbUser.organizationId;
         (user as { organizationId?: string; role?: string }).role = dbUser.role;
+        // Precisa retornar true (não uma string) pra sessão ser criada — o
+        // NextAuth trata retorno de string como "redireciona sem logar" (pulando
+        // handleLoginOrRegister/criação do cookie de sessão), então string aqui
+        // deixava o usuário "autenticado" só na aparência e o middleware rebocava
+        // pro /login por não achar sessão nenhuma. loginWithGoogle e
+        // signupWithGoogle sempre passam redirectTo: "/processos", então basta
+        // aceitar (true) que o próprio NextAuth honra esse destino corretamente.
         return true;
       }
 
@@ -198,9 +212,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           maxAge: 600,
           secure: process.env.NODE_ENV === "production",
         });
+        console.log("[DEBUG-SIGNIN] signupFlag branch -> returning /registrar/completar");
         return "/registrar/completar";
       }
 
+      console.log("[DEBUG-SIGNIN] fell through to final return false");
       return false;
     },
   },

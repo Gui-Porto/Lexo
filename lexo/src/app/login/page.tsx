@@ -57,16 +57,27 @@ const bullets = [
 function OAuthErrorBanner({ formError }: { formError?: string }) {
   const searchParams = useSearchParams();
   const oauthError = searchParams.get("error");
+  const isInfo = oauthError === "already_registered";
   const message =
     formError ??
-    (oauthError === "AccessDenied"
+    (oauthError === "already_registered"
+      ? "Esse e-mail já tem uma conta Google cadastrada no Lexo. Faça login normalmente abaixo."
+      : oauthError === "AccessDenied"
       ? "Essa conta Google não está cadastrada. Peça um convite ao administrador do seu escritório."
       : oauthError
       ? "Não foi possível entrar com o Google. Tente novamente."
       : null);
   if (!message) return null;
   return (
-    <div style={{ background: "oklch(0.62 0.18 22 / 12%)", border: "1px solid oklch(0.62 0.18 22 / 28%)", borderRadius: 9, padding: "10px 14px", fontFamily: F, fontSize: 13, color: "oklch(0.78 0.14 22)" }}>
+    <div style={{
+      background: isInfo ? "oklch(0.75 0.14 145 / 12%)" : "oklch(0.62 0.18 22 / 12%)",
+      border: `1px solid ${isInfo ? "oklch(0.75 0.14 145 / 28%)" : "oklch(0.62 0.18 22 / 28%)"}`,
+      borderRadius: 9,
+      padding: "10px 14px",
+      fontFamily: F,
+      fontSize: 13,
+      color: isInfo ? "oklch(0.85 0.14 145)" : "oklch(0.78 0.14 22)",
+    }}>
       {message}
     </div>
   );

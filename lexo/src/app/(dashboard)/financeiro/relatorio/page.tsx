@@ -88,6 +88,7 @@ export default async function RelatorioFinanceiroPage({
         </div>
 
         {/* Tabela */}
+        <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr style={{ borderBottom: "2px solid #cef79e66" }}>
@@ -153,6 +154,7 @@ export default async function RelatorioFinanceiroPage({
             </tr>
           </tfoot>
         </table>
+        </div>
 
         <p className="text-xs text-muted-foreground text-right">
           Gerado em {new Date().toLocaleDateString("pt-BR")} · Lexo

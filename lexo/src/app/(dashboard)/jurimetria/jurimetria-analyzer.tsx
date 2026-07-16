@@ -513,6 +513,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
               </span>
             </div>
 
+            <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #4d5757" }}>
@@ -595,6 +596,7 @@ export function JurimtriaAnalyzer({ processos }: { processos: Processo[] }) {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </>
       )}

@@ -140,12 +140,17 @@ export function LexoAIChat({ userEmail }: { userEmail?: string }) {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let rafId = 0;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         accumulated += decoder.decode(value, { stream: true });
-        setStreamBuffer(accumulated);
+        // ponytail: 1 setState por chunk de rede reparseia o markdown inteiro a cada byte
+        // recebido; cap em 1 flush por frame independe da granularidade dos chunks
+        if (!rafId) rafId = requestAnimationFrame(() => { setStreamBuffer(accumulated); rafId = 0; });
       }
+      if (rafId) cancelAnimationFrame(rafId);
+      setStreamBuffer(accumulated);
     } catch {
       accumulated = "Não foi possível obter resposta da IA. Tente novamente.";
       setStreamBuffer(accumulated);

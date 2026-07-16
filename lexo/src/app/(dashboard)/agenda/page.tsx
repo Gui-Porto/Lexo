@@ -85,7 +85,7 @@ export default async function AgendaPage({
   });
 
   // KPI counts (always)
-  const [statsHoje, statsProximos, statsVencidos, statsConcluidos] = await Promise.all([
+  const kpiCountsPromise = Promise.all([
     db.deadline.count({
       where: { organizationId: orgId, status: "PENDENTE", date: { gte: startOfToday, lt: new Date(startOfToday.getTime() + 86400000) } },
     }),
@@ -159,18 +159,6 @@ export default async function AgendaPage({
     isCurrentPeriod = calMonthParam === nowMonthStr;
   }
 
-  const viewDeadlines = await db.deadline.findMany({
-    where: { organizationId: orgId, date: { gte: rangeStart, lte: rangeEnd } },
-    select: { id: true, title: true, date: true, type: true, status: true, description: true, caseId: true },
-    orderBy: { date: "asc" },
-  });
-
-  const cases = await db.case.findMany({
-    where: { organizationId: orgId },
-    select: { id: true, number: true },
-    orderBy: { number: "asc" },
-  });
-
   // Lista: filtrada + paginada
   const listWhere = {
     organizationId: orgId,
@@ -186,11 +174,25 @@ export default async function AgendaPage({
 
   const DAY_PAGE_SIZE = 5; // ponytail: dias por página; ajustar se ficar apertado na prática
 
-  const matchingDates = await db.deadline.findMany({
-    where: listWhere,
-    select: { date: true },
-    orderBy: { date: "asc" },
-  });
+  // Independente entre si — dispara junto em vez de serializar round trips
+  const [[statsHoje, statsProximos, statsVencidos, statsConcluidos], viewDeadlines, cases, matchingDates] = await Promise.all([
+    kpiCountsPromise,
+    db.deadline.findMany({
+      where: { organizationId: orgId, date: { gte: rangeStart, lte: rangeEnd } },
+      select: { id: true, title: true, date: true, type: true, status: true, description: true, caseId: true },
+      orderBy: { date: "asc" },
+    }),
+    db.case.findMany({
+      where: { organizationId: orgId },
+      select: { id: true, number: true },
+      orderBy: { number: "asc" },
+    }),
+    db.deadline.findMany({
+      where: listWhere,
+      select: { date: true },
+      orderBy: { date: "asc" },
+    }),
+  ]);
   const uniqueDayKeys = Array.from(new Set(matchingDates.map((d) => dayKey(d.date))));
   const totalDays = uniqueDayKeys.length;
   const pageDayKeys = uniqueDayKeys.slice((page - 1) * DAY_PAGE_SIZE, page * DAY_PAGE_SIZE);

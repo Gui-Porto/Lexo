@@ -30,14 +30,18 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline'",
+              // 'unsafe-eval' só em dev: o devtool de source map do webpack (next dev)
+              // embrulha os chunks em eval(), bloqueado pelo CSP e quebrando todo o JS
+              // do client (ex: as animações de reveal-on-scroll da landing) sem erro visível.
+              // Build de produção não usa eval, então lá o CSP fica só com 'unsafe-inline'.
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""}`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
               "connect-src 'self'",
               "frame-ancestors 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
+              "form-action 'self' https://accounts.google.com",
             ].join("; "),
           },
         ],

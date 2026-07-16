@@ -167,6 +167,7 @@ const CSS = `
 
   /* ── RESPONSIVO ─────────────────────────────────────────── */
   html, body { max-width: 100%; overflow-x: clip; }
+  html { scroll-behavior: smooth; }
   @media (max-width: 900px) {
     .lp2-portal { grid-template-columns: 1fr !important; gap: 40px !important; }
     .lp2-step { grid-template-columns: 1fr !important; text-align: left !important; }

@@ -192,7 +192,7 @@ export default async function ConfiguracoesPage({
           background: "#222f30",
           border: "1px solid #4d5757",
           borderRadius: 12, padding: 4,
-          width: "fit-content",
+          width: "fit-content", maxWidth: "100%", overflowX: "auto",
         }}
       >
         {TABS.filter((t) => !t.adminOnly || isAdmin).map(({ key, label, icon: Icon }) => {

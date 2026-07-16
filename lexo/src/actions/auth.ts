@@ -88,7 +88,10 @@ export async function signupWithGoogle() {
     maxAge: 600,
     secure: process.env.NODE_ENV === "production",
   });
-  await signIn("google", { redirectTo: "/registrar/completar" });
+  // redirectTo é só o destino padrão pra quem já tem conta (signIn callback
+  // retorna true e honra isso); conta nova é redirecionada via string-override
+  // pro /registrar/completar direto no callback, então esse valor nunca é usado nesse caso.
+  await signIn("google", { redirectTo: "/processos" });
 }
 
 export type CompleteSignupResult = { error: string } | undefined;
