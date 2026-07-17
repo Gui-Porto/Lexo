@@ -217,21 +217,20 @@ lexo/
 - Rate limiting persistido em Postgres
 - Headers de segurança (`X-Frame-Options`, `X-Content-Type-Options` etc.)
 
-- ---
+---
 
 ## Roadmap / Melhorias futuras
 
 - [ ] Suporte a múltiplos idiomas na interface (i18n completo, hoje parcial)
-- [ ] - [ ] App mobile (React Native) para consulta de prazos e portal do cliente
-- [ ] - [ ] Webhooks públicos para integração com sistemas de terceiros (ex: ERPs de escritórios)
-- [ ] - [ ] Testes end-to-end automatizados (Playwright) cobrindo os fluxos críticos de billing e auth
-- [ ] - [ ] Observabilidade em produção (tracing e métricas via OpenTelemetry)
-- [ ] - [ ] Exportação de dados em massa (LGPD - portabilidade)
+- [ ] App mobile (React Native) para consulta de prazos e portal do cliente
+- [ ] Webhooks públicos para integração com sistemas de terceiros (ex: ERPs de escritórios)
+- [ ] Testes end-to-end automatizados (Playwright) cobrindo os fluxos críticos de billing e auth
+- [ ] Observabilidade em produção (tracing e métricas via OpenTelemetry)
+- [ ] Exportação de dados em massa (LGPD - portabilidade)
 
-- [ ] ## Licença
+## Licença
 
-- [ ] Este é um projeto **proprietário**, construído e mantido por Guilherme Porto. O código é público apenas para fins de demonstração técnica de portfólio — consulte o arquivo [LICENSE](./LICENSE) para os termos completos. Não é permitido reutilizar, redistribuir ou executar este software em produção sem autorização prévia.
-- [ ] 
+Este é um projeto **proprietário**, construído e mantido por Guilherme Porto. O código é público apenas para fins de demonstração técnica de portfólio — consulte o arquivo [LICENSE](./LICENSE) para os termos completos. Não é permitido reutilizar, redistribuir ou executar este software em produção sem autorização prévia.
 
 ---
 
